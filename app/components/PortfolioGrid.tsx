@@ -4,7 +4,6 @@ import type React from "react"
 
 import { useState, useRef } from "react"
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
-import Image from "next/image"
 import ScrollReveal from "./ScrollReveal"
 import { smoothScrollTo } from "../utils/smooth-scroll"
 
@@ -55,6 +54,7 @@ const products = [
 ]
 
 export default function PortfolioGrid() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [filter, setFilter] = useState("All")
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
