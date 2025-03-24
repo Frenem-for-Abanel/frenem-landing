@@ -36,7 +36,7 @@ export default function Footer() {
           ))}
         </nav>
         <p className="mt-10 text-center text-sm leading-5 text-gray-500">
-          &copy; {new Date().getFullYear()} FRENEM. All rights reserved.
+          &copy; {new Date().getFullYear()} frenem. All rights reserved.
         </p>
       </div>
     </footer>

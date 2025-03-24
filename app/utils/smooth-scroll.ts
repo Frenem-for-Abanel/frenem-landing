@@ -5,10 +5,13 @@ export function smoothScrollTo(elementId: string) {
   const element = document.getElementById(id)
 
   if (element) {
-    // Scroll to the element with smooth behavior
-    element.scrollIntoView({
+    const elementPosition = element.getBoundingClientRect().top
+    const offsetPosition = elementPosition + window.pageYOffset - 80 // Adjust for header height
+
+    // Use window.scrollTo for better cross-browser compatibility
+    window.scrollTo({
+      top: offsetPosition,
       behavior: "smooth",
-      block: "start",
     })
   }
 }
