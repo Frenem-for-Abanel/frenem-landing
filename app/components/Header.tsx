@@ -23,7 +23,7 @@ export default function Header() {
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">FRENEM</span>
-            <span className="text-2xl font-bold text-[#1e0e62]">FRENEM</span>
+            <span className="font-['League_Spartan'] text-3xl font-black tracking-[-0.05em]">frenem</span>
           </Link>
         </div>
         <div className="flex gap-x-12">

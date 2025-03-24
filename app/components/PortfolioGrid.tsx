@@ -11,7 +11,7 @@ import { smoothScrollTo } from "../utils/smooth-scroll"
 const products = [
   {
     id: 1,
-    title: "FRENEM BUILD",
+    title: "Build",
     description: "Top-tier consulting without traditional costs",
     imageUrl: "/placeholder.svg?height=600&width=800",
     category: "Build",
@@ -25,7 +25,7 @@ const products = [
   },
   {
     id: 2,
-    title: "FRENEM PRISM",
+    title: "Prism",
     description: "Your Single Source of Truth",
     imageUrl: "/placeholder.svg?height=800&width=600",
     category: "Prism",
@@ -40,7 +40,7 @@ const products = [
   },
   {
     id: 3,
-    title: "FRENEM PULSE",
+    title: "Pulse",
     description: "Deep Employee Insights, Delivered Precisely",
     imageUrl: "/placeholder.svg?height=600&width=800",
     category: "Pulse",
@@ -85,32 +85,6 @@ export default function PortfolioGrid() {
           </div>
         </ScrollReveal>
 
-        <ScrollReveal delay={0.2}>
-          <div className="flex justify-center space-x-4 mb-8">
-            <button
-              onClick={() => setFilter("All")}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                filter === "All" ? "bg-[#1e0e62] text-white" : "bg-gray-100 text-[#1e0e62] hover:bg-gray-200"
-              }`}
-            >
-              All
-            </button>
-            {products.map((product) => (
-              <button
-                key={product.category}
-                onClick={() => setFilter(product.category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  filter === product.category
-                    ? "bg-[#1e0e62] text-white"
-                    : "bg-gray-100 text-[#1e0e62] hover:bg-gray-200"
-                }`}
-              >
-                {product.category}
-              </button>
-            ))}
-          </div>
-        </ScrollReveal>
-
         <motion.div layout className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <AnimatePresence>
             {filteredProducts.map((product, index) => (
@@ -124,17 +98,11 @@ export default function PortfolioGrid() {
                   transition={{ duration: 0.5 }}
                   className="bg-white rounded-3xl shadow-lg overflow-hidden hover-lift transition-all duration-300 ease-in-out border-2 border-transparent hover:border-[#1e0e62]/10"
                 >
-                  <div className="relative h-64 overflow-hidden">
-                    <Image
-                      src={product.imageUrl || "/placeholder.svg"}
-                      alt={product.title}
-                      layout="fill"
-                      objectFit="cover"
-                      className="transition-transform duration-300 ease-in-out group-hover:scale-105"
-                    />
-                  </div>
                   <div className="p-6">
-                    <h3 className="text-2xl font-semibold text-[#1e0e62] mb-2">{product.title}</h3>
+                    <h3 className="text-2xl font-medium mb-2">
+                      <span className="font-['League_Spartan'] font-black tracking-[-0.05em]">frenem</span>{" "}
+                      <span className="text-gray-500">{product.title.toLowerCase()}</span>
+                    </h3>
                     <p className="text-lg font-medium text-[#1e0e62] mb-4">{product.description}</p>
                     <ul className="space-y-2 mb-6">
                       {product.features.map((feature, index) => (

@@ -141,12 +141,12 @@ export default function Hero() {
 
       <motion.div className="relative z-10 text-center px-6 max-w-4xl mx-auto" style={{ y: textY }}>
         <motion.h1
-          className="text-6xl sm:text-7xl md:text-8xl font-bold tracking-tight text-[#1e0e62] mb-4"
+          className="font-['League_Spartan'] text-3xl md:text-5xl font-black tracking-[-0.05em] mb-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          FRENEM
+          frenem
         </motion.h1>
 
         <motion.p

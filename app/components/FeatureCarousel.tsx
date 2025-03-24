@@ -83,16 +83,12 @@ export default function FeatureCarousel() {
             {features.map((feature, index) => (
               <motion.div
                 key={index}
-                className="min-w-[300px] h-[400px] p-8 m-4 bg-white rounded-3xl shadow-lg flex flex-col justify-between hover-lift transition-all duration-300 ease-in-out border-2 border-transparent hover:border-[#1e0e62]/10"
+                className="min-w-[200px] h-[200px] p-8 m-4 bg-white rounded-3xl shadow-lg flex flex-col justify-between hover-lift transition-all duration-300 ease-in-out border-2 border-transparent hover:border-[#1e0e62]/10"
                 whileHover={{ y: -10, transition: { duration: 0.3 } }}
               >
                 <div>
-                  <div className="text-4xl mb-4">{feature.icon}</div>
                   <h3 className="text-xl font-semibold mb-2 text-[#1e0e62]">{feature.title}</h3>
                   <p className="text-gray-600">{feature.description}</p>
-                </div>
-                <div className="mt-4">
-                  <p className="text-[#1e0e62]">Join us in reshaping how organisations evolve.</p>
                 </div>
               </motion.div>
             ))}
