@@ -3,7 +3,7 @@ import nodemailer from "nodemailer"
 
 export async function POST(req: Request) {
   try {
-    const { name, email, company, employeeCount, interestedIn, message } = await req.json()
+    const { name, email, company, message } = await req.json()
 
     // Create a transporter using GoDaddy SMTP settings
     const transporter = nodemailer.createTransport({

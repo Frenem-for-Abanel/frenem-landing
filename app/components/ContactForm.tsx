@@ -58,6 +58,7 @@ export default function ContactForm() {
       toast.success("Thank you for your message", {
         description: "We'll get back to you soon!",
       })
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error("Failed to send message", {
         description: "Please try again later.",
