@@ -2,16 +2,11 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { smoothScrollTo } from "../utils/smooth-scroll"
 
 export default function Header() {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => setMounted(true), [])
-
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault()
     smoothScrollTo(id)

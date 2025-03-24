@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react"
 import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion"
+import { MotionValue } from "framer-motion"
 
 const timelineEvents = [
   {
@@ -48,13 +49,15 @@ const timelineEvents = [
   },
 ]
 
-const FlowerIcon = ({ progress }: { progress: number }) => (
-  <svg
+const FlowerIcon = ({ progress }: { progress: MotionValue<number> }) => (
+  <motion.svg
+    width="24"
+    height="24"
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     className="w-6 h-6"
-    style={{ transform: `scale(${progress})` }}
+    style={{ scale: progress }}
   >
     <path
       d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
@@ -66,7 +69,7 @@ const FlowerIcon = ({ progress }: { progress: number }) => (
       stroke="currentColor"
       strokeWidth="2"
     />
-  </svg>
+  </motion.svg>
 )
 
 export default function Timeline() {
@@ -108,7 +111,7 @@ export default function Timeline() {
             className="sticky top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 text-primary"
             style={{ y: useTransform(scrollYProgress, [0, 1], [0, 100]) }}
           >
-            <FlowerIcon progress={useTransform(scrollYProgress, [0, 1], [0.5, 1]) as any} />
+            <FlowerIcon progress={useTransform(scrollYProgress, [0, 1], [0.5, 1]) as MotionValue<number>} />
           </motion.div>
 
           {timelineEvents.map((event, index) => (

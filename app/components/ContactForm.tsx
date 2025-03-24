@@ -69,7 +69,7 @@ export default function ContactForm() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-[#1e0e62] sm:text-4xl mb-4">Get in Touch</h2>
             <p className="text-lg text-gray-600">
-              Ready to transform your organization? Let's start a conversation about your specific needs.
+              Ready to transform your organization? Let&apos;s start a conversation about your specific needs.
             </p>
           </div>
         </ScrollReveal>
