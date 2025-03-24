@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import ScrollReveal from "./ScrollReveal"
 import { toast } from "sonner"
 
@@ -17,8 +16,6 @@ const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
   company: z.string().min(2, { message: "Company name must be at least 2 characters." }),
-  employeeCount: z.string().min(1, { message: "Please select your company size." }),
-  interestedIn: z.string().min(1, { message: "Please select a product you're interested in." }),
   message: z.string().min(10, { message: "Message must be at least 10 characters." }),
 })
 
@@ -38,23 +35,36 @@ export default function ContactForm() {
       name: "",
       email: "",
       company: "",
-      employeeCount: "",
-      interestedIn: "",
       message: "",
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
-    // Simulate API call
-    setTimeout(() => {
-      console.log(values)
-      setIsSubmitting(false)
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to send message")
+      }
+
       form.reset()
       toast.success("Thank you for your message", {
         description: "We'll get back to you soon!",
       })
-    }, 2000)
+    } catch (error) {
+      toast.error("Failed to send message", {
+        description: "Please try again later.",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -123,53 +133,6 @@ export default function ContactForm() {
                 />
                 <FormField
                   control={form.control}
-                  name="employeeCount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-[#1e0e62]">Company Size</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select company size" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="1-10">1-10 employees</SelectItem>
-                          <SelectItem value="11-50">11-50 employees</SelectItem>
-                          <SelectItem value="51-200">51-200 employees</SelectItem>
-                          <SelectItem value="201-500">201-500 employees</SelectItem>
-                          <SelectItem value="501+">501+ employees</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="interestedIn"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-[#1e0e62]">Interested In</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a product" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="build">FRENEM BUILD</SelectItem>
-                          <SelectItem value="prism">FRENEM PRISM</SelectItem>
-                          <SelectItem value="pulse">FRENEM PULSE</SelectItem>
-                          <SelectItem value="multiple">Multiple Products</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
                   name="message"
                   render={({ field }) => (
                     <FormItem>
@@ -186,7 +149,7 @@ export default function ContactForm() {
                   )}
                 />
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Button type="submit" className="w-full bg-[#1e0e62] hover:bg-[#1e0e62]/90" disabled={isSubmitting}>
+                  <Button type="submit" className="w-full bg-[#1e0e62] hover:bg-[#1e0e62]/90 text-white" disabled={isSubmitting}>
                     {isSubmitting ? "Sending..." : "Send Message"}
                   </Button>
                 </motion.div>

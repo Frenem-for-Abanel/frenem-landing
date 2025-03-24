@@ -22,7 +22,7 @@ export default function Header() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
-            <span className="sr-only">FRENEM</span>
+            <span className="sr-only">frenem</span>
             <span className="font-['League_Spartan'] text-3xl font-black tracking-[-0.05em]">frenem</span>
           </Link>
         </div>
@@ -30,21 +30,21 @@ export default function Header() {
           <a
             href="#build"
             onClick={(e) => handleNavClick(e, "build")}
-            className="text-sm font-semibold leading-6 text-[#1e0e62] hover:text-[#1e0e62]/70 transition-colors"
+            className="text-xl font-semibold leading-6 text-[#1e0e62] hover:text-[#1e0e62]/70 transition-colors"
           >
             Build
           </a>
           <a
             href="#prism"
             onClick={(e) => handleNavClick(e, "prism")}
-            className="text-sm font-semibold leading-6 text-[#1e0e62] hover:text-[#1e0e62]/70 transition-colors"
+            className="text-xl font-semibold leading-6 text-[#1e0e62] hover:text-[#1e0e62]/70 transition-colors"
           >
             Prism
           </a>
           <a
             href="#pulse"
             onClick={(e) => handleNavClick(e, "pulse")}
-            className="text-sm font-semibold leading-6 text-[#1e0e62] hover:text-[#1e0e62]/70 transition-colors"
+            className="text-xl font-semibold leading-6 text-[#1e0e62] hover:text-[#1e0e62]/70 transition-colors"
           >
             Pulse
           </a>

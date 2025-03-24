@@ -31,19 +31,14 @@ export default function WearYourStory() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center">
           <ScrollReveal>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#1e0e62] mb-4">Consulting Reimagined</h2>
-          </ScrollReveal>
-
-          <ScrollReveal delay={0.2}>
-            <p className="text-xl md:text-2xl text-[#1e0e62] mb-6 max-w-3xl mx-auto">
-              Software and Consulting Converging for Exceptional Outcomes
-            </p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1e0e62] mb-4">
+            Software and Consulting Converging for Exceptional Outcomes</h2>
           </ScrollReveal>
 
           <ScrollReveal delay={0.4}>
             <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
-              At FRENEM, we combine cutting-edge software with proven consulting methodologies to deliver exceptional
-              outcomes for your organization. Our solutions are designed to provide clarity, insights, and actionable
+              At frenem, we combine cutting-edge software with proven consulting methodologies to deliver exceptional
+              outcomes for your organization. <br /><br /> Our solutions are designed to provide clarity, insights, and actionable
               recommendations at a fraction of traditional consulting costs.
             </p>
           </ScrollReveal>

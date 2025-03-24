@@ -67,7 +67,7 @@ export default function FeatureCarousel() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <ScrollReveal>
-          <h2 className="text-3xl font-bold text-center mb-12 text-[#1e0e62]">Why Choose FRENEM?</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 text-[#1e0e62]">Why choose frenem?</h2>
         </ScrollReveal>
 
         <motion.div ref={carousel} className="cursor-grab overflow-hidden" style={{ opacity: cardsOpacity, y: cardsY }}>

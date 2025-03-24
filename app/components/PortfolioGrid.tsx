@@ -5,14 +5,12 @@ import type React from "react"
 import { useState, useRef } from "react"
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import ScrollReveal from "./ScrollReveal"
-import { smoothScrollTo } from "../utils/smooth-scroll"
 
 const products = [
   {
     id: 1,
     title: "Build",
     description: "Top-tier consulting without traditional costs",
-    imageUrl: "/placeholder.svg?height=600&width=800",
     category: "Build",
     features: [
       "Job Descriptions and Job Families",
@@ -26,7 +24,6 @@ const products = [
     id: 2,
     title: "Prism",
     description: "Your Single Source of Truth",
-    imageUrl: "/placeholder.svg?height=800&width=600",
     category: "Prism",
     features: [
       "Dynamic Org Charts and Reporting Chains",
@@ -41,7 +38,6 @@ const products = [
     id: 3,
     title: "Pulse",
     description: "Deep Employee Insights, Delivered Precisely",
-    imageUrl: "/placeholder.svg?height=600&width=800",
     category: "Pulse",
     features: [
       "Comprehensive Competency Evaluation",
@@ -64,11 +60,6 @@ export default function PortfolioGrid() {
 
   const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -50])
   const filteredProducts = filter === "All" ? products : products.filter((product) => product.category === filter)
-
-  const handleLearnMoreClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
-    smoothScrollTo("contact")
-  }
 
   return (
     <section id="products" ref={ref} className="py-20 bg-white relative overflow-hidden">
@@ -96,15 +87,15 @@ export default function PortfolioGrid() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="bg-white rounded-3xl shadow-lg overflow-hidden hover-lift transition-all duration-300 ease-in-out border-2 border-transparent hover:border-[#1e0e62]/10"
+                  className="bg-white rounded-3xl shadow-lg overflow-hidden hover-lift transition-all duration-300 ease-in-out border-2 border-transparent hover:border-[#1e0e62]/10 h-[460px] flex"
                 >
-                  <div className="p-6">
+                  <div className="p-6 h-full flex-grow flex flex-col">
                     <h3 className="text-2xl font-medium mb-2">
                       <span className="font-['League_Spartan'] font-black tracking-[-0.05em]">frenem</span>{" "}
                       <span className="text-gray-500">{product.title.toLowerCase()}</span>
                     </h3>
                     <p className="text-lg font-medium text-[#1e0e62] mb-4">{product.description}</p>
-                    <ul className="space-y-2 mb-6">
+                    <ul className="space-y-2 mb-6 flex-grow">
                       {product.features.map((feature, index) => (
                         <li key={index} className="flex items-start">
                           <span className="text-[#1e0e62] mr-2">•</span>
@@ -112,27 +103,6 @@ export default function PortfolioGrid() {
                         </li>
                       ))}
                     </ul>
-                    <a
-                      href="#contact"
-                      onClick={handleLearnMoreClick}
-                      className="text-[#1e0e62] hover:underline inline-flex items-center"
-                    >
-                      Learn More
-                      <svg
-                        className="w-4 h-4 ml-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M14 5l7 7m0 0l-7 7m7-7H3"
-                        />
-                      </svg>
-                    </a>
                   </div>
                 </motion.div>
               </ScrollReveal>
