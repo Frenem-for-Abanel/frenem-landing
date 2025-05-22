@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     // Email content
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: ['antony.paul@abanel.com', 'sanjay.antony@abanel.com'], // Multiple recipients
+      to: ['antony.paul@abanel.com'], // Multiple recipients
       subject: `New Contact Form Submission from ${name}`,
       html: `
         <h2>New Contact Form Submission</h2>
