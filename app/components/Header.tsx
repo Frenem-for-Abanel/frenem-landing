@@ -1,29 +1,13 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { smoothScrollTo } from "../utils/smooth-scroll"
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024) // 1024px is the lg breakpoint
-    }
-    
-    // Initial check
-    checkMobile()
-    
-    // Add event listener
-    window.addEventListener('resize', checkMobile)
-    
-    // Cleanup
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault()
