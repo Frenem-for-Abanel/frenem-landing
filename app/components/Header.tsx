@@ -29,11 +29,11 @@ export default function Header() {
     e.preventDefault()
     setIsOpen(false)
     
-    // Determine scroll target based on device and clicked link
-    const scrollTarget = isMobile ? id.toLowerCase() : "products"
+    // Remove the # if it's included
+    const targetId = id.startsWith("#") ? id.substring(1) : id
     
     setTimeout(() => {
-      smoothScrollTo(scrollTarget)
+      smoothScrollTo(targetId)
     }, 200)
   }
 
