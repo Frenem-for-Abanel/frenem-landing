@@ -3,7 +3,18 @@ import nodemailer from "nodemailer"
 
 export async function POST(req: Request) {
   try {
-    const { name, email, company, message } = await req.json()
+    const body = await req.json()
+    const {
+      name,
+      email,
+      company,
+      message,
+      team_size,
+      interest,
+      notes,
+    } = body
+
+    const messageContent = notes ?? message ?? ""
 
     // Create a transporter using GoDaddy SMTP settings
     const transporter = nodemailer.createTransport({
@@ -16,18 +27,25 @@ export async function POST(req: Request) {
       },
     })
 
+    const teamSizeRow = team_size ? `<p><strong>Team size:</strong> ${team_size}</p>` : ""
+    const interestRow = interest ? `<p><strong>Interested in:</strong> ${interest}</p>` : ""
+    const messageRow = messageContent
+      ? `<p><strong>Message:</strong></p><p>${messageContent}</p>`
+      : ""
+
     // Email content
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: ['antony.paul@abanel.com'], // Multiple recipients
+      to: ['antony.paul@abanel.com','sanjay.antony@abanel.com'], // Multiple recipients
       subject: `New Contact Form Submission from ${name}`,
       html: `
         <h2>New Contact Form Submission</h2>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Company:</strong> ${company}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message}</p>
+        ${teamSizeRow}
+        ${interestRow}
+        ${messageRow}
       `,
     }
 
@@ -45,4 +63,4 @@ export async function POST(req: Request) {
       { status: 500 }
     )
   }
-} 
+}

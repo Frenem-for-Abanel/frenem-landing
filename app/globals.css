@@ -2,8 +2,25 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* V2 design system */
+    --bg: #f6f4f0;
+    --bg-warm: #edeae4;
+    --bg-dark: #1a1a18;
+    --bg-card: #ffffff;
+    --text: #1a1a18;
+    --text-secondary: #6b6860;
+    --text-tertiary: #9b978f;
+    --accent: #b8860b;
+    --accent-soft: #d4a843;
+    --border-color: rgba(26, 26, 24, 0.08);
+    --border-dark: rgba(255, 255, 255, 0.08);
+    --radius: 14px;
+    --radius-btn: 980px;
+    --content-width: 720px;
+    --wide-width: 960px;
+
+    --background: 40 20% 96%;
+    --foreground: 30 10% 10%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
@@ -48,12 +65,19 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
   * {
     @reference border-border;
   }
   body {
     @reference bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    overflow-x: hidden;
+    line-height: 1.7;
   }
 }
 
@@ -72,6 +96,37 @@
   
   .hover-lift {
     @reference transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg;
+  }
+
+  .container-v2 {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .container-wide {
+    max-width: var(--wide-width);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  @media (min-width: 768px) {
+    .container-v2,
+    .container-wide {
+      padding: 0 32px;
+    }
+  }
+
+  .font-logo {
+    font-family: var(--font-logo), sans-serif;
+  }
+
+  .font-serif {
+    font-family: var(--font-serif), serif;
+  }
+
+  .font-sans {
+    font-family: var(--font-sans), sans-serif;
   }
 }
 

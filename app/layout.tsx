@@ -1,15 +1,29 @@
 import "./globals.css"
-import { Inter } from "next/font/google"
+import { League_Spartan, Instrument_Serif, DM_Sans } from "next/font/google"
+import { Providers } from "./context/Providers"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
+import ContactModal from "./components/ContactModal"
 import { Toaster } from "sonner"
 import type React from "react"
 
-const inter = Inter({ subsets: ["latin"] })
+const leagueSpartan = League_Spartan({
+  subsets: ["latin"],
+  variable: "--font-logo",
+})
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-serif",
+})
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
 export const metadata = {
-  title: "frenem | Consulting Reimagined",
-  description: "Software and Consulting Converging for Exceptional Outcomes",
+  title: "Frenem | Organisation Design for Scale",
+  description: "Build an organisation that scales beyond you. Clarity in roles, decisions, and leadership.",
 }
 
 export default function RootLayout({
@@ -19,10 +33,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="light">
-      <body className={`${inter.className} min-h-screen bg-white text-foreground`}>
-        <Header />
-        <main>{children}</main>
-        <Footer />
+      <body
+        className={`${instrumentSerif.variable} ${leagueSpartan.variable} ${dmSans.variable} ${instrumentSerif.className} min-h-screen bg-[#f6f4f0] text-[#1a1a18]`}
+      >
+        <Providers>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+          <ContactModal />
+        </Providers>
         <Toaster position="top-center" />
       </body>
     </html>

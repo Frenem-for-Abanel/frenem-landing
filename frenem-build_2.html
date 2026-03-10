@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frenem | Organisation Design for Scale</title>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f4f0;
+    --bg-warm: #edeae4;
+    --bg-dark: #1a1a18;
+    --bg-card: #ffffff;
+    --text: #1a1a18;
+    --text-secondary: #6b6860;
+    --text-tertiary: #9b978f;
+    --accent: #b8860b;
+    --accent-soft: #d4a843;
+    --border: rgba(26, 26, 24, 0.08);
+    --border-dark: rgba(255,255,255,0.08);
+    --radius: 14px;
+    --radius-btn: 980px;
+
+    --font-logo: 'League Spartan', sans-serif;
+    --font-serif: 'Instrument Serif', serif;
+    --font-sans: 'DM Sans', sans-serif;
+
+    --content-width: 720px;
+    --wide-width: 960px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
+  }
+
+  body {
+    font-family: var(--font-serif);
+    color: var(--text);
+    background: var(--bg);
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    padding: 0 48px;
+    height: 52px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    background: rgba(246, 244, 240, 0.88);
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+
+  nav.scrolled { box-shadow: 0 1px 12px rgba(0,0,0,0.04); }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-logo {
+    font-family: var(--font-logo);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    text-decoration: none;
+    text-transform: lowercase;
+  }
+
+  /* ── PRODUCT SWITCHER (center) ── */
+  .nav-products {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(26, 26, 24, 0.04);
+    border-radius: var(--radius-btn);
+    padding: 3px;
+  }
+
+  .nav-product {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: none;
+    border: none;
+    padding: 7px 20px;
+    border-radius: var(--radius-btn);
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+    position: relative;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .nav-product:hover {
+    color: var(--text);
+  }
+
+  .nav-product.active {
+    color: var(--text);
+    background: var(--bg-card);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 0 1px rgba(0,0,0,0.08);
+  }
+
+  .nav-product.primary {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.1px;
+  }
+
+  .core-tag {
+    font-family: var(--font-sans);
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(184, 134, 11, 0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1.4;
+  }
+
+  .nav-product.addon {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+  }
+
+  .nav-product.addon:hover {
+    color: var(--text-secondary);
+  }
+
+  .nav-product.addon.active {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .nav-divider {
+    width: 1px;
+    height: 16px;
+    background: rgba(26, 26, 24, 0.1);
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* ── NAV RIGHT ── */
+  .nav-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 28px;
+  }
+
+  .nav-link {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-link:hover { color: var(--text); }
+
+  .nav-cta {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 7px 18px;
+    border-radius: var(--radius-btn);
+    border: none;
+    background: var(--text);
+    color: var(--bg);
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  .container-wide {
+    max-width: var(--wide-width);
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  section { position: relative; }
+
+  /* ── PRODUCT PAGES ── */
+  .product-page { display: none; }
+  .product-page.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 32px 120px;
+    max-width: var(--content-width);
+    margin: 0 auto;
+  }
+
+  .hero-label {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(48px, 6.5vw, 76px);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -1.5px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.35s forwards;
+  }
+
+  .hero h1 em { font-style: italic; color: var(--accent); }
+
+  .hero-sub {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    max-width: 500px;
+    line-height: 1.55;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+
+  .hero-cta-group {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.65s forwards;
+  }
+
+  .btn-primary {
+    font-family: var(--font-sans);
+    font-size: 17px;
+    font-weight: 500;
+    padding: 16px 36px;
+    border-radius: var(--radius-btn);
+    border: none;
+    background: var(--text);
+    color: var(--bg);
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .btn-primary:hover { opacity: 0.85; }
+
+  .btn-text {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(26,26,24,0.15);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btn-text:hover { color: var(--text); border-color: var(--text); }
+
+  /* ── SHARED TYPOGRAPHY ── */
+  .section-label {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .section-heading {
+    font-family: var(--font-serif);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 400;
+    line-height: 1.12;
+    letter-spacing: -1px;
+    margin-bottom: 56px;
+  }
+
+  /* ── BUILD: PROBLEM ── */
+  .problem { padding: 140px 0 120px; }
+  .pain-list { display: flex; flex-direction: column; }
+
+  .pain-item {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 20px;
+    align-items: baseline;
+    padding: 32px 0;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .pain-item:last-child { border-bottom: 1px solid var(--border); }
+  .pain-icon { font-size: 20px; line-height: 1.7; }
+
+  .pain-item h3 {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: -0.4px;
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+
+  .pain-item p {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 540px;
+  }
+
+  /* ── BUILD: TRANSFORMATION ── */
+  .transformation {
+    padding: 140px 0;
+    background: var(--bg-dark);
+    color: #f6f4f0;
+  }
+
+  .transformation .section-label { color: var(--accent-soft); }
+  .transformation .section-heading { color: #f6f4f0; }
+  .transform-list { display: flex; flex-direction: column; }
+
+  .transform-row {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+    align-items: center;
+    padding: 28px 0;
+    border-top: 1px solid var(--border-dark);
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  .transform-row:last-child { border-bottom: 1px solid var(--border-dark); }
+
+  .transform-before {
+    font-family: var(--font-serif);
+    font-size: 21px;
+    color: rgba(246, 244, 240, 0.4);
+    line-height: 1.5;
+    padding-right: 16px;
+  }
+
+  .transform-arrow {
+    text-align: center;
+    color: var(--accent-soft);
+    font-size: 20px;
+    font-family: var(--font-sans);
+  }
+
+  .transform-after {
+    font-family: var(--font-serif);
+    font-size: 21px;
+    color: #f6f4f0;
+    line-height: 1.5;
+    padding-left: 16px;
+  }
+
+  /* ── BUILD: CAPITAL READY ── */
+  .capital-ready {
+    padding: 140px 0;
+    background: var(--bg-warm);
+  }
+
+  .capital-body {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 48px;
+  }
+
+  .capital-quote {
+    font-family: var(--font-serif);
+    font-size: 30px;
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .capital-quote-attr {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    color: var(--text-tertiary);
+    margin-bottom: 56px;
+  }
+
+  .capital-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+
+  .capital-card {
+    padding: 32px 28px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .capital-card h4 {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 12px;
+    line-height: 1.25;
+  }
+
+  .capital-card p {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  /* ── BUILD: HOW IT WORKS ── */
+  .how-it-works { padding: 140px 0; }
+
+  .hiw-sub {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 64px;
+    max-width: 500px;
+  }
+
+  .hiw-phases {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 3px;
+    background: rgba(26, 26, 24, 0.06);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .hiw-phase {
+    padding: 48px 36px;
+    background: var(--bg-dark);
+    color: #f6f4f0;
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .hiw-phase:first-child { border-radius: 20px 0 0 20px; }
+  .hiw-phase:last-child { border-radius: 0 20px 20px 0; }
+
+  .hiw-phase-label {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-soft);
+    margin-bottom: 20px;
+  }
+
+  .hiw-phase h3 {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+
+  .hiw-phase p {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    color: rgba(246,244,240,0.5);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+
+  .hiw-time {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent-soft);
+    padding: 6px 16px;
+    border: 1px solid rgba(212, 168, 67, 0.25);
+    border-radius: var(--radius-btn);
+  }
+
+  /* ── BUILD: POSITIONING ── */
+  .positioning { padding: 180px 0; text-align: center; }
+
+  .pos-headline {
+    font-family: var(--font-serif);
+    font-size: clamp(34px, 4.8vw, 52px);
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.8px;
+    max-width: 640px;
+    margin: 0 auto 24px;
+  }
+
+  .pos-headline em { font-style: italic; color: var(--accent); }
+
+  .pos-sub {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    color: var(--text-secondary);
+    max-width: 460px;
+    margin: 0 auto 44px;
+    line-height: 1.6;
+  }
+
+  /* ── SHARED: FINAL CTA ── */
+  .final-cta {
+    padding: 140px 0 100px;
+    background: var(--bg-dark);
+    color: #f6f4f0;
+    text-align: center;
+  }
+
+  .final-cta .section-label { color: var(--accent-soft); }
+
+  .final-cta h2 {
+    font-family: var(--font-serif);
+    font-size: clamp(38px, 5.5vw, 60px);
+    font-weight: 400;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    max-width: 580px;
+    margin: 0 auto 24px;
+  }
+
+  .final-cta h2 em { font-style: italic; color: var(--accent-soft); }
+
+  .final-sub {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    color: rgba(246,244,240,0.5);
+    max-width: 440px;
+    margin: 0 auto 44px;
+    line-height: 1.6;
+  }
+
+  .btn-primary-light {
+    font-family: var(--font-sans);
+    font-size: 17px;
+    font-weight: 500;
+    padding: 16px 36px;
+    border-radius: var(--radius-btn);
+    border: none;
+    background: #f6f4f0;
+    color: var(--bg-dark);
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    display: inline-block;
+  }
+
+  .btn-primary-light:hover { opacity: 0.9; }
+
+  /* ── SUB PRODUCT PAGES ── */
+  .sub-hero {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 32px 100px;
+    max-width: var(--content-width);
+    margin: 0 auto;
+  }
+
+  .sub-hero .hero-label,
+  .sub-hero h1,
+  .sub-hero .hero-sub,
+  .sub-hero .hero-cta-group {
+    opacity: 0;
+    animation: fadeUp 0.8s forwards;
+  }
+
+  .sub-hero .hero-label { animation-delay: 0.15s; }
+  .sub-hero h1 {
+    animation-delay: 0.3s;
+    font-family: var(--font-serif);
+    font-size: clamp(48px, 6.5vw, 76px);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -1.5px;
+  }
+  .sub-hero .hero-sub { animation-delay: 0.45s; font-size: 24px; }
+  .sub-hero .hero-cta-group { animation-delay: 0.6s; }
+
+  .features-section { padding: 100px 0 140px; }
+  .features-section .section-heading { margin-bottom: 48px; }
+  .feature-list { display: flex; flex-direction: column; }
+
+  .feature-item {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 24px;
+    align-items: baseline;
+    padding: 36px 0;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .feature-item:last-child { border-bottom: 1px solid var(--border); }
+
+  .feature-num {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .feature-item h3 {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: -0.4px;
+    margin-bottom: 10px;
+  }
+
+  .feature-item p {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 540px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 36px 48px;
+    background: var(--bg-dark);
+    border-top: 1px solid var(--border-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .foot-logo {
+    font-family: var(--font-logo);
+    font-weight: 700;
+    font-size: 20px;
+    color: rgba(246,244,240,0.4);
+    text-transform: lowercase;
+  }
+
+  .foot-links a {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    color: rgba(246,244,240,0.35);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .foot-links a:hover { color: rgba(246,244,240,0.7); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(26, 26, 24, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    padding: 24px;
+  }
+
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); opacity: 1; }
+
+  .modal {
+    background: var(--bg);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 520px;
+    padding: 52px 48px 48px;
+    position: relative;
+    transform: translateY(16px) scale(0.98);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.15);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: rgba(26,26,24,0.05);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    font-size: 20px;
+    color: var(--text-secondary);
+  }
+
+  .modal-close:hover { background: rgba(26,26,24,0.1); }
+
+  .modal h3 {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+
+  .modal-subtitle {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 36px;
+  }
+
+  .field { margin-bottom: 20px; }
+
+  .field label {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .field input, .field select, .field textarea {
+    width: 100%;
+    font-family: var(--font-serif);
+    font-size: 18px;
+    color: var(--text);
+    background: var(--bg-card);
+    border: 1px solid rgba(26,26,24,0.12);
+    border-radius: 12px;
+    padding: 14px 18px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b6860' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 44px;
+    cursor: pointer;
+  }
+
+  .field textarea { resize: vertical; min-height: 80px; }
+  .field input::placeholder, .field textarea::placeholder { color: var(--text-tertiary); }
+
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1);
+  }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .modal-submit {
+    width: 100%;
+    font-family: var(--font-sans);
+    font-size: 18px;
+    font-weight: 500;
+    padding: 16px 36px;
+    border-radius: var(--radius-btn);
+    border: none;
+    background: var(--text);
+    color: var(--bg);
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 8px;
+  }
+
+  .modal-submit:hover { opacity: 0.85; }
+
+  .modal-note {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    color: var(--text-tertiary);
+    text-align: center;
+    margin-top: 16px;
+  }
+
+  .modal-success { display: none; text-align: center; padding: 20px 0; }
+  .modal-success.show { display: block; }
+  .modal-form.hide { display: none; }
+
+  .modal-success .success-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(184, 134, 11, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 28px;
+  }
+
+  .modal-success h3 { text-align: center; }
+
+  .modal-success p {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ── MBB REFERENCE ── */
+  .mbb-ref {
+    position: relative;
+    border-bottom: 1px dotted rgba(184, 134, 11, 0.4);
+    cursor: default;
+  }
+
+  .mbb-aside {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0;
+    color: rgba(246,244,240,0.7);
+    background: var(--bg-dark);
+    padding: 6px 14px;
+    border-radius: 8px;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+
+  .mbb-aside::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--bg-dark);
+  }
+
+  .mbb-ref:hover .mbb-aside {
+    display: block;
+  }
+
+  /* ── TEAM CREDENTIALS ── */
+  .team-section {
+    padding: 120px 0;
+    background: var(--bg-warm);
+  }
+
+  .team-section .section-heading {
+    margin-bottom: 40px;
+  }
+
+  .team-intro {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 56px;
+  }
+
+  .team-logos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-bottom: 40px;
+  }
+
+  .team-logo-group {
+    margin-bottom: 32px;
+    width: 100%;
+  }
+
+  .team-logo-group-label {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 16px;
+  }
+
+  .team-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .team-tag {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 8px 18px;
+    border-radius: var(--radius-btn);
+    white-space: nowrap;
+  }
+
+  .team-stat {
+    display: inline-block;
+    font-family: var(--font-serif);
+    font-size: 19px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-top: 8px;
+  }
+
+  .team-stat strong {
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  .stagger-1 { transition-delay: 0.04s; }
+  .stagger-2 { transition-delay: 0.08s; }
+  .stagger-3 { transition-delay: 0.12s; }
+  .stagger-4 { transition-delay: 0.16s; }
+  .stagger-5 { transition-delay: 0.20s; }
+  .stagger-6 { transition-delay: 0.24s; }
+  .stagger-7 { transition-delay: 0.28s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; height: 52px; }
+    .nav-products { gap: 2px; padding: 3px; }
+    .nav-product { padding: 6px 14px; font-size: 12px; }
+    .nav-product.primary { font-size: 13px; }
+    .nav-product.addon { font-size: 11px; }
+    .nav-divider { height: 12px; }
+    .core-tag { font-size: 7.5px; padding: 1.5px 5px; }
+    .nav-link { display: none; }
+    .nav-cta { font-size: 12px; padding: 6px 14px; }
+    .container, .container-wide { padding: 0 24px; }
+    .hero, .sub-hero { padding: 120px 24px 100px; }
+    .capital-cards { grid-template-columns: 1fr; }
+    .hiw-phases { grid-template-columns: 1fr; border-radius: 20px; }
+    .hiw-phase:first-child { border-radius: 20px 20px 0 0; }
+    .hiw-phase:last-child { border-radius: 0 0 20px 20px; }
+    .transform-row { grid-template-columns: 1fr; gap: 4px; }
+    .transform-arrow { text-align: left; padding: 4px 0; }
+    .transform-before { padding-right: 0; }
+    .transform-after { padding-left: 0; }
+    .hero-cta-group { flex-direction: column; align-items: flex-start; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+    .modal { padding: 44px 28px 36px; border-radius: 20px; }
+    .field-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-left">
+    <a href="#" class="nav-logo" onclick="switchTab('build'); return false;">frenem</a>
+  </div>
+
+  <div class="nav-products">
+    <button class="nav-product primary active" data-tab="build" onclick="switchTab('build')">Build <span class="core-tag">Core</span></button>
+    <div class="nav-divider"></div>
+    <button class="nav-product addon" data-tab="prism" onclick="switchTab('prism')">Prism</button>
+    <button class="nav-product addon" data-tab="pulse" onclick="switchTab('pulse')">Pulse</button>
+  </div>
+
+  <div class="nav-right">
+    <a href="#how" class="nav-link" id="navHowLink">How it works</a>
+    <button class="nav-cta" onclick="openModal()">Get in Touch</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- BUILD PAGE -->
+<!-- ═══════════════════════════════════════ -->
+<div class="product-page active" id="page-build">
+
+  <section class="hero">
+    <div class="hero-label">Frenem Build</div>
+    <h1>Build an organisation that scales <em>beyond you</em></h1>
+    <p class="hero-sub">Clarity in roles, decisions, and leadership. Without losing control. In weeks, not months.</p>
+    <div class="hero-cta-group">
+      <button class="btn-primary" onclick="openModal()">Start your sprint</button>
+      <a href="#how" class="btn-text">See how it works</a>
+    </div>
+  </section>
+
+  <section class="problem">
+    <div class="container">
+      <div class="section-label reveal">The Founder's Dilemma</div>
+      <h2 class="section-heading reveal stagger-1">You built this business.<br>Now it can't run without you.</h2>
+      <div class="pain-list">
+        <div class="pain-item reveal stagger-1"><span class="pain-icon">⏳</span><div><h3>Everything depends on you</h3><p>Every decision, every escalation, every fire. It all routes back to you. You're the bottleneck in your own company.</p></div></div>
+        <div class="pain-item reveal stagger-2"><span class="pain-icon">🔀</span><div><h3>Roles are unclear as you grow</h3><p>People have titles, but nobody knows who owns what. Accountability is a conversation, not a system.</p></div></div>
+        <div class="pain-item reveal stagger-3"><span class="pain-icon">🐌</span><div><h3>Good people, slow execution</h3><p>You have the talent. But decisions crawl through layers, sign-offs, and "let me check with…" loops.</p></div></div>
+        <div class="pain-item reveal stagger-4"><span class="pain-icon">👥</span><div><h3>Overlapping work, unclear ownership</h3><p>Multiple people doing the same thing. Nobody quite sure where their remit ends and another's begins.</p></div></div>
+        <div class="pain-item reveal stagger-5"><span class="pain-icon">⚖️</span><div><h3>Professionalise, but keep control</h3><p>You know you need structure. But you've seen what "consultants" do. You don't want to lose your company's soul.</p></div></div>
+        <div class="pain-item reveal stagger-6"><span class="pain-icon">🔑</span><div><h3>Succession feels risky</h3><p>There's no visible pipeline. No structured bench. If a key person walks, the plan walks with them.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="transformation">
+    <div class="container">
+      <div class="section-label reveal">The Shift</div>
+      <h2 class="section-heading reveal stagger-1">What changes after Build</h2>
+      <div class="transform-list">
+        <div class="transform-row reveal stagger-2"><div class="transform-before">Everything depends on me</div><div class="transform-arrow">→</div><div class="transform-after">A decision-rights framework so calls get made at the right level, without you</div></div>
+        <div class="transform-row reveal stagger-3"><div class="transform-before">Roles are unclear as we grow</div><div class="transform-arrow">→</div><div class="transform-after">Every role mapped to a grade, family, and owner with documented accountability</div></div>
+        <div class="transform-row reveal stagger-4"><div class="transform-before">Good people, but execution is slow</div><div class="transform-arrow">→</div><div class="transform-after">Fewer layers, clearer spans of control, and a RACI matrix that kills sign-off loops</div></div>
+        <div class="transform-row reveal stagger-5"><div class="transform-before">Overlapping work everywhere</div><div class="transform-arrow">→</div><div class="transform-after">A complete job architecture where every outcome has exactly one owner</div></div>
+        <div class="transform-row reveal stagger-6"><div class="transform-before">I want to professionalise, but stay in control</div><div class="transform-arrow">→</div><div class="transform-after">Governance guardrails you define, with delegation built into the structure</div></div>
+        <div class="transform-row reveal stagger-7"><div class="transform-before">Succession feels risky and informal</div><div class="transform-arrow">→</div><div class="transform-after">A 9-box talent map with a visible leadership bench and development pipeline</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="capital-ready">
+    <div class="container">
+      <div class="section-label reveal">Capital Ready</div>
+      <h2 class="section-heading reveal stagger-1">Institution-ready, before markets force the change</h2>
+      <p class="capital-body reveal stagger-2">IPOs and PE deals don't fail because of strategy. They fail because investors see organisation risk: promoter dependency, informal decision-making, and a thin leadership bench. Build moves that work upstream, before it becomes expensive.</p>
+      <p class="capital-quote reveal stagger-3">"Will this company still work if the promoter steps back?"</p>
+      <p class="capital-quote-attr reveal stagger-3">The question every merchant banker asks internally</p>
+      <div class="capital-cards">
+        <div class="capital-card reveal stagger-4"><h4>IPO Readiness</h4><p>Governance model, role separation, committee oversight, organisational transparency, and succession visibility.</p></div>
+        <div class="capital-card reveal stagger-5"><h4>PE / VC Readiness</h4><p>Institutional governance, scalable operating model, management depth, and reduced key-person risk.</p></div>
+        <div class="capital-card reveal stagger-6"><h4>Founder-Independent Execution</h4><p>A system-driven model where decisions happen because the structure supports them, not because the founder approves them.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-it-works" id="how">
+    <div class="container-wide">
+      <div class="section-label reveal">How It Works</div>
+      <h2 class="section-heading reveal stagger-1">Fit. Flat. Fast.<br>Ready for scale.</h2>
+      <p class="hiw-sub reveal stagger-2">A structured sprint, not a meandering engagement. You get a working operating system, not a binder.</p>
+      <div class="hiw-phases">
+        <div class="hiw-phase reveal stagger-3"><div class="hiw-phase-label">Phase 01</div><h3>Diagnose</h3><p>Understand the baseline: people maturity, employee data, employee voice, and how decisions actually flow today. Build the foundation everything else sits on.</p><span class="hiw-time">Weeks 1–2</span></div>
+        <div class="hiw-phase reveal stagger-4"><div class="hiw-phase-label">Phase 02</div><h3>Design</h3><p>Build the architecture: the grade structure, role catalog, org map, job descriptions, and decision rights. Turn complexity into a simple organisation that executes.</p><span class="hiw-time">Weeks 3–5</span></div>
+        <div class="hiw-phase reveal stagger-5"><div class="hiw-phase-label">Phase 03</div><h3>Deploy</h3><p>Lock in the competency framework, map talent, and deliver a validated, boardroom-ready operating model. A leadership blueprint that outlasts individuals.</p><span class="hiw-time">Weeks 6–8</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="positioning">
+    <div class="container">
+      <p class="pos-headline reveal">The org design that <span class="mbb-ref">McKinsey, Bain, and BCG<span class="mbb-aside">the "MBB" firms</span></span> deliver in six months and six figures. <em>Done in 8 weeks.</em></p>
+      <p class="pos-sub reveal stagger-1">Same rigour. Fraction of the time and cost. No slide decks that collect dust. A live system your team actually uses.</p>
+      <button class="btn-primary reveal stagger-2" onclick="openModal()">Book a Sprint</button>
+    </div>
+  </section>
+
+  <section class="team-section">
+    <div class="container">
+      <div class="section-label reveal">Who Built This</div>
+      <h2 class="section-heading reveal stagger-1">100+ years of consulting and HR experience. Built into the product.</h2>
+      <p class="team-intro reveal stagger-2">Frenem isn't a tool built by engineers guessing what organisations need. It's built by people who've done this work, in the room, for decades.</p>
+
+      <div class="team-logo-group reveal stagger-3">
+        <div class="team-logo-group-label">Team alumni from</div>
+        <div class="team-tags">
+          <span class="team-tag">Goldman Sachs</span>
+          <span class="team-tag">Cisco</span>
+          <span class="team-tag">Times Internet</span>
+          <span class="team-tag">Godrej & Boyce</span>
+          <span class="team-tag">Novell Software</span>
+        </div>
+      </div>
+
+      <div class="team-logo-group reveal stagger-4">
+        <div class="team-logo-group-label">Educated at</div>
+        <div class="team-tags">
+          <span class="team-tag">XLRI Jamshedpur</span>
+          <span class="team-tag">IISc Bangalore</span>
+          <span class="team-tag">IIIT Hyderabad</span>
+          <span class="team-tag">RVCE Bangalore</span>
+          <span class="team-tag">St. Stephen's College, Delhi</span>
+        </div>
+      </div>
+
+      <p class="team-stat reveal stagger-5">The playbooks we've used across <strong>hundreds of engagements</strong> are now embedded directly in the platform. You get the thinking without the billing.</p>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="container">
+      <div class="section-label reveal">Get Started</div>
+      <h2 class="reveal stagger-1">Design the organisation your strategy <em>needs</em></h2>
+      <p class="final-sub reveal stagger-2">Structure, governance, roles, and talent, aligned to growth. One sprint. No consultant theatre.</p>
+      <button class="btn-primary-light reveal stagger-3" onclick="openModal()">Talk to us →</button>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- PRISM PAGE -->
+<!-- ═══════════════════════════════════════ -->
+<div class="product-page" id="page-prism">
+  <section class="sub-hero">
+    <div class="hero-label">Frenem Prism</div>
+    <h1>Your single source of <em>truth</em></h1>
+    <p class="hero-sub">Lightweight employee management that gives your people clarity on who does what, how they're measured, and where they stand.</p>
+    <div class="hero-cta-group"><button class="btn-primary" onclick="openModal()">Get started</button></div>
+  </section>
+
+  <section class="features-section">
+    <div class="container">
+      <div class="section-label reveal">What Prism Does</div>
+      <h2 class="section-heading reveal stagger-1">Clarity across your entire organisation</h2>
+      <div class="feature-list">
+        <div class="feature-item reveal stagger-1"><span class="feature-num">01</span><div><h3>Dynamic Org Charts</h3><p>Live org charts and reporting chains that update as your team grows. Always current, always visible.</p></div></div>
+        <div class="feature-item reveal stagger-2"><span class="feature-num">02</span><div><h3>Transparent KRAs, KPIs, and Responsibilities</h3><p>Everyone knows what they own, what they're measured on, and what success looks like in their role.</p></div></div>
+        <div class="feature-item reveal stagger-3"><span class="feature-num">03</span><div><h3>Seamless Performance Review Cycles</h3><p>From goal setting through to reviews. A complete, continuous cycle that doesn't live in spreadsheets.</p></div></div>
+        <div class="feature-item reveal stagger-4"><span class="feature-num">04</span><div><h3>Employee-driven Innovation</h3><p>Moonshot idea submissions that give every person in the company a voice in shaping what comes next.</p></div></div>
+        <div class="feature-item reveal stagger-5"><span class="feature-num">05</span><div><h3>Secure Whistleblower Channel</h3><p>A safe, anonymous channel for raising concerns. Built in, not bolted on.</p></div></div>
+        <div class="feature-item reveal stagger-6"><span class="feature-num">06</span><div><h3>Edit Histories and Audit Trails</h3><p>Every change tracked. Full transparency for governance, compliance, and peace of mind.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="container">
+      <div class="section-label reveal">Get Started with Prism</div>
+      <h2 class="reveal stagger-1">One place for your people, <em>always current</em></h2>
+      <p class="final-sub reveal stagger-2">Org charts, performance cycles, KPIs, and governance. In a tool your team will actually use.</p>
+      <button class="btn-primary-light reveal stagger-3" onclick="openModal()">Talk to us →</button>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- PULSE PAGE -->
+<!-- ═══════════════════════════════════════ -->
+<div class="product-page" id="page-pulse">
+  <section class="sub-hero">
+    <div class="hero-label">Frenem Pulse</div>
+    <h1>Deep employee insights, <em>delivered precisely</em></h1>
+    <p class="hero-sub">Multirater feedback that goes beyond ratings. Structured perspectives, competency evaluation, and clear development paths.</p>
+    <div class="hero-cta-group"><button class="btn-primary" onclick="openModal()">Get started</button></div>
+  </section>
+
+  <section class="features-section">
+    <div class="container">
+      <div class="section-label reveal">What Pulse Does</div>
+      <h2 class="section-heading reveal stagger-1">Feedback that drives real development</h2>
+      <div class="feature-list">
+        <div class="feature-item reveal stagger-1"><span class="feature-num">01</span><div><h3>Comprehensive Competency Evaluation</h3><p>Assess the competencies that actually matter for each role. Not generic checklists, but evaluations built around your organisation's needs.</p></div></div>
+        <div class="feature-item reveal stagger-2"><span class="feature-num">02</span><div><h3>Actionable Behavioural Insights</h3><p>Go beyond scores. Understand the behavioural patterns that drive performance, and the ones that hold it back.</p></div></div>
+        <div class="feature-item reveal stagger-3"><span class="feature-num">03</span><div><h3>Data-Driven Development Plans</h3><p>Clear, individual development plans generated from real feedback data. Not templated advice.</p></div></div>
+        <div class="feature-item reveal stagger-4"><span class="feature-num">04</span><div><h3>Structured Multi-Perspective Feedback</h3><p>Peers, managers, direct reports, and stakeholders. Feedback gathered from every angle, organised for clarity.</p></div></div>
+        <div class="feature-item reveal stagger-5"><span class="feature-num">05</span><div><h3>Tailored Leadership Recommendations</h3><p>Personalised recommendations for leadership development based on where each individual stands today and where they need to go.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="container">
+      <div class="section-label reveal">Get Started with Pulse</div>
+      <h2 class="reveal stagger-1">Feedback that builds <em>leaders</em></h2>
+      <p class="final-sub reveal stagger-2">Multirater insights, competency mapping, and development plans. All in one place.</p>
+      <button class="btn-primary-light reveal stagger-3" onclick="openModal()">Talk to us →</button>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">frenem</div>
+  <div class="foot-links"><a href="https://frenem.com">frenem.com</a></div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+    <div class="modal-form" id="modalForm">
+      <h3>Get in Touch</h3>
+      <p class="modal-subtitle">Tell us a little about your business. We'll get back to you within 24 hours.</p>
+      <div class="field-row">
+        <div class="field"><label for="name">Your name</label><input type="text" id="name" placeholder="First and last name"></div>
+        <div class="field"><label for="company">Company</label><input type="text" id="company" placeholder="Company name"></div>
+      </div>
+      <div class="field"><label for="email">Email</label><input type="email" id="email" placeholder="you@company.com"></div>
+      <div class="field-row">
+        <div class="field"><label for="size">Team size</label><select id="size"><option value="" disabled selected>Select</option><option>10 – 50</option><option>50 – 200</option><option>200 – 500</option><option>500+</option></select></div>
+        <div class="field"><label for="interest">Interested in</label><select id="interest"><option value="" disabled selected>Select</option><option>Build · Org Design Sprint</option><option>Prism · Employee Management</option><option>Pulse · Multirater Feedback</option><option>Multiple products</option><option>Not sure yet</option></select></div>
+      </div>
+      <div class="field"><label for="notes">Anything else? <span style="color: var(--text-tertiary); font-size: 16px;">(optional)</span></label><textarea id="notes" placeholder="Brief context about your business or what you're looking to solve" rows="3"></textarea></div>
+      <button class="modal-submit" onclick="submitForm()">Send →</button>
+      <p class="modal-note">No commitment. No decks. Just a conversation.</p>
+    </div>
+    <div class="modal-success" id="modalSuccess">
+      <div class="success-icon">✓</div>
+      <h3>We'll be in touch</h3>
+      <p>Thanks for reaching out. We'll get back to you within 24 hours to set up a conversation.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initRevealObserver() {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+    document.querySelectorAll('.product-page.active .reveal').forEach(el => {
+      el.classList.remove('visible');
+      obs.observe(el);
+    });
+    return obs;
+  }
+
+  let currentObserver = initRevealObserver();
+
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 20); });
+
+  function switchTab(tab) {
+    document.querySelectorAll('.nav-product').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.nav-product[data-tab="${tab}"]`).classList.add('active');
+
+    document.querySelectorAll('.product-page').forEach(p => p.classList.remove('active'));
+    document.getElementById(`page-${tab}`).classList.add('active');
+
+    document.getElementById('navHowLink').style.display = tab === 'build' ? '' : 'none';
+
+    window.scrollTo({ top: 0, behavior: 'instant' });
+
+    if (currentObserver) currentObserver.disconnect();
+
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.product-page.active .sub-hero .hero-label, .product-page.active .sub-hero h1, .product-page.active .sub-hero .hero-sub, .product-page.active .sub-hero .hero-cta-group').forEach(el => {
+        el.style.animation = 'none';
+        el.offsetHeight;
+        el.style.animation = '';
+      });
+      currentObserver = initRevealObserver();
+    });
+  }
+
+  const modal = document.getElementById('modal');
+  function openModal() { modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeModal() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => { document.getElementById('modalForm').classList.remove('hide'); document.getElementById('modalSuccess').classList.remove('show'); }, 400);
+  }
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+  function submitForm() { document.getElementById('modalForm').classList.add('hide'); document.getElementById('modalSuccess').classList.add('show'); }
+</script>
+
+</body>
+</html>
