@@ -1,14 +1,22 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
-import Link from "next/link"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { useProduct } from "../context/ProductContext"
+import { useContactModal } from "../context/ContactModalContext"
 import { smoothScrollTo } from "../utils/smooth-scroll"
 import type { ProductTab } from "../context/ProductContext"
 
 export default function Header() {
-  const [isOpen, setIsOpen] = useState(false)
+  const { activeProduct, setActiveProduct } = useProduct()
+  const { openModal } = useContactModal()
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener("scroll", onScroll)
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
 
   const handleProductClick = (tab: ProductTab) => {
     setActiveProduct(tab)
@@ -16,14 +24,7 @@ export default function Header() {
 
   const handleHowClick = (e: React.MouseEvent) => {
     e.preventDefault()
-    setIsOpen(false)
-    
-    // Remove the # if it's included
-    const targetId = id.startsWith("#") ? id.substring(1) : id
-    
-    setTimeout(() => {
-      smoothScrollTo(targetId)
-    }, 200)
+    smoothScrollTo("how")
   }
 
   return (
