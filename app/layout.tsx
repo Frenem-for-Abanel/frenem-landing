@@ -1,9 +1,10 @@
 import "./globals.css"
-import { League_Spartan, Instrument_Serif, DM_Sans } from "next/font/google"
+import { League_Spartan, Inter } from "next/font/google"
 import { Providers } from "./context/Providers"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import ContactModal from "./components/ContactModal"
+import ScrollProgressBar from "./components/ScrollProgressBar"
 import { Toaster } from "sonner"
 import type React from "react"
 
@@ -11,12 +12,7 @@ const leagueSpartan = League_Spartan({
   subsets: ["latin"],
   variable: "--font-logo",
 })
-const instrumentSerif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-serif",
-})
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 })
@@ -34,10 +30,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="light">
       <body
-        className={`${instrumentSerif.variable} ${leagueSpartan.variable} ${dmSans.variable} ${instrumentSerif.className} min-h-screen bg-[#f6f4f0] text-[#1a1a18]`}
+        className={`${inter.variable} ${leagueSpartan.variable} ${inter.className} min-h-screen bg-[var(--frenem-bg)] text-[var(--frenem-ink)] antialiased`}
       >
         <Providers>
           <Header />
+          <ScrollProgressBar />
           <main>{children}</main>
           <Footer />
           <ContactModal />
@@ -47,4 +44,3 @@ export default function RootLayout({
     </html>
   )
 }
-

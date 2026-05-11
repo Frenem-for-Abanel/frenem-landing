@@ -2,7 +2,7 @@
 
 import Reveal from "./Reveal"
 
-const transforms = [
+const transforms: { before: string; after: string }[] = [
   {
     before: "Everything depends on me",
     after: "A decision-rights framework so calls get made at the right level, without you",
@@ -20,7 +20,7 @@ const transforms = [
     after: "A complete job architecture where every outcome has exactly one owner",
   },
   {
-    before: "I want to professionalise, but stay in control",
+    before: "Professionalise without losing control",
     after: "Governance guardrails you define, with delegation built into the structure",
   },
   {
@@ -31,29 +31,63 @@ const transforms = [
 
 export default function TransformationSection() {
   return (
-    <section className="py-[140px] bg-[#1a1a18] text-[#f6f4f0]">
+    <section
+      className="relative overflow-hidden bg-[var(--frenem-bg-dark)] py-[140px] text-[var(--frenem-bg)]"
+      data-section-name="Transformation"
+      data-section-num="03"
+    >
       <div className="container-v2">
         <Reveal>
-          <div className="font-sans text-sm font-medium tracking-[2.5px] uppercase text-[#d4a843] mb-5">
+          <div className="mb-6 flex items-center gap-3 text-[13px] font-medium text-white/60 before:h-px before:w-6 before:shrink-0 before:bg-[var(--frenem-bg)] before:content-['']">
             The Shift
           </div>
         </Reveal>
-        <Reveal delay={0.04}>
-          <h2 className="font-serif text-[clamp(36px,5vw,56px)] font-normal leading-[1.12] tracking-[-1px] mb-14">
-            What changes after Build
+        <Reveal delay={0.05}>
+          <h2 className="mb-14 font-sans text-[clamp(36px,5vw,72px)] font-semibold leading-none tracking-[-0.03em] text-[var(--frenem-bg)]">
+            What changes <em className="font-normal italic">after Build.</em>
           </h2>
         </Reveal>
-        <div className="flex flex-col">
+
+        {/* Desktop / tablet: two columns */}
+        <div className="hidden border-t border-white/10 md:block">
+          <div className="grid grid-cols-2 gap-0">
+            <div className="border-b border-white/10 py-8 pr-8">
+              <div className="flex items-center gap-3 pb-6 font-sans text-xs font-medium uppercase tracking-[0.1em] text-white/40">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-current" />
+                Today
+              </div>
+            </div>
+            <div className="border-b border-l border-white/10 py-8 pl-8">
+              <div className="flex items-center gap-3 pb-6 font-sans text-xs font-medium uppercase tracking-[0.1em] text-[var(--frenem-accent)]">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-current" />
+                After Build
+              </div>
+            </div>
+          </div>
           {transforms.map((t, i) => (
-            <Reveal key={t.before} delay={0.04 * (i + 2)}>
-              <div className="grid grid-cols-1 md:grid-cols-[1fr_40px_1fr] gap-5 md:gap-0 items-center py-7 border-t border-[rgba(255,255,255,0.08)] last:border-b last:border-[rgba(255,255,255,0.08)]">
-                <div className="font-serif text-[21px] text-[rgba(246,244,240,0.4)] leading-[1.5] md:pr-4">
-                  {t.before}
+            <Reveal key={t.before} delay={0.04 * i}>
+              <div className="grid grid-cols-2 border-b border-white/10 last:border-b-0">
+                <div className="flex gap-6 py-7 pr-8">
+                  <span className="w-6 shrink-0 pt-1 font-sans text-[13px] font-medium text-white/40">{String(i + 1).padStart(2, "0")}</span>
+                  <p className="font-sans text-[17px] font-normal leading-snug text-white/50 line-through decoration-white/25">{t.before}</p>
                 </div>
-                <div className="text-center text-[#d4a843] text-xl font-sans hidden md:block">→</div>
-                <div className="font-serif text-[21px] text-[#f6f4f0] leading-[1.5] md:pl-4">
-                  {t.after}
+                <div className="flex gap-6 border-l border-white/10 py-7 pl-8">
+                  <span className="w-6 shrink-0 pt-1 font-sans text-[13px] font-medium text-white/40">→</span>
+                  <p className="font-sans text-[17px] font-medium leading-snug tracking-[-0.005em]">{t.after}</p>
                 </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        {/* Mobile */}
+        <div className="space-y-0 border-t border-white/10 md:hidden">
+          {transforms.map((t, i) => (
+            <Reveal key={t.before} delay={0.03 * i}>
+              <div className="space-y-3 border-b border-white/10 py-6">
+                <p className="font-sans text-[15px] text-white/50 line-through decoration-white/25">{t.before}</p>
+                <p className="font-sans text-[16px] font-medium leading-snug text-[var(--frenem-accent)]">→</p>
+                <p className="font-sans text-[16px] font-medium leading-snug">{t.after}</p>
               </div>
             </Reveal>
           ))}

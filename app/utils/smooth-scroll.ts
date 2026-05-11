@@ -6,7 +6,8 @@ export function smoothScrollTo(elementId: string) {
 
   if (element) {
     const elementPosition = element.getBoundingClientRect().top
-    const offsetPosition = elementPosition + window.pageYOffset - 52 // Header height
+    /** Header height matches `Header` fixed bar (h-16) */
+    const offsetPosition = elementPosition + window.pageYOffset - 64
 
     // Use window.scrollTo for better cross-browser compatibility
     window.scrollTo({

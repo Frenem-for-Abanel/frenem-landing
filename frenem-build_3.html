@@ -1,0 +1,2587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frenem | Organisation Design for Scale</title>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f4f4f2;
+    --bg-dark: #0a0a0a;
+    --ink: #0a0a0a;
+    --ink-secondary: #555555;
+    --ink-tertiary: #999999;
+    --accent: #ff5b1f;
+    --accent-soft: rgba(255, 91, 31, 0.08);
+    --border: rgba(10, 10, 10, 0.08);
+    --border-strong: rgba(10, 10, 10, 0.16);
+    --border-dark: rgba(255, 255, 255, 0.1);
+
+    --font-logo: 'League Spartan', sans-serif;
+    --font: 'Inter', sans-serif;
+
+    --content-width: 1240px;
+    --narrow-width: 820px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
+    background: var(--bg);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font);
+    color: var(--ink);
+    background: var(--bg);
+    overflow-x: hidden;
+    line-height: 1.45;
+    font-feature-settings: 'ss01' on, 'cv01' on;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    padding: 0 32px;
+    height: 64px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(255, 255, 255, 0.78);
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+
+  nav.scrolled { box-shadow: 0 1px 16px rgba(0,0,0,0.04); }
+
+  .nav-left { display: flex; align-items: center; }
+
+  .nav-logo {
+    font-family: var(--font-logo);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    text-decoration: none;
+    text-transform: lowercase;
+  }
+
+  .nav-products {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: rgba(10, 10, 10, 0.04);
+    border-radius: 100px;
+    padding: 3px;
+  }
+
+  .nav-product {
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    background: none;
+    border: none;
+    padding: 6px 18px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: -0.1px;
+  }
+
+  .nav-product:hover { color: var(--ink); }
+
+  .nav-product.active {
+    color: var(--ink);
+    background: var(--bg);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 0 1px rgba(0,0,0,0.08);
+  }
+
+  .nav-product.primary { font-size: 14px; font-weight: 600; }
+
+  .core-tag {
+    font-family: var(--font);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1.4;
+  }
+
+  .nav-product.addon { font-size: 12px; font-weight: 400; color: var(--ink-tertiary); }
+  .nav-product.addon:hover { color: var(--ink-secondary); }
+  .nav-product.addon.active { color: var(--ink); font-weight: 500; }
+
+  .nav-divider { width: 1px; height: 16px; background: rgba(10, 10, 10, 0.1); margin: 0 4px; }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 24px;
+  }
+
+  .nav-link {
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ink-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-link:hover { color: var(--ink); }
+
+  .nav-cta {
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 100px;
+    border: none;
+    background: var(--ink);
+    color: var(--bg);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .nav-cta:hover { background: var(--accent); }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    height: 2px;
+    background: var(--accent);
+    z-index: 99;
+    width: 0%;
+    transform-origin: left center;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  section { position: relative; }
+
+  /* ── PRODUCT PAGES ── */
+  .product-page { display: none; }
+  .product-page.active { display: block; }
+
+  /* ────────────────────────────────────────────
+     HERO — split layout with live diagram
+     ──────────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    padding: 120px 32px 80px;
+    max-width: var(--content-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 64px;
+    align-items: center;
+    position: relative;
+  }
+
+  .hero-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .hero-eyebrow {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--ink);
+  }
+
+  .hero h1 {
+    font-size: clamp(48px, 6.5vw, 96px);
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    margin-bottom: 32px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink-secondary);
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    max-width: 480px;
+    margin-bottom: 40px;
+  }
+
+  .hero-cta-group {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .btn-primary {
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 16px 28px;
+    border-radius: 100px;
+    border: none;
+    background: var(--ink);
+    color: var(--bg);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-primary:hover { background: var(--accent); transform: translateY(-2px); }
+
+  .btn-text {
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 4px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btn-text:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ── HERO DIAGRAM (Org Chart Visual) ── */
+  .hero-visual {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    max-width: 540px;
+    width: 100%;
+    justify-self: center;
+  }
+
+  .hero-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .org-node {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .org-node-circle {
+    fill: var(--bg);
+    stroke: var(--ink);
+    stroke-width: 1.5;
+    transition: fill 0.4s, stroke 0.4s;
+  }
+
+  .org-node.founder .org-node-circle {
+    fill: var(--ink);
+    stroke: var(--ink);
+  }
+
+  .org-node.team .org-node-circle {
+    fill: var(--bg-soft);
+    stroke: var(--border-strong);
+  }
+
+  .org-line {
+    stroke: var(--border-strong);
+    stroke-width: 1;
+    fill: none;
+  }
+
+  .org-label {
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 500;
+    fill: var(--ink-secondary);
+    letter-spacing: -0.01em;
+  }
+
+  .org-label.founder { fill: var(--ink); font-weight: 600; }
+
+  .org-pulse {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    opacity: 0;
+  }
+
+  .hero-visual-caption {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: var(--ink-tertiary);
+    letter-spacing: 0.02em;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* ────────────────────────────────────────────
+     SECTION HEADERS
+     ──────────────────────────────────────────── */
+  .section-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--ink);
+  }
+
+  .section-heading {
+    font-size: clamp(36px, 5vw, 72px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 56px;
+    max-width: 1000px;
+  }
+
+  .section-heading em { font-style: italic; font-weight: 400; }
+
+  /* ────────────────────────────────────────────
+     PROBLEM — pain points with subtle visual rail
+     ──────────────────────────────────────────── */
+  .problem {
+    padding: 140px 0;
+    background: var(--bg-soft);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .problem-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: end;
+    margin-bottom: 80px;
+  }
+
+  .problem-stat {
+    align-self: end;
+    padding: 32px;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    background: var(--bg);
+  }
+
+  .problem-stat-num {
+    font-size: 64px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin-bottom: 8px;
+    color: var(--accent);
+  }
+
+  .problem-stat-label {
+    font-size: 14px;
+    color: var(--ink-secondary);
+    line-height: 1.4;
+  }
+
+  .pain-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border-strong);
+    border-left: 1px solid var(--border-strong);
+  }
+
+  .pain-item {
+    padding: 40px 32px;
+    background: var(--bg);
+    border-right: 1px solid var(--border-strong);
+    border-bottom: 1px solid var(--border-strong);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: background 0.3s;
+    position: relative;
+  }
+
+  .pain-item:hover { background: var(--bg-soft); }
+
+  .pain-item-num {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-tertiary);
+    letter-spacing: 0.5px;
+  }
+
+  .pain-item h3 {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .pain-item p {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ink-secondary);
+    line-height: 1.55;
+  }
+
+  /* ────────────────────────────────────────────
+     TRANSFORMATION — bold split layout with visual
+     ──────────────────────────────────────────── */
+  .transformation {
+    padding: 140px 0;
+    background: var(--bg-dark);
+    color: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .transformation .section-label { color: rgba(255,255,255,0.6); }
+  .transformation .section-label::before { background: var(--bg); }
+  .transformation .section-heading { color: var(--bg); }
+
+  .transform-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--border-dark);
+  }
+
+  .transform-side {
+    padding: 32px 32px 32px 0;
+    border-bottom: 1px solid var(--border-dark);
+  }
+
+  .transform-side.right {
+    padding-left: 32px;
+    border-left: 1px solid var(--border-dark);
+  }
+
+  .transform-side-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 24px;
+    margin-bottom: 0;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .transform-side-header.now { color: rgba(255,255,255,0.4); }
+  .transform-side-header.after { color: var(--accent); }
+  .transform-side-header .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .transform-row-pair {
+    display: contents;
+  }
+
+  .transform-cell {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border-dark);
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .transform-cell:last-child { border-bottom: none; }
+
+  .transform-cell.before {
+    padding-right: 32px;
+  }
+
+  .transform-cell.after {
+    padding-left: 32px;
+    border-left: 1px solid var(--border-dark);
+  }
+
+  .transform-num {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    flex-shrink: 0;
+    width: 24px;
+    padding-top: 4px;
+  }
+
+  .transform-text-before {
+    font-size: 17px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.45;
+    text-decoration: line-through;
+    text-decoration-color: rgba(255,255,255,0.25);
+  }
+
+  .transform-text-after {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--bg);
+    line-height: 1.45;
+    letter-spacing: -0.005em;
+  }
+
+  /* ────────────────────────────────────────────
+     CAPITAL READY — tilted card / stats display
+     ──────────────────────────────────────────── */
+  .capital-ready {
+    padding: 140px 0;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .capital-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 80px;
+    align-items: start;
+    margin-top: 48px;
+  }
+
+  .capital-body {
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    margin-bottom: 48px;
+  }
+
+  .capital-quote-block {
+    padding: 32px;
+    background: var(--bg-soft);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+
+  .capital-quote-mark {
+    font-size: 56px;
+    line-height: 0.5;
+    color: var(--accent);
+    margin-bottom: 16px;
+    font-family: 'Times New Roman', serif;
+  }
+
+  .capital-quote {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .capital-quote-attr {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-tertiary);
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .capital-quote-attr::before {
+    content: '';
+    width: 16px;
+    height: 1px;
+    background: var(--ink-tertiary);
+  }
+
+  .capital-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .capital-card {
+    padding: 28px;
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 20px;
+    align-items: start;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .capital-card:hover {
+    border-color: var(--ink);
+    transform: translateX(-4px);
+  }
+
+  .capital-card-num {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-tertiary);
+    padding-top: 4px;
+  }
+
+  .capital-card h4 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .capital-card p {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--ink-secondary);
+    line-height: 1.5;
+  }
+
+  /* ────────────────────────────────────────────
+     HOW IT WORKS — phases with visual progression
+     ──────────────────────────────────────────── */
+  .how-it-works {
+    padding: 140px 0;
+    background: var(--bg-soft);
+    position: relative;
+  }
+
+  .hiw-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: end;
+    margin-bottom: 80px;
+  }
+
+  .hiw-sub {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink-secondary);
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    max-width: 480px;
+    align-self: end;
+  }
+
+  .hiw-timeline {
+    position: relative;
+    margin-top: 40px;
+  }
+
+  .hiw-timeline-line {
+    position: absolute;
+    top: 60px;
+    left: 8.33%;
+    right: 8.33%;
+    height: 2px;
+    background: var(--border-strong);
+    z-index: 0;
+  }
+
+  .hiw-timeline-line::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    bottom: -1px;
+    width: 0%;
+    background: var(--accent);
+    transition: width 0.6s ease-out;
+  }
+
+  .hiw-timeline.in-view .hiw-timeline-line::after {
+    width: 100%;
+  }
+
+  .hiw-phases {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hiw-phase {
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  }
+
+  .hiw-phase:hover {
+    border-color: var(--ink);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+  }
+
+  .hiw-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--border-strong);
+    margin-bottom: 24px;
+    position: relative;
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .hiw-phase:hover .hiw-dot,
+  .hiw-timeline.in-view .hiw-dot {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  .hiw-phase-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .hiw-phase-num {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-tertiary);
+    letter-spacing: 0.5px;
+  }
+
+  .hiw-time {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 4px 10px;
+    border-radius: 100px;
+  }
+
+  .hiw-phase h3 {
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    line-height: 1;
+  }
+
+  .hiw-phase p {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--ink-secondary);
+    line-height: 1.55;
+    margin-top: auto;
+  }
+
+  /* ────────────────────────────────────────────
+     POSITIONING — comparison visual
+     ──────────────────────────────────────────── */
+  .positioning {
+    padding: 180px 0;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pos-headline {
+    font-size: clamp(32px, 4.4vw, 56px);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    max-width: 1000px;
+    margin-bottom: 80px;
+  }
+
+  .pos-headline em { font-style: italic; font-weight: 400; color: var(--accent); }
+
+  .pos-headline .mbb-ref {
+    position: relative;
+    border-bottom: 1px dashed rgba(10, 10, 10, 0.3);
+    cursor: default;
+  }
+
+  .mbb-aside {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 0;
+    font-size: 13px;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0;
+    color: var(--bg);
+    background: var(--ink);
+    padding: 8px 14px;
+    border-radius: 6px;
+    white-space: nowrap;
+    line-height: 1.4;
+  }
+
+  .mbb-aside::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 24px;
+    border: 5px solid transparent;
+    border-top-color: var(--ink);
+  }
+
+  .mbb-ref:hover .mbb-aside { display: block; }
+
+  /* Comparison block */
+  .pos-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 56px;
+  }
+
+  .pos-card {
+    padding: 36px 32px;
+    border-radius: 16px;
+    border: 1px solid var(--border-strong);
+  }
+
+  .pos-card.them {
+    background: var(--bg-soft);
+  }
+
+  .pos-card.us {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .pos-card-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-tertiary);
+    margin-bottom: 24px;
+  }
+
+  .pos-card.us .pos-card-label {
+    color: var(--accent);
+  }
+
+  .pos-card-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+  }
+
+  .pos-card.us .pos-card-row {
+    border-bottom-color: var(--border-dark);
+  }
+
+  .pos-card-row:last-child { border-bottom: none; }
+
+  .pos-card-row-label {
+    color: var(--ink-secondary);
+    font-weight: 400;
+  }
+
+  .pos-card.us .pos-card-row-label {
+    color: rgba(255,255,255,0.6);
+  }
+
+  .pos-card-row-value {
+    font-weight: 600;
+    color: var(--ink);
+    text-align: right;
+  }
+
+  .pos-card.us .pos-card-row-value {
+    color: var(--bg);
+  }
+
+  .pos-card.us .pos-card-row-value.highlight {
+    color: var(--accent);
+  }
+
+  .pos-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: end;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+
+  .pos-sub {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink-secondary);
+    line-height: 1.55;
+    max-width: 480px;
+  }
+
+  /* ────────────────────────────────────────────
+     TEAM
+     ──────────────────────────────────────────── */
+  .team-section {
+    padding: 140px 0;
+    background: var(--bg-soft);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .team-header {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 64px;
+    align-items: end;
+    margin-bottom: 64px;
+  }
+
+  .team-intro {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink-secondary);
+    line-height: 1.55;
+    letter-spacing: -0.005em;
+    align-self: end;
+  }
+
+  .team-headline-stat {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 32px;
+    border-radius: 16px;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .team-headline-stat-num {
+    font-size: 72px;
+    font-weight: 600;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .team-headline-stat-label {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.4;
+  }
+
+  .team-block {
+    margin-bottom: 32px;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 32px;
+    align-items: baseline;
+    padding: 24px 0;
+    border-top: 1px solid var(--border-strong);
+  }
+
+  .team-block:last-of-type { border-bottom: 1px solid var(--border-strong); margin-bottom: 56px; }
+
+  .team-block-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-tertiary);
+    letter-spacing: 0.3px;
+  }
+
+  .team-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  .team-tag {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    padding: 8px 16px;
+    border-radius: 100px;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+  }
+
+  .team-tag:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  .team-stat {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    max-width: 720px;
+  }
+
+  .team-stat strong { font-weight: 600; }
+
+  /* ────────────────────────────────────────────
+     SECURITY
+     ──────────────────────────────────────────── */
+  .security {
+    padding: 140px 0;
+    background: var(--bg-dark);
+    color: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .security .section-label { color: rgba(255,255,255,0.6); }
+  .security .section-label::before { background: var(--bg); }
+  .security .section-heading { color: var(--bg); }
+
+  .security-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: end;
+    margin-bottom: 80px;
+  }
+
+  .security-intro {
+    font-size: 20px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    max-width: 480px;
+    align-self: end;
+  }
+
+  .security-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border-dark);
+    border-left: 1px solid var(--border-dark);
+  }
+
+  .security-card {
+    padding: 36px 28px;
+    background: transparent;
+    border-right: 1px solid var(--border-dark);
+    border-bottom: 1px solid var(--border-dark);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 280px;
+    transition: background 0.4s;
+  }
+
+  .security-card:hover { background: rgba(255,255,255,0.02); }
+
+  .security-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+  }
+
+  .security-icon svg { width: 100%; height: 100%; stroke-width: 1.5; }
+
+  .security-card h4 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--bg);
+    letter-spacing: -0.01em;
+  }
+
+  .security-card p {
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.55;
+    margin-top: auto;
+  }
+
+  /* ────────────────────────────────────────────
+     FINAL CTA
+     ──────────────────────────────────────────── */
+  .final-cta {
+    padding: 160px 0 120px;
+    background: var(--bg);
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .final-cta h2 {
+    font-size: clamp(56px, 9vw, 132px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    margin-bottom: 64px;
+    max-width: 1100px;
+  }
+
+  .final-cta h2 em { font-style: italic; font-weight: 400; color: var(--accent); }
+
+  .final-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: end;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+
+  .final-sub {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink-secondary);
+    line-height: 1.55;
+    max-width: 480px;
+  }
+
+  /* ────────────────────────────────────────────
+     SUB PRODUCT PAGES
+     ──────────────────────────────────────────── */
+  .sub-hero {
+    min-height: 80vh;
+    padding: 120px 32px 80px;
+    max-width: var(--content-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 64px;
+    align-items: center;
+    position: relative;
+  }
+
+  .sub-hero h1 { font-size: clamp(44px, 6vw, 88px); }
+
+  /* PRISM visual: live org chart with KRA panel */
+  .prism-visual {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.04);
+  }
+
+  .prism-visual-bar {
+    display: flex;
+    gap: 6px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .prism-visual-bar div {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border-strong);
+  }
+
+  .prism-visual-tabs {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-tertiary);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+  }
+
+  .prism-visual-tabs .active {
+    color: var(--ink);
+    position: relative;
+  }
+
+  .prism-visual-tabs .active::after {
+    content: '';
+    position: absolute;
+    bottom: -13px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .prism-visual-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    flex: 1;
+  }
+
+  .prism-org-mini {
+    background: var(--bg-soft);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .prism-org-mini svg { width: 100%; max-width: 200px; }
+
+  .prism-kra-panel {
+    background: var(--bg-soft);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .prism-kra-panel-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-tertiary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .prism-kra-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: center;
+    font-size: 12px;
+  }
+
+  .prism-kra-bar {
+    width: 60px;
+    height: 6px;
+    background: var(--border);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .prism-kra-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 100px;
+    transform-origin: left;
+  }
+
+  /* PULSE visual: 9-box grid */
+  .pulse-visual {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.04);
+  }
+
+  .pulse-visual-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-tertiary);
+  }
+
+  .pulse-visual-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .pulse-9box {
+    display: grid;
+    grid-template-columns: 32px 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 28px;
+    gap: 0;
+    flex: 1;
+    position: relative;
+  }
+
+  .pulse-9box-axis-y {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(-90deg);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink-tertiary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .pulse-9box-axis-x {
+    grid-column: 2 / span 3;
+    grid-row: 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink-tertiary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-top: 8px;
+  }
+
+  .pulse-cell {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    flex-wrap: wrap;
+    gap: 4px;
+    position: relative;
+    transition: background 0.3s;
+  }
+
+  .pulse-cell:hover { background: var(--bg-soft); }
+
+  .pulse-cell.high-perf-high-pot { background: var(--accent-soft); }
+  .pulse-cell.high-perf-high-pot:hover { background: rgba(255, 91, 31, 0.14); }
+
+  .pulse-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--ink);
+  }
+
+  .pulse-dot.accent { background: var(--accent); }
+  .pulse-dot.muted { background: var(--ink-tertiary); }
+
+  /* ────────────────────────────────────────────
+     FEATURES
+     ──────────────────────────────────────────── */
+  .features-section {
+    padding: 140px 0;
+    background: var(--bg-soft);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border-strong);
+    border-left: 1px solid var(--border-strong);
+  }
+
+  .feature-item {
+    padding: 40px 32px;
+    background: var(--bg);
+    border-right: 1px solid var(--border-strong);
+    border-bottom: 1px solid var(--border-strong);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: background 0.3s;
+  }
+
+  .feature-item:hover { background: var(--bg-soft); }
+
+  .feature-num {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-tertiary);
+  }
+
+  .feature-item h3 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .feature-item p {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ink-secondary);
+    line-height: 1.55;
+  }
+
+  /* ────────────────────────────────────────────
+     FOOTER
+     ──────────────────────────────────────────── */
+  footer {
+    padding: 56px 32px 40px;
+    background: var(--bg-dark);
+    color: rgba(255,255,255,0.6);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .footer-inner {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: end;
+  }
+
+  .footer-mark {
+    font-family: var(--font-logo);
+    font-weight: 700;
+    font-size: clamp(60px, 12vw, 140px);
+    letter-spacing: -0.04em;
+    color: var(--bg);
+    text-transform: lowercase;
+    line-height: 0.85;
+  }
+
+  .footer-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: right;
+  }
+
+  .footer-meta a {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-meta a:hover { color: var(--bg); }
+
+  .footer-copy {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-dark);
+    max-width: var(--content-width);
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  /* ────────────────────────────────────────────
+     MODAL
+     ──────────────────────────────────────────── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(10, 10, 10, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    padding: 24px;
+  }
+
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); opacity: 1; }
+
+  .modal {
+    background: var(--bg);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 540px;
+    padding: 48px 44px 40px;
+    position: relative;
+    transform: translateY(16px) scale(0.98);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: var(--bg-soft);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    font-size: 18px;
+    color: var(--ink-secondary);
+  }
+
+  .modal-close:hover { background: var(--border); }
+
+  .modal h3 {
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: 12px;
+  }
+
+  .modal-subtitle {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--ink-secondary);
+    line-height: 1.5;
+    margin-bottom: 32px;
+  }
+
+  .field { margin-bottom: 18px; }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    margin-bottom: 6px;
+  }
+
+  .field input, .field select, .field textarea {
+    width: 100%;
+    font-family: var(--font);
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+    cursor: pointer;
+  }
+
+  .field textarea { resize: vertical; min-height: 72px; }
+  .field input::placeholder, .field textarea::placeholder { color: var(--ink-tertiary); }
+
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.06);
+  }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .modal-submit {
+    width: 100%;
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 14px 28px;
+    border-radius: 100px;
+    border: none;
+    background: var(--ink);
+    color: var(--bg);
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 8px;
+  }
+
+  .modal-submit:hover { background: var(--accent); }
+
+  .modal-note {
+    font-size: 13px;
+    color: var(--ink-tertiary);
+    text-align: center;
+    margin-top: 14px;
+  }
+
+  .modal-success { display: none; text-align: center; padding: 20px 0; }
+  .modal-success.show { display: block; }
+  .modal-form.hide { display: none; }
+
+  .modal-success .success-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 24px;
+  }
+
+  .modal-success h3 { text-align: center; }
+
+  .modal-success p {
+    font-size: 15px;
+    color: var(--ink-secondary);
+    line-height: 1.5;
+  }
+
+  /* ── ANIMATION HELPERS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    will-change: transform, opacity;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 980px) {
+    .hero, .sub-hero {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      min-height: auto;
+      padding-top: 100px;
+    }
+    .hero-visual { max-width: 400px; }
+    .pain-list { grid-template-columns: 1fr; }
+    .feature-list { grid-template-columns: 1fr; }
+    .transform-grid { grid-template-columns: 1fr; gap: 0; }
+    .transform-side.right { padding-left: 0; border-left: none; padding-top: 32px; border-top: 1px solid var(--border-dark); }
+    .transform-cell.after { padding-left: 0; border-left: none; }
+    .hiw-phases { grid-template-columns: 1fr; gap: 16px; }
+    .hiw-timeline-line { display: none; }
+    .pos-comparison { grid-template-columns: 1fr; }
+    .security-grid { grid-template-columns: 1fr 1fr; }
+    .team-block { grid-template-columns: 1fr; gap: 16px; }
+    .team-header { grid-template-columns: 1fr; gap: 32px; }
+    .problem-header { grid-template-columns: 1fr; gap: 32px; }
+    .hiw-header { grid-template-columns: 1fr; gap: 24px; }
+    .security-header { grid-template-columns: 1fr; gap: 24px; }
+    .hero-meta, .pos-meta, .final-meta { grid-template-columns: 1fr; gap: 24px; align-items: start; }
+    .capital-grid { grid-template-columns: 1fr; gap: 48px; }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-link { display: none; }
+    .nav-product { padding: 6px 12px; font-size: 12px; }
+    .nav-product.primary { font-size: 13px; }
+    .nav-product.addon { font-size: 11px; }
+    .container { padding: 0 24px; }
+    .hero, .sub-hero { padding: 100px 24px 60px; }
+    footer { padding: 40px 24px; }
+    .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+    .footer-meta { text-align: left; }
+    .footer-copy { flex-direction: column; gap: 12px; padding: 0 24px 0; }
+    .modal { padding: 40px 28px 32px; }
+    .field-row { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 540px) {
+    .security-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-left">
+    <a href="#" class="nav-logo" onclick="switchTab('build'); return false;">frenem</a>
+  </div>
+  <div class="nav-products">
+    <button class="nav-product primary active" data-tab="build" onclick="switchTab('build')">Build <span class="core-tag">Core</span></button>
+    <div class="nav-divider"></div>
+    <button class="nav-product addon" data-tab="prism" onclick="switchTab('prism')">Prism</button>
+    <button class="nav-product addon" data-tab="pulse" onclick="switchTab('pulse')">Pulse</button>
+  </div>
+  <div class="nav-right">
+    <a href="#how" class="nav-link" id="navHowLink">How it works</a>
+    <button class="nav-cta" onclick="openModal()">Get in Touch</button>
+  </div>
+</nav>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- BUILD PAGE -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="product-page active" id="page-build">
+
+  <section class="hero">
+    <div class="hero-text">
+      <div class="hero-eyebrow">Frenem Build · Organisation Design</div>
+      <h1>Build an organisation that scales <em>beyond you.</em></h1>
+      <p class="hero-sub">Clarity in roles, decisions, and leadership. Without losing control. In weeks, not months.</p>
+      <div class="hero-cta-group">
+        <button class="btn-primary" onclick="openModal()">Start your sprint →</button>
+        <a href="#how" class="btn-text">See how</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <svg class="hero-svg" viewBox="0 0 540 540" xmlns="http://www.w3.org/2000/svg" id="heroOrg">
+        <!-- Lines from founder -->
+        <g id="orgLines" class="org-lines">
+          <line class="org-line" x1="270" y1="120" x2="120" y2="270"/>
+          <line class="org-line" x1="270" y1="120" x2="270" y2="270"/>
+          <line class="org-line" x1="270" y1="120" x2="420" y2="270"/>
+          <!-- Sub lines -->
+          <line class="org-line" x1="120" y1="320" x2="60" y2="430"/>
+          <line class="org-line" x1="120" y1="320" x2="180" y2="430"/>
+          <line class="org-line" x1="270" y1="320" x2="220" y2="430"/>
+          <line class="org-line" x1="270" y1="320" x2="320" y2="430"/>
+          <line class="org-line" x1="420" y1="320" x2="360" y2="430"/>
+          <line class="org-line" x1="420" y1="320" x2="480" y2="430"/>
+        </g>
+
+        <!-- Founder node -->
+        <g class="org-node founder" data-node="founder" transform="translate(270, 90)">
+          <circle class="org-node-circle" r="32"/>
+          <text class="org-label founder" text-anchor="middle" dy="60" fill="#0a0a0a">Founder</text>
+        </g>
+
+        <!-- Department leads -->
+        <g class="org-node" data-node="dept" transform="translate(120, 295)">
+          <circle class="org-node-circle" r="22"/>
+          <text class="org-label" text-anchor="middle" dy="42">Operations</text>
+        </g>
+        <g class="org-node" data-node="dept" transform="translate(270, 295)">
+          <circle class="org-node-circle" r="22"/>
+          <text class="org-label" text-anchor="middle" dy="42">Product</text>
+        </g>
+        <g class="org-node" data-node="dept" transform="translate(420, 295)">
+          <circle class="org-node-circle" r="22"/>
+          <text class="org-label" text-anchor="middle" dy="42">People</text>
+        </g>
+
+        <!-- Team -->
+        <g class="org-node team" data-node="team" transform="translate(60, 455)">
+          <circle class="org-node-circle" r="14"/>
+        </g>
+        <g class="org-node team" data-node="team" transform="translate(180, 455)">
+          <circle class="org-node-circle" r="14"/>
+        </g>
+        <g class="org-node team" data-node="team" transform="translate(220, 455)">
+          <circle class="org-node-circle" r="14"/>
+        </g>
+        <g class="org-node team" data-node="team" transform="translate(320, 455)">
+          <circle class="org-node-circle" r="14"/>
+        </g>
+        <g class="org-node team" data-node="team" transform="translate(360, 455)">
+          <circle class="org-node-circle" r="14"/>
+        </g>
+        <g class="org-node team" data-node="team" transform="translate(480, 455)">
+          <circle class="org-node-circle" r="14"/>
+        </g>
+
+        <!-- Pulse from founder -->
+        <circle class="org-pulse" cx="270" cy="120" r="32" id="orgPulse"/>
+      </svg>
+      <div class="hero-visual-caption">A clear chain of decision rights, end to end</div>
+    </div>
+  </section>
+
+  <section class="problem">
+    <div class="container">
+      <div class="problem-header">
+        <div>
+          <div class="section-label fade-up">The Founder's Dilemma</div>
+          <h2 class="section-heading fade-up">You built this business. Now it can't run <em>without you.</em></h2>
+        </div>
+        <div class="problem-stat fade-up">
+          <div class="problem-stat-num">1</div>
+          <div class="problem-stat-label">person every decision routes through. The bottleneck has a name.</div>
+        </div>
+      </div>
+
+      <div class="pain-list">
+        <div class="pain-item fade-up"><span class="pain-item-num">01</span><h3>Everything depends on you</h3><p>Every decision, every escalation, every fire. It all routes back to you. You're the bottleneck in your own company.</p></div>
+        <div class="pain-item fade-up"><span class="pain-item-num">02</span><h3>Roles are unclear as you grow</h3><p>People have titles, but nobody knows who owns what. Accountability is a conversation, not a system.</p></div>
+        <div class="pain-item fade-up"><span class="pain-item-num">03</span><h3>Good people, slow execution</h3><p>You have the talent. But decisions crawl through layers, sign-offs, and "let me check with…" loops.</p></div>
+        <div class="pain-item fade-up"><span class="pain-item-num">04</span><h3>Overlapping work, unclear ownership</h3><p>Multiple people doing the same thing. Nobody quite sure where their remit ends and another's begins.</p></div>
+        <div class="pain-item fade-up"><span class="pain-item-num">05</span><h3>Professionalise, but keep control</h3><p>You know you need structure. But you've seen what "consultants" do. You don't want to lose your company's soul.</p></div>
+        <div class="pain-item fade-up"><span class="pain-item-num">06</span><h3>Succession feels risky</h3><p>There's no visible pipeline. No structured bench. If a key person walks, the plan walks with them.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="transformation">
+    <div class="container">
+      <div class="section-label fade-up">The Shift</div>
+      <h2 class="section-heading fade-up">What changes <em>after Build.</em></h2>
+
+      <div class="transform-grid">
+        <div class="transform-side">
+          <div class="transform-side-header now"><span class="dot"></span>Today</div>
+        </div>
+        <div class="transform-side right">
+          <div class="transform-side-header after"><span class="dot"></span>After Build</div>
+        </div>
+
+        <div class="transform-cell before fade-up"><span class="transform-num">01</span><div class="transform-text-before">Everything depends on me</div></div>
+        <div class="transform-cell after fade-up"><span class="transform-num">→</span><div class="transform-text-after">A decision-rights framework so calls get made at the right level, without you</div></div>
+
+        <div class="transform-cell before fade-up"><span class="transform-num">02</span><div class="transform-text-before">Roles are unclear as we grow</div></div>
+        <div class="transform-cell after fade-up"><span class="transform-num">→</span><div class="transform-text-after">Every role mapped to a grade, family, and owner with documented accountability</div></div>
+
+        <div class="transform-cell before fade-up"><span class="transform-num">03</span><div class="transform-text-before">Good people, but execution is slow</div></div>
+        <div class="transform-cell after fade-up"><span class="transform-num">→</span><div class="transform-text-after">Fewer layers, clearer spans of control, and a RACI matrix that kills sign-off loops</div></div>
+
+        <div class="transform-cell before fade-up"><span class="transform-num">04</span><div class="transform-text-before">Overlapping work everywhere</div></div>
+        <div class="transform-cell after fade-up"><span class="transform-num">→</span><div class="transform-text-after">A complete job architecture where every outcome has exactly one owner</div></div>
+
+        <div class="transform-cell before fade-up"><span class="transform-num">05</span><div class="transform-text-before">Professionalise without losing control</div></div>
+        <div class="transform-cell after fade-up"><span class="transform-num">→</span><div class="transform-text-after">Governance guardrails you define, with delegation built into the structure</div></div>
+
+        <div class="transform-cell before fade-up"><span class="transform-num">06</span><div class="transform-text-before">Succession feels risky and informal</div></div>
+        <div class="transform-cell after fade-up"><span class="transform-num">→</span><div class="transform-text-after">A 9-box talent map with a visible leadership bench and development pipeline</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="capital-ready">
+    <div class="container">
+      <div class="section-label fade-up">Capital Ready</div>
+      <h2 class="section-heading fade-up">Institution-ready. Before markets force the change.</h2>
+      <div class="capital-grid">
+        <div>
+          <p class="capital-body fade-up">IPOs and PE deals don't fail because of strategy. They fail because investors see organisation risk. Promoter dependency, informal decision-making, a thin leadership bench. Build moves that work upstream, before it becomes expensive.</p>
+          <div class="capital-quote-block fade-up">
+            <div class="capital-quote-mark">"</div>
+            <p class="capital-quote">Will this company still work if the promoter steps back?</p>
+            <p class="capital-quote-attr">The question every merchant banker asks internally</p>
+          </div>
+        </div>
+        <div class="capital-cards">
+          <div class="capital-card fade-up"><span class="capital-card-num">01</span><div><h4>IPO Readiness</h4><p>Governance model, role separation, committee oversight, organisational transparency, and succession visibility.</p></div></div>
+          <div class="capital-card fade-up"><span class="capital-card-num">02</span><div><h4>PE / VC Readiness</h4><p>Institutional governance, scalable operating model, management depth, and reduced key-person risk.</p></div></div>
+          <div class="capital-card fade-up"><span class="capital-card-num">03</span><div><h4>Founder-Independent Execution</h4><p>A system-driven model where decisions happen because the structure supports them, not because the founder approves them.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-it-works" id="how">
+    <div class="container">
+      <div class="hiw-header">
+        <div>
+          <div class="section-label fade-up">How It Works</div>
+          <h2 class="section-heading fade-up">Fit. Flat. Fast. <em>Ready for scale.</em></h2>
+        </div>
+        <p class="hiw-sub fade-up">A structured sprint. Not a meandering engagement. You get a working operating system, not a binder.</p>
+      </div>
+
+      <div class="hiw-timeline" id="hiwTimeline">
+        <div class="hiw-timeline-line"></div>
+        <div class="hiw-phases">
+          <div class="hiw-phase fade-up">
+            <div class="hiw-dot"></div>
+            <div class="hiw-phase-meta"><span class="hiw-phase-num">Phase 01</span><span class="hiw-time">Weeks 1–2</span></div>
+            <h3>Diagnose</h3>
+            <p>Understand the baseline. People maturity, employee data, employee voice, and how decisions actually flow today. Build the foundation everything else sits on.</p>
+          </div>
+          <div class="hiw-phase fade-up">
+            <div class="hiw-dot"></div>
+            <div class="hiw-phase-meta"><span class="hiw-phase-num">Phase 02</span><span class="hiw-time">Weeks 3–5</span></div>
+            <h3>Design</h3>
+            <p>Build the architecture. The grade structure, role catalog, org map, job descriptions, and decision rights. Turn complexity into a simple organisation that executes.</p>
+          </div>
+          <div class="hiw-phase fade-up">
+            <div class="hiw-dot"></div>
+            <div class="hiw-phase-meta"><span class="hiw-phase-num">Phase 03</span><span class="hiw-time">Weeks 6–8</span></div>
+            <h3>Deploy</h3>
+            <p>Lock in the competency framework, map talent, and deliver a validated, boardroom-ready operating model. A leadership blueprint that outlasts individuals.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="positioning">
+    <div class="container">
+      <div class="section-label fade-up">Positioning</div>
+      <p class="pos-headline fade-up">The org design that <span class="mbb-ref">McKinsey, Bain &amp; BCG<span class="mbb-aside">the "MBB" firms</span></span> deliver in six months and six figures. <em>Done in 8 weeks.</em></p>
+
+      <div class="pos-comparison">
+        <div class="pos-card them fade-up">
+          <div class="pos-card-label">Traditional consulting</div>
+          <div class="pos-card-row"><span class="pos-card-row-label">Timeline</span><span class="pos-card-row-value">6 months</span></div>
+          <div class="pos-card-row"><span class="pos-card-row-label">Cost</span><span class="pos-card-row-value">Six figures, USD</span></div>
+          <div class="pos-card-row"><span class="pos-card-row-label">Deliverable</span><span class="pos-card-row-value">Slide deck</span></div>
+          <div class="pos-card-row"><span class="pos-card-row-label">After they leave</span><span class="pos-card-row-value">It collects dust</span></div>
+        </div>
+        <div class="pos-card us fade-up">
+          <div class="pos-card-label">Frenem Build</div>
+          <div class="pos-card-row"><span class="pos-card-row-label">Timeline</span><span class="pos-card-row-value highlight">8 weeks</span></div>
+          <div class="pos-card-row"><span class="pos-card-row-label">Cost</span><span class="pos-card-row-value highlight">A fraction</span></div>
+          <div class="pos-card-row"><span class="pos-card-row-label">Deliverable</span><span class="pos-card-row-value">A live operating system</span></div>
+          <div class="pos-card-row"><span class="pos-card-row-label">After we leave</span><span class="pos-card-row-value">Your team uses it daily</span></div>
+        </div>
+      </div>
+
+      <div class="pos-meta fade-up">
+        <p class="pos-sub">Same rigour. Fraction of the time and cost. No slide decks that collect dust. A live system your team actually uses.</p>
+        <button class="btn-primary" onclick="openModal()">Book a Sprint →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="team-section">
+    <div class="container">
+      <div class="team-header">
+        <div>
+          <div class="section-label fade-up">Who Built This</div>
+          <h2 class="section-heading fade-up">A combined <em>100+ years</em> of consulting and HR experience.</h2>
+          <p class="team-intro fade-up">Frenem isn't a tool built by engineers guessing what organisations need. It's built by people who've done this work, in the room, for decades.</p>
+        </div>
+        <div class="team-headline-stat fade-up">
+          <div class="team-headline-stat-num">100+</div>
+          <div class="team-headline-stat-label">Years of combined consulting &amp; HR experience across the team.</div>
+        </div>
+      </div>
+
+      <div class="team-block fade-up">
+        <div class="team-block-label">Team alumni from</div>
+        <div class="team-tags">
+          <span class="team-tag">Goldman Sachs</span>
+          <span class="team-tag">Cisco</span>
+          <span class="team-tag">Times Internet</span>
+          <span class="team-tag">Godrej &amp; Boyce</span>
+          <span class="team-tag">Novell Software</span>
+        </div>
+      </div>
+      <div class="team-block fade-up">
+        <div class="team-block-label">Educated at</div>
+        <div class="team-tags">
+          <span class="team-tag">XLRI Jamshedpur</span>
+          <span class="team-tag">IISc Bangalore</span>
+          <span class="team-tag">IIIT Hyderabad</span>
+          <span class="team-tag">RVCE Bangalore</span>
+          <span class="team-tag">St. Stephen's College, Delhi</span>
+        </div>
+      </div>
+
+      <p class="team-stat fade-up">The playbooks we've used across <strong>hundreds of engagements</strong> are now embedded directly in the platform. You get the thinking without the billing.</p>
+    </div>
+  </section>
+
+  <section class="security">
+    <div class="container">
+      <div class="security-header">
+        <div>
+          <div class="section-label fade-up">Security &amp; Trust</div>
+          <h2 class="section-heading fade-up">Your <em>data,</em> protected.</h2>
+        </div>
+        <p class="security-intro fade-up">Organisation data is sensitive. We treat it that way. Frenem is built on enterprise-grade security practices from the ground up.</p>
+      </div>
+
+      <div class="security-grid">
+        <div class="security-card fade-up">
+          <div class="security-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h4>Encryption</h4>
+          <p>Data encrypted at rest and in transit. Always.</p>
+        </div>
+        <div class="security-card fade-up">
+          <div class="security-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c2.4 0 4.58.94 6.19 2.46"/></svg>
+          </div>
+          <h4>Access Control</h4>
+          <p>Secure OTP authentication with role-based permissions for promoter, HR, and employee levels.</p>
+        </div>
+        <div class="security-card fade-up">
+          <div class="security-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l3-9 6 18 3-9h4"/></svg>
+          </div>
+          <h4>Monitoring</h4>
+          <p>Full audit trails for every important action on the platform. Nothing happens off the record.</p>
+        </div>
+        <div class="security-card fade-up">
+          <div class="security-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.4 0 4.58.94 6.19 2.46"/><polyline points="21 3 21 9 15 9"/></svg>
+          </div>
+          <h4>Resilience</h4>
+          <p>99%+ server uptime with continuous reliability monitoring. Daily backups across a 7-day window.</p>
+        </div>
+        <div class="security-card fade-up">
+          <div class="security-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          </div>
+          <h4>Data Minimisation</h4>
+          <p>Only essential PII is collected and stored. We don't ask for what we don't need.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="container">
+      <div class="section-label fade-up">Get Started</div>
+      <h2 class="fade-up">Design the organisation your strategy <em>needs.</em></h2>
+      <div class="final-meta fade-up">
+        <p class="final-sub">Structure, governance, roles, and talent. Aligned to growth. One sprint. No consultant theatre.</p>
+        <button class="btn-primary" onclick="openModal()">Talk to us →</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PRISM PAGE -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="product-page" id="page-prism">
+  <section class="sub-hero">
+    <div class="hero-text">
+      <div class="hero-eyebrow">Frenem Prism · Employee Management</div>
+      <h1>Your single source of <em>truth.</em></h1>
+      <p class="hero-sub">Lightweight employee management that gives your people clarity on who does what, how they're measured, and where they stand.</p>
+      <div class="hero-cta-group">
+        <button class="btn-primary" onclick="openModal()">Get started →</button>
+      </div>
+    </div>
+    <div class="prism-visual">
+      <div class="prism-visual-bar">
+        <div></div><div></div><div></div>
+      </div>
+      <div class="prism-visual-tabs">
+        <span class="active">Org Chart</span>
+        <span>KRAs</span>
+        <span>Reviews</span>
+        <span>Audit Log</span>
+      </div>
+      <div class="prism-visual-content">
+        <div class="prism-org-mini">
+          <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+            <line x1="100" y1="32" x2="40" y2="80" stroke="#999" stroke-width="1"/>
+            <line x1="100" y1="32" x2="100" y2="80" stroke="#999" stroke-width="1"/>
+            <line x1="100" y1="32" x2="160" y2="80" stroke="#999" stroke-width="1"/>
+            <line x1="40" y1="100" x2="20" y2="140" stroke="#ccc" stroke-width="1"/>
+            <line x1="40" y1="100" x2="60" y2="140" stroke="#ccc" stroke-width="1"/>
+            <line x1="100" y1="100" x2="100" y2="140" stroke="#ccc" stroke-width="1"/>
+            <line x1="160" y1="100" x2="140" y2="140" stroke="#ccc" stroke-width="1"/>
+            <line x1="160" y1="100" x2="180" y2="140" stroke="#ccc" stroke-width="1"/>
+            <circle cx="100" cy="22" r="10" fill="#0a0a0a"/>
+            <circle cx="40" cy="90" r="8" fill="#fff" stroke="#0a0a0a" stroke-width="1.5"/>
+            <circle cx="100" cy="90" r="8" fill="#fff" stroke="#0a0a0a" stroke-width="1.5"/>
+            <circle cx="160" cy="90" r="8" fill="#fff" stroke="#0a0a0a" stroke-width="1.5"/>
+            <circle cx="20" cy="148" r="5" fill="#999"/>
+            <circle cx="60" cy="148" r="5" fill="#999"/>
+            <circle cx="100" cy="148" r="5" fill="#999"/>
+            <circle cx="140" cy="148" r="5" fill="#999"/>
+            <circle cx="180" cy="148" r="5" fill="#ff5b1f"/>
+          </svg>
+        </div>
+        <div class="prism-kra-panel">
+          <div class="prism-kra-panel-title">Q1 KRAs · A. Rao</div>
+          <div class="prism-kra-row">
+            <span>Revenue Growth</span>
+            <div class="prism-kra-bar"><div class="prism-kra-bar-fill" style="width: 78%"></div></div>
+          </div>
+          <div class="prism-kra-row">
+            <span>Team NPS</span>
+            <div class="prism-kra-bar"><div class="prism-kra-bar-fill" style="width: 92%"></div></div>
+          </div>
+          <div class="prism-kra-row">
+            <span>Retention</span>
+            <div class="prism-kra-bar"><div class="prism-kra-bar-fill" style="width: 65%"></div></div>
+          </div>
+          <div class="prism-kra-row">
+            <span>OKR Delivery</span>
+            <div class="prism-kra-bar"><div class="prism-kra-bar-fill" style="width: 84%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-section">
+    <div class="container">
+      <div class="section-label fade-up">What Prism Does</div>
+      <h2 class="section-heading fade-up">Clarity across your <em>entire</em> organisation.</h2>
+      <div class="feature-list">
+        <div class="feature-item fade-up"><span class="feature-num">01</span><h3>Dynamic Org Charts</h3><p>Live org charts and reporting chains that update as your team grows. Always current, always visible.</p></div>
+        <div class="feature-item fade-up"><span class="feature-num">02</span><h3>Transparent KRAs, KPIs, and Responsibilities</h3><p>Everyone knows what they own, what they're measured on, and what success looks like in their role.</p></div>
+        <div class="feature-item fade-up"><span class="feature-num">03</span><h3>Seamless Performance Review Cycles</h3><p>From goal setting through to reviews. A complete, continuous cycle that doesn't live in spreadsheets.</p></div>
+        <div class="feature-item fade-up"><span class="feature-num">04</span><h3>Employee-driven Innovation</h3><p>Moonshot idea submissions that give every person in the company a voice in shaping what comes next.</p></div>
+        <div class="feature-item fade-up"><span class="feature-num">05</span><h3>Secure Whistleblower Channel</h3><p>A safe, anonymous channel for raising concerns. Built in, not bolted on.</p></div>
+        <div class="feature-item fade-up"><span class="feature-num">06</span><h3>Edit Histories and Audit Trails</h3><p>Every change tracked. Full transparency for governance, compliance, and peace of mind.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="container">
+      <div class="section-label fade-up">Get Started with Prism</div>
+      <h2 class="fade-up">One place for your people. <em>Always current.</em></h2>
+      <div class="final-meta fade-up">
+        <p class="final-sub">Org charts, performance cycles, KPIs, and governance. In a tool your team will actually use.</p>
+        <button class="btn-primary" onclick="openModal()">Talk to us →</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- PULSE PAGE -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="product-page" id="page-pulse">
+  <section class="sub-hero">
+    <div class="hero-text">
+      <div class="hero-eyebrow">Frenem Pulse · Multirater Feedback</div>
+      <h1>Deep employee insights, <em>delivered precisely.</em></h1>
+      <p class="hero-sub">Multirater feedback that goes beyond ratings. Structured perspectives, competency evaluation, and clear development paths.</p>
+      <div class="hero-cta-group">
+        <button class="btn-primary" onclick="openModal()">Get started →</button>
+      </div>
+    </div>
+    <div class="pulse-visual">
+      <div class="pulse-visual-header">
+        <span class="pulse-visual-title">9-Box Talent Map</span>
+        <span>32 employees</span>
+      </div>
+      <div class="pulse-9box">
+        <div class="pulse-9box-axis-y">Performance →</div>
+        <!-- Row 1: High performance -->
+        <div class="pulse-cell">
+          <div class="pulse-dot muted"></div>
+        </div>
+        <div class="pulse-cell">
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+        </div>
+        <div class="pulse-cell high-perf-high-pot">
+          <div class="pulse-dot accent"></div>
+          <div class="pulse-dot accent"></div>
+          <div class="pulse-dot accent"></div>
+        </div>
+        <!-- Row 2: Medium performance -->
+        <div class="pulse-cell">
+          <div class="pulse-dot muted"></div>
+          <div class="pulse-dot muted"></div>
+        </div>
+        <div class="pulse-cell">
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+        </div>
+        <div class="pulse-cell">
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot accent"></div>
+        </div>
+        <!-- Row 3: Low performance -->
+        <div class="pulse-cell">
+          <div class="pulse-dot muted"></div>
+        </div>
+        <div class="pulse-cell">
+          <div class="pulse-dot muted"></div>
+          <div class="pulse-dot muted"></div>
+        </div>
+        <div class="pulse-cell">
+          <div class="pulse-dot muted"></div>
+        </div>
+        <div></div>
+        <div class="pulse-9box-axis-x">Potential →</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-section">
+    <div class="container">
+      <div class="section-label fade-up">What Pulse Does</div>
+      <h2 class="section-heading fade-up">Feedback that drives <em>real</em> development.</h2>
+      <div class="feature-list">
+        <div class="feature-item fade-up"><span class="feature-num">01</span><h3>Comprehensive Competency Evaluation</h3><p>Assess the competencies that actually matter for each role. Not generic checklists, but evaluations built around your organisation's needs.</p></div>
+        <div class="feature-item fade-up"><span class="feature-num">02</span><h3>Actionable Behavioural Insights</h3><p>Go beyond scores. Understand the behavioural patterns that drive performance, and the ones that hold it back.</p></div>
+        <div class="feature-item fade-up"><span class="feature-num">03</span><h3>Data-Driven Development Plans</h3><p>Clear, individual development plans generated from real feedback data. Not templated advice.</p></div>
+        <div class="feature-item fade-up"><span class="feature-num">04</span><h3>Structured Multi-Perspective Feedback</h3><p>Peers, managers, direct reports, and stakeholders. Feedback gathered from every angle, organised for clarity.</p></div>
+        <div class="feature-item fade-up"><span class="feature-num">05</span><h3>Tailored Leadership Recommendations</h3><p>Personalised recommendations for leadership development based on where each individual stands today and where they need to go.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="container">
+      <div class="section-label fade-up">Get Started with Pulse</div>
+      <h2 class="fade-up">Feedback that builds <em>leaders.</em></h2>
+      <div class="final-meta fade-up">
+        <p class="final-sub">Multirater insights, competency mapping, and development plans. All in one place.</p>
+        <button class="btn-primary" onclick="openModal()">Talk to us →</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-mark">frenem</div>
+    <div class="footer-meta">
+      <a href="#" onclick="switchTab('build'); return false;">Build</a>
+      <a href="#" onclick="switchTab('prism'); return false;">Prism</a>
+      <a href="#" onclick="switchTab('pulse'); return false;">Pulse</a>
+      <a href="https://frenem.com">frenem.com</a>
+    </div>
+  </div>
+  <div class="footer-copy">
+    <span>© Frenem 2026</span>
+    <span>Bangalore, India</span>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+    <div class="modal-form" id="modalForm">
+      <h3>Get in touch.</h3>
+      <p class="modal-subtitle">Tell us a little about your business. We'll get back to you within 24 hours.</p>
+      <div class="field-row">
+        <div class="field"><label for="name">Your name</label><input type="text" id="name" placeholder="First and last name"></div>
+        <div class="field"><label for="company">Company</label><input type="text" id="company" placeholder="Company name"></div>
+      </div>
+      <div class="field"><label for="email">Email</label><input type="email" id="email" placeholder="you@company.com"></div>
+      <div class="field-row">
+        <div class="field"><label for="size">Team size</label><select id="size"><option value="" disabled selected>Select</option><option>10 – 50</option><option>50 – 200</option><option>200 – 500</option><option>500+</option></select></div>
+        <div class="field"><label for="interest">Interested in</label><select id="interest"><option value="" disabled selected>Select</option><option>Build · Org Design Sprint</option><option>Prism · Employee Management</option><option>Pulse · Multirater Feedback</option><option>Multiple products</option><option>Not sure yet</option></select></div>
+      </div>
+      <div class="field"><label for="notes">Anything else? <span style="color: var(--ink-tertiary); font-weight: 400;">(optional)</span></label><textarea id="notes" placeholder="Brief context about your business or what you're looking to solve" rows="3"></textarea></div>
+      <button class="modal-submit" onclick="submitForm()">Send →</button>
+      <p class="modal-note">No commitment. No decks. Just a conversation.</p>
+    </div>
+    <div class="modal-success" id="modalSuccess">
+      <div class="success-icon">✓</div>
+      <h3>We'll be in touch.</h3>
+      <p>Thanks for reaching out. We'll get back to you within 24 hours to set up a conversation.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+  let activeScrollTriggers = [];
+
+  function killAnimations() {
+    activeScrollTriggers.forEach(st => st.kill && st.kill());
+    activeScrollTriggers = [];
+    ScrollTrigger.getAll().forEach(st => st.kill());
+  }
+
+  function initAnimations() {
+    killAnimations();
+
+    const activePage = document.querySelector('.product-page.active');
+    if (!activePage) return;
+
+    // Reset all .fade-up before observing
+    const fadeUps = activePage.querySelectorAll('.fade-up');
+    fadeUps.forEach(el => {
+      gsap.set(el, { opacity: 0, y: 28 });
+    });
+
+    // Generic fade-up reveal
+    fadeUps.forEach((el) => {
+      const tween = gsap.to(el, {
+        opacity: 1,
+        y: 0,
+        duration: 0.85,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 88%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+      activeScrollTriggers.push(tween.scrollTrigger);
+    });
+
+    // ── HERO ORG CHART (Build) ──
+    const heroOrg = document.querySelector('#page-build.active #heroOrg');
+    if (heroOrg) {
+      const lines = heroOrg.querySelectorAll('.org-line');
+      const founder = heroOrg.querySelector('[data-node="founder"]');
+      const depts = heroOrg.querySelectorAll('[data-node="dept"]');
+      const team = heroOrg.querySelectorAll('[data-node="team"]');
+      const pulse = heroOrg.querySelector('#orgPulse');
+
+      // Set initial states
+      gsap.set(lines, { opacity: 0, drawSVG: 0 });
+      gsap.set([founder, ...depts, ...team], { opacity: 0, scale: 0.5, transformOrigin: 'center' });
+
+      // Use stroke-dasharray trick instead of DrawSVGPlugin
+      lines.forEach(line => {
+        const len = line.getTotalLength ? line.getTotalLength() : 200;
+        line.style.strokeDasharray = len;
+        line.style.strokeDashoffset = len;
+        line.style.opacity = 1;
+      });
+
+      const tl = gsap.timeline({ delay: 0.3 });
+
+      // Founder appears
+      tl.to(founder, { opacity: 1, scale: 1, duration: 0.7, ease: 'back.out(1.6)' });
+
+      // Lines draw to dept nodes
+      tl.to(Array.from(lines).slice(0, 3), {
+        strokeDashoffset: 0,
+        duration: 0.8,
+        ease: 'power2.inOut',
+        stagger: 0.08,
+      }, '-=0.3');
+
+      // Dept nodes pop in
+      tl.to(depts, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.5,
+        stagger: 0.1,
+        ease: 'back.out(1.6)',
+      }, '-=0.4');
+
+      // Lines draw to team
+      tl.to(Array.from(lines).slice(3), {
+        strokeDashoffset: 0,
+        duration: 0.7,
+        ease: 'power2.inOut',
+        stagger: 0.04,
+      }, '-=0.2');
+
+      // Team nodes
+      tl.to(team, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.4,
+        stagger: 0.04,
+        ease: 'back.out(1.4)',
+      }, '-=0.3');
+
+      // Subtle pulse on founder (loop)
+      gsap.to(pulse, {
+        opacity: 0.4,
+        scale: 1.6,
+        duration: 1.6,
+        transformOrigin: '270px 120px',
+        repeat: -1,
+        ease: 'power1.out',
+        keyframes: [
+          { opacity: 0.5, scale: 1, duration: 0 },
+          { opacity: 0, scale: 1.8, duration: 1.6 },
+        ],
+      });
+    }
+
+    // ── HIW TIMELINE ──
+    const hiwTimeline = activePage.querySelector('#hiwTimeline');
+    if (hiwTimeline) {
+      ScrollTrigger.create({
+        trigger: hiwTimeline,
+        start: 'top 70%',
+        onEnter: () => hiwTimeline.classList.add('in-view'),
+        onLeaveBack: () => hiwTimeline.classList.remove('in-view'),
+      });
+    }
+
+    // ── PRISM KRA bar fills ──
+    const prismBars = activePage.querySelectorAll('#page-prism.active .prism-kra-bar-fill');
+    if (prismBars.length) {
+      prismBars.forEach((bar, i) => {
+        const targetWidth = bar.style.width;
+        bar.style.width = '0%';
+        gsap.to(bar, {
+          width: targetWidth,
+          duration: 1.2,
+          delay: 0.5 + (i * 0.15),
+          ease: 'power3.out',
+        });
+      });
+    }
+
+    // ── PULSE 9-box dots ──
+    const pulseDots = activePage.querySelectorAll('#page-pulse.active .pulse-dot');
+    if (pulseDots.length) {
+      gsap.from(pulseDots, {
+        scale: 0,
+        opacity: 0,
+        duration: 0.5,
+        delay: 0.4,
+        stagger: 0.04,
+        ease: 'back.out(1.8)',
+        transformOrigin: 'center',
+      });
+    }
+
+    requestAnimationFrame(() => ScrollTrigger.refresh());
+  }
+
+  // Progress bar
+  ScrollTrigger.create({
+    trigger: 'body',
+    start: 'top top',
+    end: 'bottom bottom',
+    onUpdate: (self) => {
+      gsap.to('#progressBar', {
+        width: `${self.progress * 100}%`,
+        duration: 0.1,
+        ease: 'none',
+        overwrite: 'auto',
+      });
+    },
+  });
+
+  // Nav shadow
+  const nav = document.getElementById('nav');
+  ScrollTrigger.create({
+    start: 20,
+    end: 999999,
+    onUpdate: (self) => {
+      nav.classList.toggle('scrolled', self.scroll() > 20);
+    },
+  });
+
+  // Smooth anchor scroll
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      const href = this.getAttribute('href');
+      if (href === '#' || href.length <= 1) return;
+      const target = document.querySelector(href);
+      if (target) {
+        e.preventDefault();
+        gsap.to(window, {
+          scrollTo: { y: target, offsetY: 80 },
+          duration: 1.2,
+          ease: 'power3.inOut',
+        });
+      }
+    });
+  });
+
+  // Tab switching
+  function switchTab(tab) {
+    document.querySelectorAll('.nav-product').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.nav-product[data-tab="${tab}"]`).classList.add('active');
+    document.querySelectorAll('.product-page').forEach(p => p.classList.remove('active'));
+    document.getElementById(`page-${tab}`).classList.add('active');
+    document.getElementById('navHowLink').style.display = tab === 'build' ? '' : 'none';
+
+    window.scrollTo({ top: 0, behavior: 'instant' });
+
+    requestAnimationFrame(() => {
+      initAnimations();
+      ScrollTrigger.refresh();
+    });
+  }
+
+  // Modal
+  const modal = document.getElementById('modal');
+
+  function openModal() {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      document.getElementById('modalForm').classList.remove('hide');
+      document.getElementById('modalSuccess').classList.remove('show');
+    }, 400);
+  }
+
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+
+  function submitForm() {
+    document.getElementById('modalForm').classList.add('hide');
+    document.getElementById('modalSuccess').classList.add('show');
+  }
+
+  // Init
+  if (document.readyState === 'complete') {
+    initAnimations();
+  } else {
+    window.addEventListener('load', () => {
+      initAnimations();
+      ScrollTrigger.refresh();
+    });
+  }
+</script>
+
+</body>
+</html>

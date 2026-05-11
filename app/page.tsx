@@ -8,9 +8,12 @@ import CapitalReadySection from "./components/CapitalReadySection"
 import HowItWorksSection from "./components/HowItWorksSection"
 import PositioningSection from "./components/PositioningSection"
 import TeamSection from "./components/TeamSection"
+import SecuritySection from "./components/SecuritySection"
 import FinalCtaSection from "./components/FinalCtaSection"
 import SubHero from "./components/SubHero"
 import FeatureListSection from "./components/FeatureListSection"
+import PrismHeroVisual from "./components/PrismHeroVisual"
+import PulseHeroVisual from "./components/PulseHeroVisual"
 
 const prismFeatures = [
   {
@@ -40,14 +43,12 @@ const prismFeatures = [
   {
     num: "05",
     title: "Secure Whistleblower Channel",
-    description:
-      "A safe, anonymous channel for raising concerns. Built in, not bolted on.",
+    description: "A safe, anonymous channel for raising concerns. Built in, not bolted on.",
   },
   {
     num: "06",
     title: "Edit Histories and Audit Trails",
-    description:
-      "Every change tracked. Full transparency for governance, compliance, and peace of mind.",
+    description: "Every change tracked. Full transparency for governance, compliance, and peace of mind.",
   },
 ]
 
@@ -84,11 +85,13 @@ const pulseFeatures = [
   },
 ]
 
+const emAccent = "italic font-normal text-[var(--frenem-accent)]"
+
 export default function Home() {
   const { activeProduct } = useProduct()
 
   return (
-    <div className="pt-[52px]">
+    <div className="pt-16">
       {activeProduct === "build" && (
         <>
           <HeroBuild />
@@ -98,13 +101,16 @@ export default function Home() {
           <HowItWorksSection />
           <PositioningSection />
           <TeamSection />
+          <SecuritySection />
           <FinalCtaSection
+            sectionName="Contact"
+            sectionNum="09"
             title={
               <>
-                Design the organisation your strategy <em className="italic text-[#d4a843]">needs</em>
+                Design the organisation your strategy <em className={emAccent}>needs.</em>
               </>
             }
-            subtitle="Structure, governance, roles, and talent, aligned to growth. One sprint. No consultant theatre."
+            subtitle="Structure, governance, roles, and talent. Aligned to growth. One sprint. No consultant theatre."
           />
         </>
       )}
@@ -112,24 +118,32 @@ export default function Home() {
       {activeProduct === "prism" && (
         <>
           <SubHero
-            label="Frenem Prism"
+            label="Frenem Prism · Employee Management"
             title={
               <>
-                Your single source of <em className="italic text-[#b8860b]">truth</em>
+                Your single source of <em className={emAccent}>truth.</em>
               </>
             }
             subtitle="Lightweight employee management that gives your people clarity on who does what, how they're measured, and where they stand."
+            ctaText="Get started →"
+            visual={<PrismHeroVisual />}
           />
           <FeatureListSection
             label="What Prism Does"
-            heading="Clarity across your entire organisation"
+            heading={
+              <>
+                Clarity across your <em className={emAccent}>entire</em> organisation.
+              </>
+            }
             features={prismFeatures}
           />
           <FinalCtaSection
             label="Get Started with Prism"
+            sectionName="Contact"
+            sectionNum="03"
             title={
               <>
-                One place for your people, <em className="italic text-[#d4a843]">always current</em>
+                One place for your people. <em className={emAccent}>Always current.</em>
               </>
             }
             subtitle="Org charts, performance cycles, KPIs, and governance. In a tool your team will actually use."
@@ -140,24 +154,32 @@ export default function Home() {
       {activeProduct === "pulse" && (
         <>
           <SubHero
-            label="Frenem Pulse"
+            label="Frenem Pulse · Multirater Feedback"
             title={
               <>
-                Deep employee insights, <em className="italic text-[#b8860b]">delivered precisely</em>
+                Deep employee insights, <em className={emAccent}>delivered precisely.</em>
               </>
             }
             subtitle="Multirater feedback that goes beyond ratings. Structured perspectives, competency evaluation, and clear development paths."
+            ctaText="Get started →"
+            visual={<PulseHeroVisual />}
           />
           <FeatureListSection
             label="What Pulse Does"
-            heading="Feedback that drives real development"
+            heading={
+              <>
+                Feedback that drives <em className={emAccent}>real</em> development.
+              </>
+            }
             features={pulseFeatures}
           />
           <FinalCtaSection
             label="Get Started with Pulse"
+            sectionName="Contact"
+            sectionNum="03"
             title={
               <>
-                Feedback that builds <em className="italic text-[#d4a843]">leaders</em>
+                Feedback that builds <em className={emAccent}>leaders.</em>
               </>
             }
             subtitle="Multirater insights, competency mapping, and development plans. All in one place."

@@ -29,14 +29,14 @@ export default function Header() {
 
   return (
     <motion.header
-      className={`fixed top-0 left-0 right-0 z-50 h-[52px] grid grid-cols-[1fr_auto_1fr] items-center px-6 md:px-12 transition-all duration-300 ${
-        scrolled ? "shadow-[0_1px_12px_rgba(0,0,0,0.04)]" : ""
+      className={`fixed top-0 left-0 right-0 z-[100] h-16 grid grid-cols-[1fr_auto_1fr] items-center px-5 md:px-8 transition-shadow duration-300 ${
+        scrolled ? "shadow-[0_1px_16px_rgba(0,0,0,0.04)]" : ""
       }`}
       style={{
-        backdropFilter: "blur(24px) saturate(180%)",
-        WebkitBackdropFilter: "blur(24px) saturate(180%)",
-        background: "rgba(246, 244, 240, 0.88)",
-        borderBottom: "1px solid rgba(26, 26, 24, 0.08)",
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        background: "rgba(255, 255, 255, 0.78)",
+        borderBottom: "1px solid var(--frenem-border)",
       }}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -46,35 +46,35 @@ export default function Header() {
         <button
           type="button"
           onClick={() => handleProductClick("build")}
-          className="font-logo font-bold text-[22px] tracking-[-0.5px] text-[#1a1a18] lowercase"
+          className="font-logo font-bold text-[22px] tracking-[-0.5px] text-[var(--frenem-ink)] lowercase"
         >
           frenem
         </button>
       </div>
 
-      <div className="flex items-center gap-1 bg-[rgba(26,26,24,0.04)] rounded-[980px] p-0.5">
+      <div className="flex items-center gap-0.5 bg-[rgba(10,10,10,0.04)] rounded-full p-[3px]">
         <button
           type="button"
           onClick={() => handleProductClick("build")}
-          className={`font-sans text-sm font-semibold px-5 py-1.5 rounded-[980px] transition-all flex items-center gap-1.5 ${
+          className={`font-sans text-sm font-semibold px-[18px] py-1.5 rounded-full transition-all flex items-center gap-1.5 whitespace-nowrap tracking-[-0.1px] ${
             activeProduct === "build"
-              ? "text-[#1a1a18] bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06),0_0_1px_rgba(0,0,0,0.08)]"
-              : "text-[#6b6860] hover:text-[#1a1a18]"
+              ? "text-[var(--frenem-ink)] bg-[var(--frenem-bg)] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_0_1px_rgba(0,0,0,0.08)]"
+              : "text-[var(--frenem-ink-secondary)] hover:text-[var(--frenem-ink)] bg-transparent border-none"
           }`}
         >
           Build
-          <span className="font-sans text-[8.5px] font-semibold tracking-[0.8px] uppercase text-[#b8860b] bg-[rgba(184,134,11,0.08)] px-1.5 py-0.5 rounded">
+          <span className="font-sans text-[9px] font-bold tracking-[0.8px] uppercase text-[var(--frenem-accent)] bg-[var(--frenem-accent-soft)] px-1.5 py-0.5 rounded leading-[1.4]">
             Core
           </span>
         </button>
-        <div className="w-px h-4 bg-[rgba(26,26,24,0.1)] mx-1 flex-shrink-0" />
+        <div className="w-px h-4 bg-[rgba(10,10,10,0.1)] mx-1 shrink-0" />
         <button
           type="button"
           onClick={() => handleProductClick("prism")}
-          className={`font-sans text-xs px-5 py-1.5 rounded-[980px] transition-all ${
+          className={`font-sans text-xs px-[18px] py-1.5 rounded-full transition-all whitespace-nowrap ${
             activeProduct === "prism"
-              ? "text-[#1a1a18] font-medium bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06),0_0_1px_rgba(0,0,0,0.08)]"
-              : "text-[#9b978f] font-normal hover:text-[#6b6860]"
+              ? "text-[var(--frenem-ink)] font-medium bg-[var(--frenem-bg)] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_0_1px_rgba(0,0,0,0.08)]"
+              : "text-[var(--frenem-ink-tertiary)] font-normal hover:text-[var(--frenem-ink-secondary)]"
           }`}
         >
           Prism
@@ -82,22 +82,22 @@ export default function Header() {
         <button
           type="button"
           onClick={() => handleProductClick("pulse")}
-          className={`font-sans text-xs px-5 py-1.5 rounded-[980px] transition-all ${
+          className={`font-sans text-xs px-[18px] py-1.5 rounded-full transition-all whitespace-nowrap ${
             activeProduct === "pulse"
-              ? "text-[#1a1a18] font-medium bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06),0_0_1px_rgba(0,0,0,0.08)]"
-              : "text-[#9b978f] font-normal hover:text-[#6b6860]"
+              ? "text-[var(--frenem-ink)] font-medium bg-[var(--frenem-bg)] shadow-[0_1px_4px_rgba(0,0,0,0.06),0_0_1px_rgba(0,0,0,0.08)]"
+              : "text-[var(--frenem-ink-tertiary)] font-normal hover:text-[var(--frenem-ink-secondary)]"
           }`}
         >
           Pulse
         </button>
       </div>
 
-      <div className="flex items-center justify-end gap-7">
+      <div className="flex items-center justify-end gap-6">
         {activeProduct === "build" && (
           <a
             href="#how"
             onClick={handleHowClick}
-            className="hidden md:block font-sans text-[13px] font-normal text-[#6b6860] hover:text-[#1a1a18] transition-colors"
+            className="hidden md:block font-sans text-[13px] font-normal text-[var(--frenem-ink-secondary)] hover:text-[var(--frenem-ink)] transition-colors"
           >
             How it works
           </a>
@@ -105,7 +105,7 @@ export default function Header() {
         <button
           type="button"
           onClick={openModal}
-          className="font-sans text-[13px] font-medium py-1.5 px-4 rounded-[980px] bg-[#1a1a18] text-[#f6f4f0] hover:opacity-85 transition-opacity"
+          className="font-sans text-[13px] font-medium py-2 px-[18px] rounded-full bg-[var(--frenem-ink)] text-[var(--frenem-bg)] hover:bg-[var(--frenem-accent)] transition-colors"
         >
           Get in Touch
         </button>

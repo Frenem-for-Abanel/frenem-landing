@@ -2,65 +2,65 @@
 
 @layer base {
   :root {
-    /* V2 design system */
-    --bg: #f6f4f0;
-    --bg-warm: #edeae4;
-    --bg-dark: #1a1a18;
-    --bg-card: #ffffff;
-    --text: #1a1a18;
-    --text-secondary: #6b6860;
-    --text-tertiary: #9b978f;
-    --accent: #b8860b;
-    --accent-soft: #d4a843;
-    --border-color: rgba(26, 26, 24, 0.08);
-    --border-dark: rgba(255, 255, 255, 0.08);
-    --radius: 14px;
-    --radius-btn: 980px;
-    --content-width: 720px;
-    --wide-width: 960px;
+    /* frenem-build_3 palette */
+    --frenem-bg: #ffffff;
+    --frenem-bg-soft: #f4f4f2;
+    --frenem-bg-dark: #0a0a0a;
+    --frenem-ink: #0a0a0a;
+    --frenem-ink-secondary: #555555;
+    --frenem-ink-tertiary: #999999;
+    --frenem-accent: #ff5b1f;
+    --frenem-accent-soft: rgba(255, 91, 31, 0.08);
+    --frenem-border: rgba(10, 10, 10, 0.08);
+    --frenem-border-strong: rgba(10, 10, 10, 0.16);
+    --frenem-border-dark: rgba(255, 255, 255, 0.1);
 
-    --background: 40 20% 96%;
-    --foreground: 30 10% 10%;
+    --content-width: 1240px;
+    --narrow-width: 820px;
+    --radius-btn: 100px;
+
+    --background: 0 0% 100%;
+    --foreground: 0 0% 4%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 0 0% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --popover-foreground: 0 0% 4%;
+    --primary: 0 0% 4%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 10% 96%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 40 10% 96%;
+    --muted-foreground: 0 0% 35%;
+    --accent: 240 6% 95%;
+    --accent-foreground: 0 0% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+    --border: 40 12% 90%;
+    --input: 40 12% 90%;
+    --ring: 16 100% 56%;
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 16 100% 56%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 18%;
+    --muted-foreground: 0 0% 72%;
+    --accent: 0 0% 18%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 0 0% 22%;
+    --input: 0 0% 22%;
+    --ring: 16 100% 56%;
   }
 }
 
@@ -69,15 +69,16 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
   }
   * {
     @reference border-border;
   }
   body {
     @reference bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings: "ss01" 1, "cv01" 1;
     overflow-x: hidden;
-    line-height: 1.7;
+    line-height: 1.45;
   }
 }
 
@@ -85,15 +86,15 @@
   .apple-button {
     @reference px-6 py-3 rounded-full bg-primary text-primary-foreground font-semibold transition-all duration-300 ease-in-out hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
   }
-  
+
   .section-title {
     @reference text-4xl font-bold mb-8 text-center text-foreground;
   }
-  
+
   .text-gradient {
     @reference bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600;
   }
-  
+
   .hover-lift {
     @reference transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg;
   }
@@ -105,7 +106,7 @@
   }
 
   .container-wide {
-    max-width: var(--wide-width);
+    max-width: var(--content-width);
     margin: 0 auto;
     padding: 0 24px;
   }
@@ -121,12 +122,33 @@
     font-family: var(--font-logo), sans-serif;
   }
 
-  .font-serif {
-    font-family: var(--font-serif), serif;
-  }
-
   .font-sans {
     font-family: var(--font-sans), sans-serif;
   }
-}
 
+  /** Section eyebrow — line prefix like build_3 `.section-label` */
+  .frenem-section-label {
+    @reference flex items-center gap-3 mb-6 text-[13px] font-medium text-[var(--frenem-ink-secondary)];
+  }
+
+  .frenem-section-label::before {
+    content: "";
+    width: 24px;
+    height: 1px;
+    background: var(--frenem-ink);
+    flex-shrink: 0;
+  }
+
+  /** Hero eyebrow variant (build_3 `.hero-eyebrow`) */
+  .frenem-hero-eyebrow {
+    @reference flex items-center gap-3 text-[13px] font-medium text-[var(--frenem-ink-secondary)];
+  }
+
+  .frenem-hero-eyebrow::before {
+    content: "";
+    width: 24px;
+    height: 1px;
+    background: var(--frenem-ink);
+    flex-shrink: 0;
+  }
+}

@@ -2,12 +2,15 @@
 
 import Reveal from "./Reveal"
 import { useContactModal } from "../context/ContactModalContext"
+import type { ReactNode } from "react"
 
 interface FinalCtaSectionProps {
   label?: string
-  title: React.ReactNode
+  title: ReactNode
   subtitle: string
   buttonText?: string
+  sectionName?: string
+  sectionNum?: string
 }
 
 export default function FinalCtaSection({
@@ -15,35 +18,41 @@ export default function FinalCtaSection({
   title,
   subtitle,
   buttonText = "Talk to us →",
+  sectionName = "Contact",
+  sectionNum = "09",
 }: FinalCtaSectionProps) {
   const { openModal } = useContactModal()
 
   return (
-    <section className="py-[140px] pb-[100px] bg-[#1a1a18] text-[#f6f4f0] text-center">
+    <section
+      className="relative overflow-hidden bg-[var(--frenem-bg)] px-0 py-[120px] pb-24 pt-40 text-left max-md:py-24"
+      data-section-name={sectionName}
+      data-section-num={sectionNum}
+    >
       <div className="container-v2">
         <Reveal>
-          <div className="font-sans text-sm font-medium tracking-[2.5px] uppercase text-[#d4a843] mb-5">
-            {label}
-          </div>
+          <div className="frenem-section-label mb-10">{label}</div>
         </Reveal>
-        <Reveal delay={0.04}>
-          <h2 className="font-serif text-[clamp(38px,5.5vw,60px)] font-normal leading-[1.1] tracking-[-1px] max-w-[580px] mx-auto mb-6">
+        <Reveal delay={0.05}>
+          <h2 className="mb-16 max-w-[1100px] font-sans text-[clamp(40px,9vw,132px)] font-semibold leading-[0.95] tracking-[-0.04em] text-[var(--frenem-ink)] md:mb-16">
             {title}
           </h2>
         </Reveal>
-        <Reveal delay={0.08}>
-          <p className="font-serif text-[22px] text-[rgba(246,244,240,0.5)] max-w-[440px] mx-auto mb-11 leading-[1.6]">
-            {subtitle}
-          </p>
-        </Reveal>
-        <Reveal delay={0.12}>
-          <button
-            type="button"
-            onClick={openModal}
-            className="font-sans text-[17px] font-medium py-4 px-9 rounded-[980px] bg-[#f6f4f0] text-[#1a1a18] hover:opacity-90 transition-opacity inline-block"
-          >
-            {buttonText}
-          </button>
+        <Reveal delay={0.1}>
+          <div className="grid grid-cols-1 items-end gap-10 border-t border-[var(--frenem-border)] pt-8 lg:grid-cols-2 lg:gap-16">
+            <p className="max-w-[480px] font-sans text-lg font-normal leading-relaxed text-[var(--frenem-ink-secondary)]">
+              {subtitle}
+            </p>
+            <div className="lg:justify-self-end">
+              <button
+                type="button"
+                onClick={openModal}
+                className="inline-flex cursor-pointer items-center gap-2 rounded-full border-none bg-[var(--frenem-ink)] px-7 py-4 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-all duration-300 hover:bg-[var(--frenem-accent)] hover:translate-y-[-2px]"
+              >
+                {buttonText}
+              </button>
+            </div>
+          </div>
         </Reveal>
       </div>
     </section>
