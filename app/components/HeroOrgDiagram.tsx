@@ -21,13 +21,46 @@ const DEPT_LABEL_W = {
   People: 42,
 } as const
 
+const THEMES = {
+  light: {
+    labelBg: "var(--frenem-bg)",
+    line: "var(--frenem-border-strong)",
+    pulse: "var(--frenem-accent)",
+    founderFill: "var(--frenem-ink)",
+    founderStroke: "var(--frenem-ink)",
+    founderText: "var(--frenem-ink)",
+    deptFill: "var(--frenem-bg)",
+    deptStroke: "var(--frenem-ink)",
+    deptText: "var(--frenem-ink-secondary)",
+    teamFill: "var(--frenem-bg-soft)",
+    teamStroke: "var(--frenem-border-strong)",
+  },
+  dark: {
+    labelBg: "#0a0f1e",
+    line: "rgba(255, 255, 255, 0.18)",
+    pulse: "#f59e0b",
+    founderFill: "#ffffff",
+    founderStroke: "#ffffff",
+    founderText: "#ffffff",
+    deptFill: "#111827",
+    deptStroke: "rgba(255, 255, 255, 0.75)",
+    deptText: "rgba(255, 255, 255, 0.55)",
+    teamFill: "rgba(255, 255, 255, 0.06)",
+    teamStroke: "rgba(255, 255, 255, 0.2)",
+  },
+} as const
+
+type DiagramTheme = keyof typeof THEMES
+
 function AnimatedNodeLabelBackdrop({
   y,
   w,
+  fill,
   motionProps,
 }: {
   y: number
   w: number
+  fill: string
   motionProps: { initial: { opacity: number }; animate: { opacity: number }; transition?: Transition }
 }) {
   const { padX, padY, rx, boxH } = LABEL_BG
@@ -37,7 +70,7 @@ function AnimatedNodeLabelBackdrop({
     <motion.rect
       aria-hidden
       animate={motionProps.animate}
-      fill="var(--frenem-bg)"
+      fill={fill}
       height={fullH}
       initial={motionProps.initial}
       rx={rx}
@@ -61,11 +94,26 @@ const LINE_CFG = [
   { x1: 420, y1: 320, x2: 480, y2: 430, delay: 1.15 },
 ] as const
 
-function OrgLine({ x1, y1, x2, y2, delay }: { x1: number; y1: number; x2: number; y2: number; delay: number }) {
+function OrgLine({
+  x1,
+  y1,
+  x2,
+  y2,
+  delay,
+  stroke,
+}: {
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+  delay: number
+  stroke: string
+}) {
   const len = Math.hypot(x2 - x1, y2 - y1)
   return (
     <motion.line
-      className="fill-none stroke-[var(--frenem-border-strong)]"
+      className="fill-none"
+      stroke={stroke}
       strokeWidth={1}
       x1={x1}
       y1={y1}
@@ -80,14 +128,15 @@ function OrgLine({ x1, y1, x2, y2, delay }: { x1: number; y1: number; x2: number
 
 /** Framer Motion on `<g>` overwrites SVG `transform`. Keep layout on static `<g>`, animate children only.
  * Pulse uses svg `cx`/`cy` + animated `r` (not css `scale`) so expansion is radial and aligned with geometry. */
-export default function HeroOrgDiagram() {
+export default function HeroOrgDiagram({ theme = "light" }: { theme?: DiagramTheme }) {
+  const t = THEMES[theme]
   const pulseStartR = FOUNDER.r + 2
 
   return (
     <svg className="h-full w-full overflow-visible" viewBox="0 0 540 540" xmlns="http://www.w3.org/2000/svg" aria-hidden>
       <g>
         {LINE_CFG.map((l) => (
-          <OrgLine key={`${l.x1}-${l.y1}-${l.x2}-${l.y2}`} {...l} />
+          <OrgLine key={`${l.x1}-${l.y1}-${l.x2}-${l.y2}`} stroke={t.line} {...l} />
         ))}
       </g>
 
@@ -97,7 +146,7 @@ export default function HeroOrgDiagram() {
         cy={FOUNDER.cy}
         fill="none"
         r={pulseStartR}
-        stroke="var(--frenem-accent)"
+        stroke={t.pulse}
         strokeWidth={2}
       >
         <animate
@@ -121,7 +170,8 @@ export default function HeroOrgDiagram() {
         <motion.circle
           cx={0}
           cy={0}
-          className="fill-[var(--frenem-ink)] stroke-[var(--frenem-ink)]"
+          fill={t.founderFill}
+          stroke={t.founderStroke}
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           r={FOUNDER.r}
@@ -130,6 +180,7 @@ export default function HeroOrgDiagram() {
           transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1], delay: 0.2 }}
         />
         <AnimatedNodeLabelBackdrop
+          fill={t.labelBg}
           motionProps={{
             initial: { opacity: 0 },
             animate: { opacity: 1 },
@@ -139,7 +190,8 @@ export default function HeroOrgDiagram() {
           y={61}
         />
         <motion.text
-          className="fill-[var(--frenem-ink)] font-sans text-[11px] font-semibold"
+          className="font-sans text-[11px] font-semibold"
+          fill={t.founderText}
           dominantBaseline="middle"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -160,7 +212,8 @@ export default function HeroOrgDiagram() {
           <motion.circle
             cx={0}
             cy={0}
-            className="fill-[var(--frenem-bg)] stroke-[var(--frenem-ink)]"
+            fill={t.deptFill}
+            stroke={t.deptStroke}
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             r={22}
@@ -169,6 +222,7 @@ export default function HeroOrgDiagram() {
             transition={{ duration: 0.55, ease: [0.34, 1.56, 0.64, 1], delay: 0.85 + i * 0.1 }}
           />
           <AnimatedNodeLabelBackdrop
+            fill={t.labelBg}
             motionProps={{
               initial: { opacity: 0 },
               animate: { opacity: 1 },
@@ -178,7 +232,8 @@ export default function HeroOrgDiagram() {
             y={44}
           />
           <motion.text
-            className="fill-[var(--frenem-ink-secondary)] font-sans text-[11px] font-medium"
+            className="font-sans text-[11px] font-medium"
+            fill={t.deptText}
             dominantBaseline="middle"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -203,7 +258,8 @@ export default function HeroOrgDiagram() {
           <motion.circle
             cx={0}
             cy={0}
-            className="fill-[var(--frenem-bg-soft)] stroke-[var(--frenem-border-strong)]"
+            fill={t.teamFill}
+            stroke={t.teamStroke}
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             r={14}

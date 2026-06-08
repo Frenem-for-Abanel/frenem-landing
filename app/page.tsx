@@ -85,13 +85,29 @@ const pulseFeatures = [
   },
 ]
 
+const PRISM_SHADER_COLORS = {
+  bg: "#f0f9ff", // Pale sky blue
+  bg2: "#e0f2fe", // Slightly deeper sky blue
+  accent: "#ffffff", // Pure white clouds
+  accent2: "#0284c7", // Deep sky blue for depth
+  highlight: "#bae6fd", // Soft blue highlight
+} as const
+
+const PULSE_SHADER_COLORS = {
+  bg: "#f0fdf4", // Soft mint
+  bg2: "#dcfce7", // Slightly deeper mint
+  accent: "#ffffff", // Pure white clouds
+  accent2: "#059669", // Deep emerald for depth
+  highlight: "#bbf7d0", // Soft green highlight
+} as const
+
 const emAccent = "italic font-normal text-[var(--frenem-accent)]"
 
 export default function Home() {
   const { activeProduct } = useProduct()
 
   return (
-    <div className="pt-16">
+    <div>
       {activeProduct === "build" && (
         <>
           <HeroBuild />
@@ -127,6 +143,7 @@ export default function Home() {
             subtitle="Lightweight employee management that gives your people clarity on who does what, how they're measured, and where they stand."
             ctaText="Get started →"
             visual={<PrismHeroVisual />}
+            shaderColors={PRISM_SHADER_COLORS}
           />
           <FeatureListSection
             label="What Prism Does"
@@ -163,6 +180,7 @@ export default function Home() {
             subtitle="Multirater feedback that goes beyond ratings. Structured perspectives, competency evaluation, and clear development paths."
             ctaText="Get started →"
             visual={<PulseHeroVisual />}
+            shaderColors={PULSE_SHADER_COLORS}
           />
           <FeatureListSection
             label="What Pulse Does"
