@@ -28,15 +28,8 @@ export default function PositioningSection() {
         </Reveal>
         <Reveal delay={0.05}>
           <p className="mb-16 max-w-[1000px] font-sans text-[clamp(28px,4.4vw,56px)] font-medium leading-tight tracking-[-0.025em] text-[var(--frenem-ink)] lg:mb-20">
-            The org design that{" "}
-            <span className="group relative cursor-default border-b border-dashed border-[rgba(10,10,10,0.35)] pb-px">
-              McKinsey, Bain &amp; BCG
-              <span className="pointer-events-none absolute bottom-[calc(100%+12px)] left-0 z-10 hidden whitespace-nowrap rounded-md bg-[var(--frenem-ink)] px-3.5 py-2 font-sans text-[13px] font-normal not-italic tracking-normal text-[var(--frenem-bg)] shadow-[0_4px_24px_rgba(0,0,0,0.12)] after:absolute after:left-6 after:top-full after:border-4 after:border-transparent after:border-t-[var(--frenem-ink)] group-hover:block">
-                the &quot;MBB&quot; firms
-              </span>
-            </span>{" "}
-            deliver in six months and six figures.{" "}
-            <em className="font-normal italic text-[var(--frenem-accent)]">Done in 8 weeks.</em>
+            The design that big consulting firms deliver in six months and six figures.{" "}
+            <em className="font-normal italic text-[var(--frenem-accent)]">Done in weeks.</em>
           </p>
         </Reveal>
 
