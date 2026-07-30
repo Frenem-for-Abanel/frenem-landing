@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 
-/** Thin accent strip — parity with frenem-build_3.html `#progressBar` */
+/** Thin accent strip: parity with frenem-build_3.html `#progressBar` */
 export default function ScrollProgressBar() {
   const [p, setP] = useState(0)
 

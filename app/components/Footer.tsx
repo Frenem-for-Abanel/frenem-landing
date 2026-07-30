@@ -9,7 +9,7 @@ export default function Footer() {
   const link = (
     tab: ProductTab,
     label: string,
-    className = "text-left font-sans text-sm text-white/60 transition-colors hover:text-[var(--frenem-bg)] md:text-right"
+    className = "min-h-11 text-left font-sans text-sm text-white/60 transition-colors hover:text-[var(--frenem-bg)] md:min-h-0 md:text-right"
   ) => (
     <button type="button" className={className} onClick={() => setActiveProduct(tab)}>
       {label}
@@ -17,20 +17,20 @@ export default function Footer() {
   )
 
   return (
-    <footer className="relative overflow-hidden bg-[var(--frenem-bg-dark)] px-6 py-14 text-[var(--frenem-ink-secondary)] md:px-8 md:pb-10 md:pt-14">
-      <div className="mx-auto mb-12 grid max-w-[var(--content-width)] grid-cols-1 items-end gap-8 md:grid-cols-[1fr_auto] md:gap-8">
-        <div className="font-logo text-[clamp(60px,12vw,140px)] font-bold lowercase leading-[0.85] tracking-[-0.04em] text-[var(--frenem-bg)]">
+    <footer className="relative overflow-hidden bg-[var(--frenem-bg-dark)] px-4 py-12 text-[var(--frenem-ink-secondary)] sm:px-6 md:px-8 md:pb-10 md:pt-14">
+      <div className="mx-auto mb-10 grid max-w-[var(--content-width)] grid-cols-1 items-end gap-8 md:mb-12 md:grid-cols-[1fr_auto] md:gap-8">
+        <div className="font-logo text-[clamp(48px,12vw,140px)] font-bold lowercase leading-[0.85] tracking-[-0.04em] text-[var(--frenem-bg)]">
           frenem
         </div>
-        <nav className="flex flex-col gap-3 md:text-right" aria-label="Product">
+        <nav className="flex flex-col gap-1 md:gap-3 md:text-right" aria-label="Product">
+          {link("pulse", "Pulse")}
           {link("build", "Build")}
           {link("prism", "Prism")}
-          {link("pulse", "Pulse")}
           <a
             href="https://frenem.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-sans text-sm text-white/60 transition-colors hover:text-[var(--frenem-bg)] md:text-right"
+            className="inline-flex min-h-11 items-center font-sans text-sm text-white/60 transition-colors hover:text-[var(--frenem-bg)] md:min-h-0 md:justify-end md:text-right"
           >
             frenem.com
           </a>
