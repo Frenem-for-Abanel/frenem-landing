@@ -18,8 +18,9 @@ const inter = Inter({
 })
 
 export const metadata = {
-  title: "Frenem | Organisation Design for Scale",
-  description: "Build an organisation that scales beyond you. Clarity in roles, decisions, and leadership.",
+  title: "Frenem | Relational Diagnostics & Organisation Design",
+  description:
+    "Frenem Pulse maps how people actually work together. Build designs organisation systems for scale. Prism keeps employee clarity current.",
 }
 
 export default function RootLayout({

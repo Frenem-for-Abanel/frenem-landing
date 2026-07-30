@@ -32,7 +32,7 @@ const transforms: { before: string; after: string }[] = [
 export default function TransformationSection() {
   return (
     <section
-      className="relative overflow-hidden bg-[var(--frenem-bg-dark)] py-[140px] text-[var(--frenem-bg)]"
+      className="relative overflow-hidden bg-[var(--frenem-bg-dark)] py-16 text-[var(--frenem-bg)] md:py-[140px]"
       data-section-name="Transformation"
       data-section-num="03"
     >
@@ -43,7 +43,7 @@ export default function TransformationSection() {
           </div>
         </Reveal>
         <Reveal delay={0.05}>
-          <h2 className="mb-14 font-sans text-[clamp(36px,5vw,72px)] font-semibold leading-none tracking-[-0.03em] text-[var(--frenem-bg)]">
+          <h2 className="mb-10 font-sans text-[clamp(28px,5vw,72px)] font-semibold leading-none tracking-[-0.03em] text-[var(--frenem-bg)] md:mb-14">
             What changes <em className="font-normal italic">after Build.</em>
           </h2>
         </Reveal>

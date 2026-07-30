@@ -102,13 +102,20 @@
   .container-v2 {
     max-width: var(--content-width);
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 16px;
   }
 
   .container-wide {
     max-width: var(--content-width);
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 16px;
+  }
+
+  @media (min-width: 640px) {
+    .container-v2,
+    .container-wide {
+      padding: 0 24px;
+    }
   }
 
   @media (min-width: 768px) {
@@ -126,9 +133,9 @@
     font-family: var(--font-sans), sans-serif;
   }
 
-  /** Section eyebrow — line prefix like build_3 `.section-label` */
+  /** Section eyebrow: line prefix like build_3 `.section-label` */
   .frenem-section-label {
-    @reference flex items-center gap-3 mb-6 text-[13px] font-medium text-[var(--frenem-ink-secondary)];
+    @apply flex items-center gap-3 mb-6 text-[13px] font-medium text-[var(--frenem-ink-secondary)];
   }
 
   .frenem-section-label::before {
@@ -141,7 +148,7 @@
 
   /** Hero eyebrow variant (build_3 `.hero-eyebrow`) */
   .frenem-hero-eyebrow {
-    @reference flex items-center gap-3 text-[13px] font-medium text-[var(--frenem-ink-secondary)];
+    @apply flex items-center gap-3 text-[13px] font-medium text-[var(--frenem-ink-secondary)];
   }
 
   .frenem-hero-eyebrow::before {

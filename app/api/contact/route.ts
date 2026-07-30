@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import nodemailer from "nodemailer"
+import { escapeHtml } from "../../utils/escape-html"
 
 export async function POST(req: Request) {
   try {
@@ -27,10 +28,17 @@ export async function POST(req: Request) {
       },
     })
 
-    const teamSizeRow = team_size ? `<p><strong>Team size:</strong> ${team_size}</p>` : ""
-    const interestRow = interest ? `<p><strong>Interested in:</strong> ${interest}</p>` : ""
-    const messageRow = messageContent
-      ? `<p><strong>Message:</strong></p><p>${messageContent}</p>`
+    const safeName = escapeHtml(String(name ?? ""))
+    const safeEmail = escapeHtml(String(email ?? ""))
+    const safeCompany = escapeHtml(String(company ?? ""))
+    const safeTeamSize = team_size ? escapeHtml(String(team_size)) : ""
+    const safeInterest = interest ? escapeHtml(String(interest)) : ""
+    const safeMessage = messageContent ? escapeHtml(String(messageContent)) : ""
+
+    const teamSizeRow = safeTeamSize ? `<p><strong>Team size:</strong> ${safeTeamSize}</p>` : ""
+    const interestRow = safeInterest ? `<p><strong>Interested in:</strong> ${safeInterest}</p>` : ""
+    const messageRow = safeMessage
+      ? `<p><strong>Message:</strong></p><p>${safeMessage}</p>`
       : ""
 
     // Email content
@@ -38,12 +46,12 @@ export async function POST(req: Request) {
       from: process.env.EMAIL_USER,
       to: ['antony.paul@abanel.com','sanjay.antony@abanel.com'], // Multiple recipients
       // to: ['arjun.ravikumar@abanel.com'], // Multiple recipients
-      subject: `New Contact Form Submission from ${name}`,
+      subject: `New Contact Form Submission from ${String(name ?? "")}`,
       html: `
         <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Company:</strong> ${company}</p>
+        <p><strong>Name:</strong> ${safeName}</p>
+        <p><strong>Email:</strong> ${safeEmail}</p>
+        <p><strong>Company:</strong> ${safeCompany}</p>
         ${teamSizeRow}
         ${interestRow}
         ${messageRow}

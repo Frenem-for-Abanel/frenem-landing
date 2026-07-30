@@ -3,7 +3,7 @@
 import type { Transition } from "framer-motion"
 import { motion } from "framer-motion"
 
-/** Single source for founder geometry (SVG user space — same cx/cy for node + pulse) */
+/** Single source for founder geometry (SVG user space: same cx/cy for node + pulse) */
 const FOUNDER = { cx: 270, cy: 90, r: 32 } as const
 
 const LABEL_BG = {
@@ -140,7 +140,7 @@ export default function HeroOrgDiagram({ theme = "light" }: { theme?: DiagramThe
         ))}
       </g>
 
-      {/* SMIL <animate> — Framer often ignores SVG `r`; native animation is reliable and stays centered on cx/cy */}
+      {/* SMIL <animate>: Framer often ignores SVG `r`; native animation is reliable and stays centered on cx/cy */}
       <circle
         cx={FOUNDER.cx}
         cy={FOUNDER.cy}

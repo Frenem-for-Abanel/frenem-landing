@@ -12,7 +12,7 @@ type ProductContextType = {
 const ProductContext = createContext<ProductContextType | null>(null)
 
 export function ProductProvider({ children }: { children: ReactNode }) {
-  const [activeProduct, setActiveProductState] = useState<ProductTab>("build")
+  const [activeProduct, setActiveProductState] = useState<ProductTab>("pulse")
 
   const setActiveProduct = useCallback((tab: ProductTab) => {
     setActiveProductState(tab)

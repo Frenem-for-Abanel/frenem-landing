@@ -19,7 +19,7 @@ export default function HeroBuild() {
 
   const handleHowClick = (e: React.MouseEvent) => {
     e.preventDefault()
-    smoothScrollTo("how")
+    smoothScrollTo("how-build")
   }
 
   const hidden = { opacity: 0, y: 20 }
@@ -41,10 +41,10 @@ export default function HeroBuild() {
 
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#fffbeb]/60 via-transparent to-[#fffbeb]/80" />
 
-        <div className="relative z-10 mx-auto grid min-h-0 w-full max-w-[var(--content-width)] grid-cols-1 items-center gap-12 px-6 pb-[60px] pt-[120px] md:px-8 lg:min-h-screen lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:pb-20 lg:pt-[120px]">
-          <motion.div className="flex flex-col justify-center">
+        <div className="relative z-10 mx-auto grid min-h-0 w-full max-w-[var(--content-width)] grid-cols-1 items-center gap-8 px-5 pb-12 pt-24 sm:px-6 md:gap-12 md:px-8 md:pb-[60px] md:pt-[120px] lg:min-h-screen lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:pb-20 lg:pt-[120px]">
+          <motion.div className="flex min-w-0 flex-col justify-center">
             <motion.div
-              className="mb-8 flex items-center gap-3 text-[13px] font-medium text-[var(--frenem-ink-secondary)] before:h-px before:w-6 before:shrink-0 before:bg-[var(--frenem-ink)] before:content-['']"
+              className="frenem-hero-eyebrow mb-5 md:mb-8"
               initial={hidden}
               animate={shown}
               transition={{ duration: 0.65, delay: 0.05 }}
@@ -52,7 +52,7 @@ export default function HeroBuild() {
               Frenem Build · Organisation Design
             </motion.div>
             <motion.h1
-              className="mb-8 font-sans text-[clamp(48px,6.5vw,96px)] font-semibold leading-[0.98] tracking-[-0.035em] text-[var(--frenem-ink)]"
+              className="mb-5 font-sans text-[clamp(34px,6.5vw,96px)] font-semibold leading-[0.98] tracking-[-0.035em] text-[var(--frenem-ink)] md:mb-8"
               initial={hidden}
               animate={shown}
               transition={{ duration: 0.65, delay: 0.17 }}
@@ -63,7 +63,7 @@ export default function HeroBuild() {
               </em>
             </motion.h1>
             <motion.p
-              className="mb-10 max-w-[480px] font-sans text-xl font-normal leading-[1.5] tracking-[-0.005em] text-[var(--frenem-ink-secondary)]"
+              className="mb-8 max-w-[480px] font-sans text-lg font-normal leading-[1.5] tracking-[-0.005em] text-[var(--frenem-ink-secondary)] md:mb-10 md:text-xl"
               initial={hidden}
               animate={shown}
               transition={{ duration: 0.65, delay: 0.29 }}
@@ -79,14 +79,14 @@ export default function HeroBuild() {
               <button
                 type="button"
                 onClick={openModal}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-full border-none bg-[var(--frenem-ink)] text-[var(--frenem-bg)] hover:bg-[var(--frenem-accent)] px-7 py-4 font-sans text-[15px] font-medium transition-colors duration-300 hover:translate-y-[-2px]"
+                className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-colors duration-300 hover:translate-y-[-2px] hover:bg-[var(--frenem-accent)] md:py-4"
               >
                 Start your free assessment →
               </button>
               <a
-                href="#how"
+                href="#how-build"
                 onClick={handleHowClick}
-                className="border-b border-[var(--frenem-ink)] pb-1 font-sans text-[15px] font-medium text-[var(--frenem-ink)] transition-colors hover:border-[var(--frenem-accent)] hover:text-[var(--frenem-accent)]"
+                className="inline-flex min-h-11 items-center border-b border-[var(--frenem-ink)] pb-1 font-sans text-[15px] font-medium text-[var(--frenem-ink)] transition-colors hover:border-[var(--frenem-accent)] hover:text-[var(--frenem-accent)]"
               >
                 See how
               </a>
@@ -94,7 +94,7 @@ export default function HeroBuild() {
           </motion.div>
 
           <motion.div
-            className="relative mx-auto aspect-square w-full max-w-[400px] justify-self-center lg:max-w-[540px]"
+            className="relative mx-auto aspect-square w-full max-w-[320px] min-w-0 justify-self-center sm:max-w-[400px] lg:max-w-[540px]"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.16, 1] }}

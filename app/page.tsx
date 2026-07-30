@@ -14,6 +14,10 @@ import SubHero from "./components/SubHero"
 import FeatureListSection from "./components/FeatureListSection"
 import PrismHeroVisual from "./components/PrismHeroVisual"
 import PulseHeroVisual from "./components/PulseHeroVisual"
+import PulseLensesSection from "./components/PulseLensesSection"
+import PulseMethodSection from "./components/PulseMethodSection"
+import PulseReportsSection from "./components/PulseReportsSection"
+import PulsePrivacySection from "./components/PulsePrivacySection"
 
 const prismFeatures = [
   {
@@ -55,33 +59,33 @@ const prismFeatures = [
 const pulseFeatures = [
   {
     num: "01",
-    title: "Comprehensive Competency Evaluation",
+    title: "Exit risk, visible early",
     description:
-      "Assess the competencies that actually matter for each role. Not generic checklists, but evaluations built around your organisation's needs.",
+      "Strain, silence, and isolation rarely appear alone. Pulse cross-references them to flag likely departures while there is still time to act.",
   },
   {
     num: "02",
-    title: "Actionable Behavioural Insights",
+    title: "Hidden brokers, surfaced",
     description:
-      "Go beyond scores. Understand the behavioural patterns that drive performance, and the ones that hold it back.",
+      "The people quietly holding your network together, trusted across teams, absent from every succession plan. Pulse names the single points of failure.",
   },
   {
     num: "03",
-    title: "Data-Driven Development Plans",
+    title: "The manager effect, isolated",
     description:
-      "Clear, individual development plans generated from real feedback data. Not templated advice.",
+      "When a team struggles, Pulse separates the workload from the manager. So you fix the actual problem, not the visible one.",
   },
   {
     num: "04",
-    title: "Structured Multi-Perspective Feedback",
+    title: "Cross-functional friction, mapped",
     description:
-      "Peers, managers, direct reports, and stakeholders. Feedback gathered from every angle, organised for clarity.",
+      "Where collaboration between departments creates energy, and where it drains it. Silos stop being a feeling and become a map.",
   },
   {
     num: "05",
-    title: "Tailored Leadership Recommendations",
+    title: "Five minutes per person",
     description:
-      "Personalised recommendations for leadership development based on where each individual stands today and where they need to go.",
+      "Fifteen questions, tailored by who each person actually works with. One secure link, answered on a phone. No login, no survey fatigue.",
   },
 ]
 
@@ -171,36 +175,43 @@ export default function Home() {
       {activeProduct === "pulse" && (
         <>
           <SubHero
-            label="Frenem Pulse · Multirater Feedback"
+            label="Frenem Pulse · Relational Diagnostics"
             title={
               <>
-                Deep employee insights, <em className={emAccent}>delivered precisely.</em>
+                See how your people <em className={emAccent}>actually work together.</em>
               </>
             }
-            subtitle="Multirater feedback that goes beyond ratings. Structured perspectives, competency evaluation, and clear development paths."
+            subtitle="Engagement surveys measure how people feel. Pulse measures how they work together: the friction, energy, and hidden connections between the people doing the work."
             ctaText="Get started →"
+            secondaryHref="how-pulse"
+            secondaryText="See how"
             visual={<PulseHeroVisual />}
             shaderColors={PULSE_SHADER_COLORS}
           />
+          <PulseLensesSection />
           <FeatureListSection
             label="What Pulse Does"
             heading={
               <>
-                Feedback that drives <em className={emAccent}>real</em> development.
+                The signals standard tools <em className={emAccent}>can&apos;t see.</em>
               </>
             }
             features={pulseFeatures}
+            sectionNum="03"
           />
+          <PulseMethodSection />
+          <PulseReportsSection />
+          <PulsePrivacySection />
           <FinalCtaSection
             label="Get Started with Pulse"
             sectionName="Contact"
-            sectionNum="03"
+            sectionNum="07"
             title={
               <>
-                Feedback that builds <em className={emAccent}>leaders.</em>
+                See your organisation as it <em className={emAccent}>really works.</em>
               </>
             }
-            subtitle="Multirater insights, competency mapping, and development plans. All in one place."
+            subtitle="One link, one short pulse, three report cuts. Friction, energy, and risk, visible while you can still act on them."
           />
         </>
       )}

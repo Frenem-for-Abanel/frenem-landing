@@ -77,23 +77,23 @@ function InfoIcon({ className }: { className?: string }) {
 export default function SecuritySection() {
   return (
     <section
-      className="overflow-hidden bg-[var(--frenem-bg-dark)] py-[140px] text-[var(--frenem-bg)]"
+      className="overflow-hidden bg-[var(--frenem-bg-dark)] py-16 text-[var(--frenem-bg)] md:py-[140px]"
       data-section-name="Security"
       data-section-num="08"
     >
       <div className="container-v2">
-        <div className="mb-20 grid grid-cols-1 items-end gap-8 lg:grid-cols-2 lg:gap-16">
+        <div className="mb-12 grid grid-cols-1 items-end gap-6 md:mb-20 md:gap-8 lg:grid-cols-2 lg:gap-16">
           <Reveal>
             <div className="mb-6 flex items-center gap-3 text-[13px] font-medium text-white/60 before:h-px before:w-6 before:shrink-0 before:bg-[var(--frenem-bg)] before:content-['']">
               Security &amp; Trust
             </div>
-            <h2 className="font-sans text-[clamp(36px,5vw,72px)] font-semibold leading-none tracking-[-0.03em]">
+            <h2 className="font-sans text-[clamp(28px,5vw,72px)] font-semibold leading-none tracking-[-0.03em]">
               Your{" "}
               <em className="font-normal italic text-[var(--frenem-accent)]">data,</em> protected.
             </h2>
           </Reveal>
           <Reveal delay={0.06}>
-            <p className="max-w-[480px] justify-self-end font-sans text-xl font-normal leading-normal tracking-[-0.005em] text-white/70">
+            <p className="max-w-[480px] justify-self-end font-sans text-lg font-normal leading-normal tracking-[-0.005em] text-white/70 md:text-xl">
               Organisation data is sensitive. We treat it that way. Frenem is built on enterprise-grade security practices from the ground up.
             </p>
           </Reveal>
@@ -102,7 +102,7 @@ export default function SecuritySection() {
         <div className="grid grid-cols-1 border-l border-t border-[var(--frenem-border-dark)] md:grid-cols-2 xl:grid-cols-5">
           {ITEMS.map(({ title, body, Icon }, i) => (
             <Reveal key={title} delay={0.03 * i}>
-              <div className="flex min-h-[260px] flex-col gap-4 border-b border-r border-[var(--frenem-border-dark)] bg-transparent p-9 transition-colors duration-500 hover:bg-white/[0.02] xl:min-h-[280px]">
+              <div className="flex min-h-0 flex-col gap-4 border-b border-r border-[var(--frenem-border-dark)] bg-transparent p-6 transition-colors duration-500 hover:bg-white/[0.02] md:min-h-[260px] md:p-9 xl:min-h-[280px]">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center text-[var(--frenem-accent)]">
                   <Icon className="h-9 w-9 stroke-[1.5]" />
                 </div>

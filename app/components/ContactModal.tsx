@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useContactModal } from "../context/ContactModalContext"
 import { useProduct } from "../context/ProductContext"
+import { INTEREST_BY_PRODUCT } from "../utils/interest"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
@@ -33,9 +34,9 @@ const TEAM_OPTIONS = [
 ]
 
 const INTEREST_OPTIONS = [
-  { value: "Build · Org Design Sprint", label: "Build · Org Design Sprint" },
-  { value: "Prism · Employee Management", label: "Prism · Employee Management" },
-  { value: "Pulse · Multirater Feedback", label: "Pulse · Multirater Feedback" },
+  { value: INTEREST_BY_PRODUCT.pulse, label: INTEREST_BY_PRODUCT.pulse },
+  { value: INTEREST_BY_PRODUCT.build, label: INTEREST_BY_PRODUCT.build },
+  { value: INTEREST_BY_PRODUCT.prism, label: INTEREST_BY_PRODUCT.prism },
   { value: "Multiple products", label: "Multiple products" },
   { value: "Not sure yet", label: "Not sure yet" },
 ] as const
@@ -50,12 +51,6 @@ const formSchema = z.object({
 })
 
 type FormValues = z.infer<typeof formSchema>
-
-const INTEREST_BY_PRODUCT = {
-  build: "Build · Org Design Sprint",
-  prism: "Prism · Employee Management",
-  pulse: "Pulse · Multirater Feedback",
-} as const
 
 const labelClass = "mb-1.5 block font-sans text-[13px] font-medium text-[var(--frenem-ink-secondary)]"
 
@@ -152,7 +147,7 @@ export default function ContactModal() {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[1000] flex items-center justify-center bg-[rgba(10,10,10,0.5)] p-6 backdrop-blur-[8px] max-md:p-5"
+          className="fixed inset-0 z-[1000] flex items-end justify-center bg-[rgba(10,10,10,0.5)] p-0 backdrop-blur-[8px] sm:items-center sm:p-5 md:p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -160,7 +155,7 @@ export default function ContactModal() {
           onClick={handleOverlayClick}
         >
           <motion.div
-            className="relative my-auto w-full max-w-[540px] max-h-[calc(100vh-2rem)] overflow-y-auto rounded-xl bg-[var(--frenem-bg)] px-7 py-10 shadow-[0_24px_80px_rgba(0,0,0,0.2)] max-md:px-7 max-md:py-10 md:px-11 md:pb-10 md:pt-12 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
+            className="relative my-0 w-full max-h-[min(92dvh,calc(100dvh-1rem))] overflow-y-auto rounded-t-2xl bg-[var(--frenem-bg)] px-5 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.2)] sm:my-auto sm:max-h-[calc(100dvh-2rem)] sm:max-w-[540px] sm:rounded-xl sm:px-7 sm:py-10 md:px-11 md:pb-10 md:pt-12 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
             initial={{ opacity: 0, y: 16, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -170,7 +165,7 @@ export default function ContactModal() {
             <button
               type="button"
               onClick={resetAndClose}
-              className="absolute right-5 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--frenem-bg-soft)] font-sans text-lg text-[var(--frenem-ink-secondary)] transition-colors hover:bg-[var(--frenem-border)]"
+              className="absolute right-4 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-[var(--frenem-bg-soft)] font-sans text-lg text-[var(--frenem-ink-secondary)] transition-colors hover:bg-[var(--frenem-border)] md:right-5 md:top-4 md:h-9 md:w-9"
               aria-label="Close"
             >
               <span aria-hidden>×</span>
@@ -181,14 +176,14 @@ export default function ContactModal() {
                 <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--frenem-accent-soft)] text-2xl text-[var(--frenem-accent)]">
                   ✓
                 </div>
-                <h3 className="mb-4 font-sans text-[32px] font-semibold tracking-[-0.02em]">We&apos;ll be in touch.</h3>
+                <h3 className="mb-4 font-sans text-[26px] font-semibold tracking-[-0.02em] md:text-[32px]">We&apos;ll be in touch.</h3>
                 <p className="font-sans text-[15px] leading-relaxed text-[var(--frenem-ink-secondary)]">
                   Thanks for reaching out. We&apos;ll get back to you within 24 hours to set up a conversation.
                 </p>
               </div>
             ) : (
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[18px]">
-                <h3 className="font-sans text-[32px] font-semibold leading-tight tracking-[-0.02em]">Get in touch.</h3>
+                <h3 className="pr-10 font-sans text-[26px] font-semibold leading-tight tracking-[-0.02em] md:text-[32px]">Get in touch.</h3>
                 <p className="mb-2 font-sans text-[15px] leading-relaxed text-[var(--frenem-ink-secondary)]">
                   Tell us a little about your business. We&apos;ll get back to you within 24 hours.
                 </p>
@@ -298,7 +293,7 @@ export default function ContactModal() {
                 <button
                   type="submit"
                   disabled={form.formState.isSubmitting}
-                  className="mt-2 w-full cursor-pointer rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-colors hover:bg-[var(--frenem-accent)] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="mt-2 min-h-11 w-full cursor-pointer rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-colors hover:bg-[var(--frenem-accent)] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {form.formState.isSubmitting ? "Sending..." : "Send →"}
                 </button>

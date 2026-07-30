@@ -17,24 +17,31 @@ const EMPTY_BORDER = "rgba(10,10,10,0.16)"
 const phases = [
   {
     label: "Phase 01",
-    title: "Diagnose",
+    title: "Ingest",
     description:
-      "Understand the baseline. People maturity, employee data, employee voice, and how decisions actually flow today. Build the foundation everything else sits on.",
-    time: "Weeks 1–2",
+      "One export from your HR system: reporting lines, teams, tenure. Plus a short intake on what's changing in the business.",
+    time: "Week 1",
   },
   {
     label: "Phase 02",
-    title: "Design",
+    title: "Route & Collect",
     description:
-      "Build the architecture. The grade structure, role catalog, org map, job descriptions, and decision rights. Turn complexity into a simple organisation that executes.",
-    time: "Weeks 3–5",
+      "Every person inside the boundary receives a secure link. Each pulse is tailored to who they actually work with.",
+    time: "Week 2",
   },
   {
     label: "Phase 03",
-    title: "Deploy",
+    title: "Protect & Process",
     description:
-      "Lock in the competency framework, map talent, and deliver a validated, boardroom-ready operating model. A leadership blueprint that outlasts individuals.",
-    time: "Weeks 6–8",
+      "The engine calculates gaps, thresholds, and confidence, and withholds anything that could identify an individual.",
+    time: "Week 3",
+  },
+  {
+    label: "Phase 04",
+    title: "Deliver",
+    description:
+      "Three report cuts land: private coaching guides, a systemic view for leadership, and the relational network map.",
+    time: "Week 4",
   },
 ]
 
@@ -43,7 +50,7 @@ function phaseLit(index: number, total: number, progress: number): boolean {
   return progress >= threshold - 0.15
 }
 
-export default function HowItWorksSection() {
+export default function PulseMethodSection() {
   const timelineRef = useRef<HTMLDivElement>(null)
   const prefersReducedMotion = useReducedMotion()
   const [scrubProgress, setScrubProgress] = useState(0)
@@ -68,23 +75,23 @@ export default function HowItWorksSection() {
 
   return (
     <section
-      id="how-build"
+      id="how-pulse"
+      className="relative overflow-hidden bg-[var(--frenem-bg)] py-16 md:py-[140px]"
       data-section-name="Method"
-      data-section-num="05"
-      className="relative overflow-hidden bg-[var(--frenem-bg-soft)] py-16 md:py-[140px]"
+      data-section-num="04"
     >
       <div className="container-v2">
         <div className="mb-12 grid grid-cols-1 items-end gap-8 md:mb-20 md:gap-10 lg:grid-cols-2 lg:gap-16">
           <Reveal>
             <div className="frenem-section-label">How It Works</div>
             <h2 className="font-sans text-[clamp(28px,5vw,72px)] font-semibold leading-none tracking-[-0.03em]">
-              Fit. Flat. Fast.{" "}
-              <em className="font-normal italic">Ready for scale.</em>
+              Ingest. Route. Protect. <em className="font-normal italic">Deliver.</em>
             </h2>
           </Reveal>
           <Reveal delay={0.06}>
             <p className="max-w-[480px] justify-self-end font-sans text-lg font-normal leading-normal tracking-[-0.005em] text-[var(--frenem-ink-secondary)] md:text-xl">
-              A structured sprint. Not a meandering engagement. You get a working operating system, not a binder.
+              A standard pilot runs four weeks, boundary to reports. Your part: one file from HR, and
+              a few minutes from each person.
             </p>
           </Reveal>
         </div>
@@ -92,7 +99,7 @@ export default function HowItWorksSection() {
         <div ref={timelineRef} className="relative mt-6 md:mt-10">
           <div
             aria-hidden
-            className="pointer-events-none absolute left-[8.33%] right-[8.33%] top-[60px] z-0 hidden h-0.5 lg:block"
+            className="pointer-events-none absolute left-[12.5%] right-[12.5%] top-[60px] z-0 hidden h-0.5 lg:block"
           >
             <div className="absolute inset-0 rounded-full bg-[var(--frenem-border-strong)]" />
             <div
@@ -110,7 +117,7 @@ export default function HowItWorksSection() {
             />
           </div>
 
-          <div className="relative z-[1] grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8">
+          <div className="relative z-[1] grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {phases.map((phase, i) => {
               const lit = prefersReducedMotion || phaseLit(i, n, scrubProgress)
               return (
@@ -136,8 +143,12 @@ export default function HowItWorksSection() {
                         {phase.time}
                       </span>
                     </div>
-                    <h3 className="mb-4 font-sans text-[28px] font-semibold leading-none tracking-[-0.02em] md:text-[32px]">{phase.title}</h3>
-                    <p className="mt-auto font-sans text-[15px] leading-relaxed text-[var(--frenem-ink-secondary)]">{phase.description}</p>
+                    <h3 className="mb-4 font-sans text-[28px] font-semibold leading-none tracking-[-0.02em] md:text-[32px]">
+                      {phase.title}
+                    </h3>
+                    <p className="mt-auto font-sans text-[15px] leading-relaxed text-[var(--frenem-ink-secondary)]">
+                      {phase.description}
+                    </p>
                   </div>
                 </Reveal>
               )

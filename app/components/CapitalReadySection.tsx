@@ -26,7 +26,7 @@ const cards = [
 export default function CapitalReadySection() {
   return (
     <section
-      className="relative overflow-hidden bg-[var(--frenem-bg)] py-[140px]"
+      className="relative overflow-hidden bg-[var(--frenem-bg)] py-16 md:py-[140px]"
       data-section-name="Capital"
       data-section-num="04"
     >
@@ -35,29 +35,29 @@ export default function CapitalReadySection() {
           <div className="frenem-section-label">Capital Ready</div>
         </Reveal>
         <Reveal delay={0.05}>
-          <h2 className="mb-12 max-w-[1000px] font-sans text-[clamp(36px,5vw,72px)] font-semibold leading-none tracking-[-0.03em]">
+          <h2 className="mb-8 max-w-[1000px] font-sans text-[clamp(28px,5vw,72px)] font-semibold leading-none tracking-[-0.03em] md:mb-12">
             Institution-ready. Before markets force the change.
           </h2>
         </Reveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
+        <div className="mt-8 grid grid-cols-1 gap-10 md:mt-12 md:gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
           <div>
             <Reveal delay={0.08}>
-              <p className="mb-12 font-sans text-[22px] font-normal leading-snug tracking-[-0.01em] text-[var(--frenem-ink)]">
+              <p className="mb-8 font-sans text-lg font-normal leading-snug tracking-[-0.01em] text-[var(--frenem-ink)] md:mb-12 md:text-[22px]">
                 IPOs and PE deals don&apos;t fail because of strategy. They fail because investors see organisation risk.
                 Promoter dependency, informal decision-making, a thin leadership bench. Build moves that work upstream,
                 before it becomes expensive.
               </p>
             </Reveal>
             <Reveal delay={0.12}>
-              <div className="rounded-2xl border border-[var(--frenem-border)] bg-[var(--frenem-bg-soft)] p-8">
+              <div className="rounded-2xl border border-[var(--frenem-border)] bg-[var(--frenem-bg-soft)] p-6 md:p-8">
                 <div
                   className="text-[56px] leading-[0.5] text-[var(--frenem-accent)]"
                   style={{ fontFamily: "Georgia, serif" }}
                 >
                   &ldquo;
                 </div>
-                <p className="mt-4 font-sans text-2xl font-medium leading-snug tracking-[-0.02em]">
+                <p className="mt-4 font-sans text-xl font-medium leading-snug tracking-[-0.02em] md:text-2xl">
                   Will this company still work if the promoter steps back?
                 </p>
                 <p className="mt-4 flex items-center gap-2 font-sans text-[13px] font-medium tracking-[0.02em] text-[var(--frenem-ink-tertiary)]">
@@ -71,10 +71,10 @@ export default function CapitalReadySection() {
           <div className="flex flex-col gap-3">
             {cards.map((card, i) => (
               <Reveal key={card.title} delay={0.06 * i}>
-                <div className="group grid cursor-default grid-cols-[48px_1fr] items-start gap-5 rounded-xl border border-[var(--frenem-border-strong)] bg-[var(--frenem-bg)] p-7 transition-all duration-300 hover:-translate-x-1 hover:border-[var(--frenem-ink)]">
+                <div className="group grid cursor-default grid-cols-[40px_1fr] items-start gap-4 rounded-xl border border-[var(--frenem-border-strong)] bg-[var(--frenem-bg)] p-5 transition-all duration-300 hover:-translate-x-1 hover:border-[var(--frenem-ink)] md:grid-cols-[48px_1fr] md:gap-5 md:p-7">
                   <span className="pt-1 font-sans text-[13px] font-medium text-[var(--frenem-ink-tertiary)]">{card.num}</span>
                   <div>
-                    <h4 className="mb-1.5 font-sans text-xl font-semibold tracking-[-0.01em]">{card.title}</h4>
+                    <h4 className="mb-1.5 font-sans text-lg font-semibold tracking-[-0.01em] md:text-xl">{card.title}</h4>
                     <p className="font-sans text-[15px] font-normal leading-normal text-[var(--frenem-ink-secondary)]">
                       {card.description}
                     </p>

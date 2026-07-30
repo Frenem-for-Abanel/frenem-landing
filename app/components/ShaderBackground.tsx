@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react"
 import type { CSSProperties } from "react"
 
 /**
- * ShaderBackground — a dependency-free, interactive WebGL2 canvas wallpaper.
+ * ShaderBackground: a dependency-free, interactive WebGL2 canvas wallpaper.
  *
  * Five "living organisation map" variants share one render pipeline. Every
  * variant reacts to pointer position (`u_mouse` / `u_pointer`) and click
@@ -28,7 +28,7 @@ export interface ShaderBackgroundColors {
 
 export interface ShaderBackgroundProps {
   colors?: ShaderBackgroundColors
-  /** Output alpha (0–1) — lets the canvas sit translucently over content. */
+  /** Output alpha (0-1). Lets the canvas sit translucently over content. */
   alpha?: number
   /** Brightness multiplier. */
   intensity?: number
