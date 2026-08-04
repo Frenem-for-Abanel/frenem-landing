@@ -1,7 +1,7 @@
 "use client"
 
 import Reveal from "./Reveal"
-import { useContactModal } from "../context/ContactModalContext"
+import { useContactModal, type ContactModalMode } from "../context/ContactModalContext"
 import type { ReactNode } from "react"
 
 interface FinalCtaSectionProps {
@@ -11,6 +11,7 @@ interface FinalCtaSectionProps {
   buttonText?: string
   sectionName?: string
   sectionNum?: string
+  modalMode?: ContactModalMode
 }
 
 export default function FinalCtaSection({
@@ -20,6 +21,7 @@ export default function FinalCtaSection({
   buttonText = "Talk to us →",
   sectionName = "Contact",
   sectionNum = "09",
+  modalMode = "default",
 }: FinalCtaSectionProps) {
   const { openModal } = useContactModal()
 
@@ -46,7 +48,7 @@ export default function FinalCtaSection({
             <div className="lg:justify-self-end">
               <button
                 type="button"
-                onClick={openModal}
+                onClick={() => openModal(modalMode)}
                 className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-all duration-300 hover:bg-[var(--frenem-accent)] hover:translate-y-[-2px] md:py-4"
               >
                 {buttonText}

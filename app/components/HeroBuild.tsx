@@ -71,17 +71,24 @@ export default function HeroBuild() {
               Clarity in roles, decisions, and leadership. Without losing control. In weeks, not months.
             </motion.p>
             <motion.div
-              className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-4"
+              className="flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-[18px] sm:gap-y-4"
               initial={hidden}
               animate={shown}
               transition={{ duration: 0.65, delay: 0.41 }}
             >
               <button
                 type="button"
-                onClick={openModal}
+                onClick={() => openModal("assessment")}
                 className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-colors duration-300 hover:translate-y-[-2px] hover:bg-[var(--frenem-accent)] md:py-4"
               >
                 Start your free assessment →
+              </button>
+              <button
+                type="button"
+                onClick={() => openModal("contact")}
+                className="inline-flex min-h-11 items-center border-b border-[var(--frenem-ink)] pb-1 font-sans text-[15px] font-medium text-[var(--frenem-ink)] transition-colors hover:border-[var(--frenem-accent)] hover:text-[var(--frenem-accent)]"
+              >
+                Just get in touch
               </button>
               <a
                 href="#how-build"

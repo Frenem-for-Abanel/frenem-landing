@@ -101,7 +101,7 @@ export default function Header() {
         ) : null}
         <button
           type="button"
-          onClick={openModal}
+          onClick={() => openModal(activeProduct === "build" ? "contact" : "default")}
           aria-label="Get in touch"
           className="inline-flex items-center justify-center font-sans text-[13px] font-medium h-11 w-11 shrink-0 rounded-full bg-[var(--frenem-ink)] text-[var(--frenem-bg)] hover:bg-[var(--frenem-accent)] transition-colors md:h-auto md:w-auto md:py-2 md:px-[18px]"
         >

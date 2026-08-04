@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useCallback, type ReactNode, type MouseEvent, type KeyboardEvent } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -8,20 +8,23 @@ import * as z from "zod"
 import { useContactModal } from "../context/ContactModalContext"
 import { useProduct } from "../context/ProductContext"
 import { INTEREST_BY_PRODUCT } from "../utils/interest"
+import {
+  ASSESSMENT_QUESTIONS,
+  type AssessmentAnswerKey,
+} from "../utils/assessment-questions"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
 const inputClass =
   "w-full rounded-lg border border-[var(--frenem-border-strong)] bg-[var(--frenem-bg)] px-3.5 py-3 font-sans text-[15px] text-[var(--frenem-ink)] outline-none transition-[border-color,box-shadow] placeholder:text-[var(--frenem-ink-tertiary)] focus:border-[var(--frenem-ink)] focus:shadow-[0_0_0_3px_rgba(10,10,10,0.06)]"
 
-/** Native select: no portal / z-index vs modal; instant OS menu */
 const selectClass = cn(
   inputClass,
   "min-h-[48px] cursor-pointer appearance-none bg-[length:14px_14px] bg-[right_14px_center] bg-no-repeat pr-11 [-webkit-appearance:none]",
 )
 
 const LABEL_CHEVRON =
-  'data:image/svg+xml,' +
+  "data:image/svg+xml," +
   encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`
   )
@@ -41,28 +44,134 @@ const INTEREST_OPTIONS = [
   { value: "Not sure yet", label: "Not sure yet" },
 ] as const
 
-const formSchema = z.object({
+const contactFieldsSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   company: z.string().min(2, { message: "Company name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
+})
+
+const legacyFormSchema = contactFieldsSchema.extend({
   team_size: z.string().optional(),
   interest: z.string().optional(),
   notes: z.string().optional(),
 })
 
-type FormValues = z.infer<typeof formSchema>
+type ContactFields = z.infer<typeof contactFieldsSchema>
+type LegacyFormValues = z.infer<typeof legacyFormSchema>
+
+type AssessmentAnswers = Record<AssessmentAnswerKey, string>
+
+const emptyAssessmentAnswers = (): AssessmentAnswers => ({
+  q1: "",
+  q2: "",
+  q3: "",
+  q4: "",
+})
 
 const labelClass = "mb-1.5 block font-sans text-[13px] font-medium text-[var(--frenem-ink-secondary)]"
 
+const submitBtnClass =
+  "mt-2 min-h-12 w-full cursor-pointer rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-colors hover:bg-[var(--frenem-accent)] disabled:cursor-not-allowed disabled:opacity-50"
+
+function SuccessCheck({ children }: { children: ReactNode }) {
+  return (
+    <div className="px-1 py-4 text-center">
+      <div className="mx-auto mb-5 flex h-[52px] w-[52px] items-center justify-center rounded-full bg-[var(--frenem-accent-soft)] text-[22px] text-[var(--frenem-accent)]">
+        ✓
+      </div>
+      <h3 className="mx-auto max-w-[400px] font-sans text-xl font-semibold leading-[1.4] tracking-[-0.01em] text-[var(--frenem-ink)]">
+        {children}
+      </h3>
+    </div>
+  )
+}
+
+function ContactFieldsForm({
+  idPrefix,
+  onSubmit,
+  submitLabel,
+  isSubmitting,
+}: {
+  idPrefix: string
+  onSubmit: (values: ContactFields) => Promise<void>
+  submitLabel: string
+  isSubmitting: boolean
+}) {
+  const form = useForm<ContactFields>({
+    resolver: zodResolver(contactFieldsSchema),
+    defaultValues: { name: "", company: "", email: "" },
+  })
+
+  return (
+    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3.5">
+      <div>
+        <label htmlFor={`${idPrefix}-name`} className={labelClass}>
+          Your name
+        </label>
+        <input
+          id={`${idPrefix}-name`}
+          type="text"
+          placeholder="First and last name"
+          className={cn(inputClass, form.formState.errors.name && "border-red-500")}
+          {...form.register("name")}
+        />
+        {form.formState.errors.name && (
+          <p className="mt-1 font-sans text-[13px] text-red-600">{form.formState.errors.name.message}</p>
+        )}
+      </div>
+      <div>
+        <label htmlFor={`${idPrefix}-email`} className={labelClass}>
+          Work email
+        </label>
+        <input
+          id={`${idPrefix}-email`}
+          type="email"
+          placeholder="you@company.com"
+          className={cn(inputClass, form.formState.errors.email && "border-red-500")}
+          {...form.register("email")}
+        />
+        {form.formState.errors.email && (
+          <p className="mt-1 font-sans text-[13px] text-red-600">{form.formState.errors.email.message}</p>
+        )}
+      </div>
+      <div>
+        <label htmlFor={`${idPrefix}-company`} className={labelClass}>
+          Company name
+        </label>
+        <input
+          id={`${idPrefix}-company`}
+          type="text"
+          placeholder="Company name"
+          className={cn(inputClass, form.formState.errors.company && "border-red-500")}
+          {...form.register("company")}
+        />
+        {form.formState.errors.company && (
+          <p className="mt-1 font-sans text-[13px] text-red-600">{form.formState.errors.company.message}</p>
+        )}
+      </div>
+      <button type="submit" disabled={isSubmitting} className={submitBtnClass}>
+        {isSubmitting ? "Sending..." : submitLabel}
+      </button>
+    </form>
+  )
+}
+
 export default function ContactModal() {
-  const { isOpen, closeModal } = useContactModal()
+  const { isOpen, mode, closeModal } = useContactModal()
   const { activeProduct } = useProduct()
   const [showSuccess, setShowSuccess] = useState(false)
+  const [discardConfirm, setDiscardConfirm] = useState(false)
+  const [step, setStep] = useState(1)
+  const [assessmentAnswers, setAssessmentAnswers] = useState<AssessmentAnswers>(emptyAssessmentAnswers)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const panelRef = useRef<HTMLDivElement | null>(null)
+  const previouslyFocused = useRef<HTMLElement | null>(null)
 
   const NOTES_MAX_HEIGHT = 200
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const legacyForm = useForm<LegacyFormValues>({
+    resolver: zodResolver(legacyFormSchema),
     defaultValues: {
       name: "",
       company: "",
@@ -73,36 +182,94 @@ export default function ContactModal() {
     },
   })
 
-  useEffect(() => {
-    if (isOpen) {
-      form.setValue("interest", INTEREST_BY_PRODUCT[activeProduct])
+  const clearAdvanceTimer = useCallback(() => {
+    if (advanceTimer.current) {
+      clearTimeout(advanceTimer.current)
+      advanceTimer.current = null
     }
-  }, [isOpen, activeProduct, form])
+  }, [])
 
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) closeModal()
+    if (isOpen && mode === "default") {
+      legacyForm.setValue("interest", INTEREST_BY_PRODUCT[activeProduct])
+    }
+  }, [isOpen, mode, activeProduct, legacyForm])
+
+  useEffect(() => {
+    if (!isOpen) {
+      setShowSuccess(false)
+      setDiscardConfirm(false)
+      setStep(1)
+      setAssessmentAnswers(emptyAssessmentAnswers())
+      setIsSubmitting(false)
+      legacyForm.reset()
+      clearAdvanceTimer()
+    }
+  }, [isOpen, legacyForm, clearAdvanceTimer])
+
+  const resetAndClose = useCallback(() => {
+    clearAdvanceTimer()
+    setShowSuccess(false)
+    setDiscardConfirm(false)
+    setStep(1)
+    setAssessmentAnswers(emptyAssessmentAnswers())
+    legacyForm.reset()
+    closeModal()
+  }, [closeModal, legacyForm, clearAdvanceTimer])
+
+  const requestClose = useCallback(() => {
+    // Escape / overlay on discard confirm cancels the confirm (keep going).
+    if (discardConfirm) {
+      setDiscardConfirm(false)
+      return
+    }
+    if (mode === "assessment" && step > 1 && step <= 5 && !showSuccess) {
+      clearAdvanceTimer()
+      setDiscardConfirm(true)
+      return
+    }
+    resetAndClose()
+  }, [discardConfirm, mode, step, showSuccess, resetAndClose, clearAdvanceTimer])
+
+  useEffect(() => {
+    const handleEscape = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) requestClose()
     }
     document.addEventListener("keydown", handleEscape)
     return () => document.removeEventListener("keydown", handleEscape)
-  }, [isOpen, closeModal])
+  }, [isOpen, requestClose])
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden"
+      previouslyFocused.current = document.activeElement as HTMLElement | null
+      // Defer so the dialog is in the DOM.
+      requestAnimationFrame(() => {
+        const panel = panelRef.current
+        if (!panel) return
+        const focusTarget =
+          panel.querySelector<HTMLElement>("[data-modal-initial-focus]") ??
+          panel.querySelector<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+        focusTarget?.focus()
+      })
     } else {
       document.body.style.overflow = ""
+      previouslyFocused.current?.focus?.()
+      previouslyFocused.current = null
     }
     return () => {
       document.body.style.overflow = ""
     }
   }, [isOpen])
 
-  const resetAndClose = () => {
-    setShowSuccess(false)
-    form.reset()
-    closeModal()
-  }
+  useEffect(() => {
+    if (!isOpen || !discardConfirm) return
+    requestAnimationFrame(() => {
+      panelRef.current?.querySelector<HTMLElement>("[data-modal-initial-focus]")?.focus()
+    })
+  }, [isOpen, discardConfirm])
 
   const adjustNotesHeight = (el: HTMLTextAreaElement | null) => {
     if (!el) return
@@ -110,11 +277,101 @@ export default function ContactModal() {
     el.style.height = `${Math.min(el.scrollHeight, NOTES_MAX_HEIGHT)}px`
   }
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) resetAndClose()
+  const handleOverlayClick = (e: MouseEvent) => {
+    if (e.target === e.currentTarget) requestClose()
   }
 
-  async function onSubmit(values: FormValues) {
+  const handlePanelKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "Tab" || !panelRef.current) return
+    const focusable = Array.from(
+      panelRef.current.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    ).filter((el) => el.offsetParent !== null || el === document.activeElement)
+    if (focusable.length === 0) return
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault()
+      last.focus()
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault()
+      first.focus()
+    }
+  }
+
+  const goBack = () => {
+    clearAdvanceTimer()
+    setStep((s) => Math.max(1, s - 1))
+  }
+
+  const selectOption = (key: AssessmentAnswerKey, value: string) => {
+    const fromStep = step
+    setAssessmentAnswers((prev) => ({ ...prev, [key]: value }))
+    clearAdvanceTimer()
+    advanceTimer.current = setTimeout(() => {
+      advanceTimer.current = null
+      setStep((s) => (s === fromStep ? Math.min(s + 1, 5) : s))
+    }, 300)
+  }
+
+  async function submitAssessment(values: ContactFields) {
+    setIsSubmitting(true)
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          flow: "assessment",
+          name: values.name,
+          email: values.email,
+          company: values.company,
+          interest: INTEREST_BY_PRODUCT.build,
+          answers: {
+            q1: assessmentAnswers.q1,
+            q2: assessmentAnswers.q2,
+            q3: assessmentAnswers.q3,
+            q4: assessmentAnswers.q4,
+          },
+        }),
+      })
+      if (!response.ok) throw new Error("Failed to send message")
+      setShowSuccess(true)
+    } catch {
+      toast.error("Failed to send message", {
+        description: "Please try again later.",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  async function submitContact(values: ContactFields) {
+    setIsSubmitting(true)
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          flow: "contact",
+          name: values.name,
+          email: values.email,
+          company: values.company,
+          interest: INTEREST_BY_PRODUCT.build,
+        }),
+      })
+      if (!response.ok) throw new Error("Failed to send message")
+      setShowSuccess(true)
+    } catch {
+      toast.error("Failed to send message", {
+        description: "Please try again later.",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  async function onLegacySubmit(values: LegacyFormValues) {
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -132,7 +389,7 @@ export default function ContactModal() {
       if (!response.ok) throw new Error("Failed to send message")
 
       setShowSuccess(true)
-      form.reset()
+      legacyForm.reset()
       toast.success("Thank you for your message", {
         description: "We'll get back to you within 24 hours.",
       })
@@ -142,6 +399,9 @@ export default function ContactModal() {
       })
     }
   }
+
+  const currentQuestion = step >= 1 && step <= 4 ? ASSESSMENT_QUESTIONS[step - 1] : null
+  const showCloseButton = isOpen && !discardConfirm
 
   return (
     <AnimatePresence>
@@ -155,35 +415,219 @@ export default function ContactModal() {
           onClick={handleOverlayClick}
         >
           <motion.div
-            className="relative my-0 w-full max-h-[min(92dvh,calc(100dvh-1rem))] overflow-y-auto rounded-t-2xl bg-[var(--frenem-bg)] px-5 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.2)] sm:my-auto sm:max-h-[calc(100dvh-2rem)] sm:max-w-[540px] sm:rounded-xl sm:px-7 sm:py-10 md:px-11 md:pb-10 md:pt-12 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="contact-modal-title"
+            tabIndex={-1}
+            className="relative my-0 w-full max-h-[min(92dvh,calc(100dvh-1rem))] overflow-y-auto rounded-t-2xl bg-[var(--frenem-bg)] px-5 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.2)] outline-none sm:my-auto sm:max-h-[calc(100dvh-2rem)] sm:max-w-[460px] sm:rounded-xl sm:px-9 sm:py-9 md:px-9 md:pb-[34px] md:pt-9 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
             initial={{ opacity: 0, y: 16, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={handlePanelKeyDown}
           >
-            <button
-              type="button"
-              onClick={resetAndClose}
-              className="absolute right-4 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-[var(--frenem-bg-soft)] font-sans text-lg text-[var(--frenem-ink-secondary)] transition-colors hover:bg-[var(--frenem-border)] md:right-5 md:top-4 md:h-9 md:w-9"
-              aria-label="Close"
-            >
-              <span aria-hidden>×</span>
-            </button>
+            {showCloseButton && (
+              <button
+                type="button"
+                onClick={requestClose}
+                data-modal-initial-focus={mode === "assessment" && step === 1 && !showSuccess ? true : undefined}
+                className="absolute right-3.5 top-3.5 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--frenem-bg-soft)] font-sans text-lg text-[var(--frenem-ink-secondary)] transition-colors hover:bg-[var(--frenem-border)]"
+                aria-label="Close"
+              >
+                <span aria-hidden>×</span>
+              </button>
+            )}
 
-            {showSuccess ? (
+            {discardConfirm ? (
+              <div className="px-1 py-6 text-center">
+                <h3
+                  id="contact-modal-title"
+                  className="mb-2.5 font-sans text-[22px] font-semibold tracking-[-0.02em] text-[var(--frenem-ink)]"
+                >
+                  Discard your answers?
+                </h3>
+                <p className="mb-6 font-sans text-sm text-[var(--frenem-ink-secondary)]">
+                  You&apos;ll lose progress on this assessment.
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-2.5">
+                  <button
+                    type="button"
+                    data-modal-initial-focus
+                    onClick={() => setDiscardConfirm(false)}
+                    className="inline-flex h-11 cursor-pointer items-center rounded-full border-none bg-[var(--frenem-ink)] px-[22px] font-sans text-sm font-medium text-[var(--frenem-bg)] transition-colors hover:bg-[var(--frenem-accent)]"
+                  >
+                    Keep going
+                  </button>
+                  <button
+                    type="button"
+                    onClick={resetAndClose}
+                    className="inline-flex h-11 cursor-pointer items-center rounded-full border border-[var(--frenem-border-strong)] bg-transparent px-[22px] font-sans text-sm font-medium text-[var(--frenem-ink-secondary)] transition-colors hover:border-[var(--frenem-ink)] hover:text-[var(--frenem-ink)]"
+                  >
+                    Discard
+                  </button>
+                </div>
+              </div>
+            ) : mode === "assessment" ? (
+              showSuccess ? (
+                <div>
+                  <h3
+                    id="contact-modal-title"
+                    className="absolute h-px w-px overflow-hidden whitespace-nowrap border-0 p-0"
+                    style={{ clip: "rect(0, 0, 0, 0)" }}
+                  >
+                    Assessment submitted
+                  </h3>
+                  <SuccessCheck>
+                    Thanks — we&apos;ll review your answers and reach out within a day with what stands out, plus a
+                    time to talk if useful.
+                  </SuccessCheck>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-[22px]">
+                    <div className="h-[3px] w-full overflow-hidden rounded-sm bg-[rgba(10,10,10,0.08)]">
+                      <div
+                        className="h-full rounded-sm bg-[var(--frenem-accent)] transition-[width] duration-300 ease-out"
+                        style={{ width: `${(Math.min(step, 5) / 5) * 100}%` }}
+                      />
+                    </div>
+                    <div className="mt-2.5 flex min-h-[18px] items-center justify-between">
+                      {step > 1 ? (
+                        <button
+                          type="button"
+                          onClick={goBack}
+                          className="border-none bg-transparent p-0 font-sans text-[13px] text-[var(--frenem-ink-secondary)] transition-colors hover:text-[var(--frenem-ink)]"
+                        >
+                          ← Back
+                        </button>
+                      ) : (
+                        <span />
+                      )}
+                      <span className="ml-auto font-sans text-xs text-[var(--frenem-ink-tertiary)]">
+                        {Math.min(step, 5)} / 5
+                      </span>
+                    </div>
+                  </div>
+
+                  <AnimatePresence mode="wait">
+                    {currentQuestion ? (
+                      <motion.div
+                        key={currentQuestion.key}
+                        initial={{ opacity: 0, x: 12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -12 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <h3
+                          id="contact-modal-title"
+                          className="mb-5 pr-5 font-sans text-2xl font-semibold leading-[1.2] tracking-[-0.02em] text-[var(--frenem-ink)]"
+                        >
+                          {currentQuestion.title}
+                        </h3>
+                        <div className="flex flex-col gap-2.5" role="listbox" aria-labelledby="contact-modal-title">
+                          {currentQuestion.options.map((option) => {
+                            const selected = assessmentAnswers[currentQuestion.key] === option
+                            return (
+                              <button
+                                key={option}
+                                type="button"
+                                role="option"
+                                aria-selected={selected}
+                                onClick={() => selectOption(currentQuestion.key, option)}
+                                className={cn(
+                                  "flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border-[1.5px] px-[18px] py-4 text-left font-sans text-[15px] font-medium text-[var(--frenem-ink)] transition-[border-color,background] duration-200",
+                                  selected
+                                    ? "border-[var(--frenem-ink)] bg-[var(--frenem-accent-soft)]"
+                                    : "border-[rgba(10,10,10,0.1)] bg-[var(--frenem-bg)] hover:border-[var(--frenem-ink)]"
+                                )}
+                              >
+                                <span>{option}</span>
+                                {selected ? (
+                                  <span className="font-semibold text-[var(--frenem-accent)]">✓</span>
+                                ) : null}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="assessment-contact"
+                        initial={{ opacity: 0, x: 12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -12 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <h3
+                          id="contact-modal-title"
+                          className="mb-5 pr-5 font-sans text-2xl font-semibold tracking-[-0.02em] text-[var(--frenem-ink)]"
+                        >
+                          Where should we send this?
+                        </h3>
+                        <ContactFieldsForm
+                          idPrefix="assessment"
+                          onSubmit={submitAssessment}
+                          submitLabel="Get my HR Maturity read"
+                          isSubmitting={isSubmitting}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </>
+              )
+            ) : mode === "contact" ? (
+              showSuccess ? (
+                <div>
+                  <h3
+                    id="contact-modal-title"
+                    className="absolute h-px w-px overflow-hidden whitespace-nowrap border-0 p-0"
+                    style={{ clip: "rect(0, 0, 0, 0)" }}
+                  >
+                    Message sent
+                  </h3>
+                  <SuccessCheck>Thanks — someone from the team will reach out within a day.</SuccessCheck>
+                </div>
+              ) : (
+                <>
+                  <h3
+                    id="contact-modal-title"
+                    className="mb-5 pr-8 font-sans text-[23px] font-semibold leading-[1.3] tracking-[-0.02em] text-[var(--frenem-ink)]"
+                  >
+                    Curious what an org design review would find? Tell us where to send it.
+                  </h3>
+                  <ContactFieldsForm
+                    idPrefix="quick-contact"
+                    onSubmit={submitContact}
+                    submitLabel="Get in touch"
+                    isSubmitting={isSubmitting}
+                  />
+                </>
+              )
+            ) : showSuccess ? (
               <div className="py-5 text-center">
                 <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--frenem-accent-soft)] text-2xl text-[var(--frenem-accent)]">
                   ✓
                 </div>
-                <h3 className="mb-4 font-sans text-[26px] font-semibold tracking-[-0.02em] md:text-[32px]">We&apos;ll be in touch.</h3>
+                <h3
+                  id="contact-modal-title"
+                  className="mb-4 font-sans text-[26px] font-semibold tracking-[-0.02em] md:text-[32px]"
+                >
+                  We&apos;ll be in touch.
+                </h3>
                 <p className="font-sans text-[15px] leading-relaxed text-[var(--frenem-ink-secondary)]">
                   Thanks for reaching out. We&apos;ll get back to you within 24 hours to set up a conversation.
                 </p>
               </div>
             ) : (
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[18px]">
-                <h3 className="pr-10 font-sans text-[26px] font-semibold leading-tight tracking-[-0.02em] md:text-[32px]">Get in touch.</h3>
+              <form onSubmit={legacyForm.handleSubmit(onLegacySubmit)} className="space-y-[18px]">
+                <h3
+                  id="contact-modal-title"
+                  className="pr-10 font-sans text-[26px] font-semibold leading-tight tracking-[-0.02em] md:text-[32px]"
+                >
+                  Get in touch.
+                </h3>
                 <p className="mb-2 font-sans text-[15px] leading-relaxed text-[var(--frenem-ink-secondary)]">
                   Tell us a little about your business. We&apos;ll get back to you within 24 hours.
                 </p>
@@ -197,11 +641,13 @@ export default function ContactModal() {
                       id="contact-name"
                       type="text"
                       placeholder="First and last name"
-                      className={cn(inputClass, form.formState.errors.name && "border-red-500")}
-                      {...form.register("name")}
+                      className={cn(inputClass, legacyForm.formState.errors.name && "border-red-500")}
+                      {...legacyForm.register("name")}
                     />
-                    {form.formState.errors.name && (
-                      <p className="mt-1 font-sans text-sm text-red-500">{form.formState.errors.name.message}</p>
+                    {legacyForm.formState.errors.name && (
+                      <p className="mt-1 font-sans text-sm text-red-500">
+                        {legacyForm.formState.errors.name.message}
+                      </p>
                     )}
                   </div>
                   <div>
@@ -212,11 +658,13 @@ export default function ContactModal() {
                       id="contact-company"
                       type="text"
                       placeholder="Company name"
-                      className={cn(inputClass, form.formState.errors.company && "border-red-500")}
-                      {...form.register("company")}
+                      className={cn(inputClass, legacyForm.formState.errors.company && "border-red-500")}
+                      {...legacyForm.register("company")}
                     />
-                    {form.formState.errors.company && (
-                      <p className="mt-1 font-sans text-sm text-red-500">{form.formState.errors.company.message}</p>
+                    {legacyForm.formState.errors.company && (
+                      <p className="mt-1 font-sans text-sm text-red-500">
+                        {legacyForm.formState.errors.company.message}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -229,11 +677,13 @@ export default function ContactModal() {
                     id="contact-email"
                     type="email"
                     placeholder="you@company.com"
-                    className={cn(inputClass, form.formState.errors.email && "border-red-500")}
-                    {...form.register("email")}
+                    className={cn(inputClass, legacyForm.formState.errors.email && "border-red-500")}
+                    {...legacyForm.register("email")}
                   />
-                  {form.formState.errors.email && (
-                    <p className="mt-1 font-sans text-sm text-red-500">{form.formState.errors.email.message}</p>
+                  {legacyForm.formState.errors.email && (
+                    <p className="mt-1 font-sans text-sm text-red-500">
+                      {legacyForm.formState.errors.email.message}
+                    </p>
                   )}
                 </div>
 
@@ -246,7 +696,7 @@ export default function ContactModal() {
                       id="contact-team-size"
                       className={cn(selectClass, "text-[var(--frenem-ink)]")}
                       style={{ backgroundImage: `url("${LABEL_CHEVRON}")` }}
-                      {...form.register("team_size")}
+                      {...legacyForm.register("team_size")}
                     >
                       <option value="">Select</option>
                       {TEAM_OPTIONS.map((o) => (
@@ -264,7 +714,7 @@ export default function ContactModal() {
                       id="contact-interest"
                       className={cn(selectClass, "text-[var(--frenem-ink)]")}
                       style={{ backgroundImage: `url("${LABEL_CHEVRON}")` }}
-                      {...form.register("interest")}
+                      {...legacyForm.register("interest")}
                     >
                       <option value="">Select</option>
                       {INTEREST_OPTIONS.map((o) => (
@@ -278,24 +728,25 @@ export default function ContactModal() {
 
                 <div>
                   <label htmlFor="contact-notes" className={labelClass}>
-                    Anything else? <span className="font-normal text-[var(--frenem-ink-tertiary)]">(optional)</span>
+                    Anything else?{" "}
+                    <span className="font-normal text-[var(--frenem-ink-tertiary)]">(optional)</span>
                   </label>
                   <textarea
                     id="contact-notes"
                     placeholder="Brief context about your business or what you're looking to solve"
                     rows={3}
                     className={cn(inputClass, "min-h-[72px] resize-y")}
-                    {...form.register("notes")}
+                    {...legacyForm.register("notes")}
                     onInput={(e) => adjustNotesHeight(e.currentTarget)}
                   />
                 </div>
 
                 <button
                   type="submit"
-                  disabled={form.formState.isSubmitting}
+                  disabled={legacyForm.formState.isSubmitting}
                   className="mt-2 min-h-11 w-full cursor-pointer rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-colors hover:bg-[var(--frenem-accent)] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {form.formState.isSubmitting ? "Sending..." : "Send →"}
+                  {legacyForm.formState.isSubmitting ? "Sending..." : "Send →"}
                 </button>
                 <p className="mt-3.5 text-center font-sans text-[13px] text-[var(--frenem-ink-tertiary)]">
                   No commitment. No decks. Just a conversation.

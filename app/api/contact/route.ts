@@ -1,23 +1,22 @@
 import { NextResponse } from "next/server"
 import nodemailer from "nodemailer"
-import { escapeHtml } from "../../utils/escape-html"
+import { buildContactEmailHtml } from "../../utils/contact-email"
+import {
+  buildContactEmailSubject,
+  validateContactSubmission,
+} from "../../utils/contact-submission"
 
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const {
-      name,
-      email,
-      company,
-      message,
-      team_size,
-      interest,
-      notes,
-    } = body
+    const validated = validateContactSubmission(body)
 
-    const messageContent = notes ?? message ?? ""
+    if (!validated.ok) {
+      return NextResponse.json({ error: validated.error }, { status: 400 })
+    }
 
-    // Create a transporter using GoDaddy SMTP settings
+    const { data } = validated
+
     const transporter = nodemailer.createTransport({
       host: "smtpout.secureserver.net",
       port: 465,
@@ -28,37 +27,13 @@ export async function POST(req: Request) {
       },
     })
 
-    const safeName = escapeHtml(String(name ?? ""))
-    const safeEmail = escapeHtml(String(email ?? ""))
-    const safeCompany = escapeHtml(String(company ?? ""))
-    const safeTeamSize = team_size ? escapeHtml(String(team_size)) : ""
-    const safeInterest = interest ? escapeHtml(String(interest)) : ""
-    const safeMessage = messageContent ? escapeHtml(String(messageContent)) : ""
-
-    const teamSizeRow = safeTeamSize ? `<p><strong>Team size:</strong> ${safeTeamSize}</p>` : ""
-    const interestRow = safeInterest ? `<p><strong>Interested in:</strong> ${safeInterest}</p>` : ""
-    const messageRow = safeMessage
-      ? `<p><strong>Message:</strong></p><p>${safeMessage}</p>`
-      : ""
-
-    // Email content
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: ['antony.paul@abanel.com','sanjay.antony@abanel.com'], // Multiple recipients
-      // to: ['arjun.ravikumar@abanel.com'], // Multiple recipients
-      subject: `New Contact Form Submission from ${String(name ?? "")}`,
-      html: `
-        <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${safeName}</p>
-        <p><strong>Email:</strong> ${safeEmail}</p>
-        <p><strong>Company:</strong> ${safeCompany}</p>
-        ${teamSizeRow}
-        ${interestRow}
-        ${messageRow}
-      `,
+      to: ["antony.paul@abanel.com", "sanjay.antony@abanel.com"],
+      subject: buildContactEmailSubject(data.flow, data.name),
+      html: buildContactEmailHtml(data),
     }
 
-    // Send email
     await transporter.sendMail(mailOptions)
 
     return NextResponse.json(
