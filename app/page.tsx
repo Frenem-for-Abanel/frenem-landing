@@ -125,6 +125,7 @@ export default function Home() {
           <FinalCtaSection
             sectionName="Contact"
             sectionNum="09"
+            modalMode="assessment"
             title={
               <>
                 Design the organisation your strategy <em className={emAccent}>needs.</em>

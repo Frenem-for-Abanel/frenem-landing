@@ -101,7 +101,7 @@ export default function SubHero({
             >
               <button
                 type="button"
-                onClick={openModal}
+                onClick={() => openModal()}
                 className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-all duration-300 hover:bg-[var(--frenem-accent)] hover:translate-y-[-2px] md:py-4"
               >
                 {ctaText}
