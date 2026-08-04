@@ -12,8 +12,15 @@ import {
   ASSESSMENT_QUESTIONS,
   type AssessmentAnswerKey,
 } from "../utils/assessment-questions"
+import { PULSE_QUESTIONS, type PulseAnswerKey } from "../utils/pulse-questions"
+import {
+  questionnaireAnswersComplete,
+  readContactApiError,
+} from "../utils/contact-modal-helpers"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+
+type QuestionnaireAnswerKey = AssessmentAnswerKey | PulseAnswerKey
 
 const inputClass =
   "w-full rounded-lg border border-[var(--frenem-border-strong)] bg-[var(--frenem-bg)] px-3.5 py-3 font-sans text-[15px] text-[var(--frenem-ink)] outline-none transition-[border-color,box-shadow] placeholder:text-[var(--frenem-ink-tertiary)] focus:border-[var(--frenem-ink)] focus:shadow-[0_0_0_3px_rgba(10,10,10,0.06)]"
@@ -59,14 +66,22 @@ const legacyFormSchema = contactFieldsSchema.extend({
 type ContactFields = z.infer<typeof contactFieldsSchema>
 type LegacyFormValues = z.infer<typeof legacyFormSchema>
 
-type AssessmentAnswers = Record<AssessmentAnswerKey, string>
+type QuestionnaireAnswers = Record<QuestionnaireAnswerKey, string>
 
-const emptyAssessmentAnswers = (): AssessmentAnswers => ({
+const emptyQuestionnaireAnswers = (): QuestionnaireAnswers => ({
   q1: "",
   q2: "",
   q3: "",
   q4: "",
 })
+
+function isQuestionnaireMode(mode: string): mode is "assessment" | "pulseQuestionnaire" {
+  return mode === "assessment" || mode === "pulseQuestionnaire"
+}
+
+function isQuickContactMode(mode: string): mode is "contact" | "pulseContact" {
+  return mode === "contact" || mode === "pulseContact"
+}
 
 const labelClass = "mb-1.5 block font-sans text-[13px] font-medium text-[var(--frenem-ink-secondary)]"
 
@@ -162,8 +177,17 @@ export default function ContactModal() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [discardConfirm, setDiscardConfirm] = useState(false)
   const [step, setStep] = useState(1)
-  const [assessmentAnswers, setAssessmentAnswers] = useState<AssessmentAnswers>(emptyAssessmentAnswers)
+  const [questionnaireAnswers, setQuestionnaireAnswers] = useState<QuestionnaireAnswers>(
+    emptyQuestionnaireAnswers
+  )
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const isQuestionnaire = isQuestionnaireMode(mode)
+  const isQuickContact = isQuickContactMode(mode)
+  const isPulseFlow = mode === "pulseQuestionnaire" || mode === "pulseContact"
+  const questions = mode === "pulseQuestionnaire" ? PULSE_QUESTIONS : ASSESSMENT_QUESTIONS
+  const questionnaireInterest = isPulseFlow
+    ? INTEREST_BY_PRODUCT.pulse
+    : INTEREST_BY_PRODUCT.build
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
   const previouslyFocused = useRef<HTMLElement | null>(null)
@@ -200,7 +224,7 @@ export default function ContactModal() {
       setShowSuccess(false)
       setDiscardConfirm(false)
       setStep(1)
-      setAssessmentAnswers(emptyAssessmentAnswers())
+      setQuestionnaireAnswers(emptyQuestionnaireAnswers())
       setIsSubmitting(false)
       legacyForm.reset()
       clearAdvanceTimer()
@@ -212,7 +236,7 @@ export default function ContactModal() {
     setShowSuccess(false)
     setDiscardConfirm(false)
     setStep(1)
-    setAssessmentAnswers(emptyAssessmentAnswers())
+    setQuestionnaireAnswers(emptyQuestionnaireAnswers())
     legacyForm.reset()
     closeModal()
   }, [closeModal, legacyForm, clearAdvanceTimer])
@@ -223,7 +247,7 @@ export default function ContactModal() {
       setDiscardConfirm(false)
       return
     }
-    if (mode === "assessment" && step > 1 && step <= 5 && !showSuccess) {
+    if (isQuestionnaireMode(mode) && step > 1 && step <= 5 && !showSuccess) {
       clearAdvanceTimer()
       setDiscardConfirm(true)
       return
@@ -305,9 +329,9 @@ export default function ContactModal() {
     setStep((s) => Math.max(1, s - 1))
   }
 
-  const selectOption = (key: AssessmentAnswerKey, value: string) => {
+  const selectOption = (key: QuestionnaireAnswerKey, value: string) => {
     const fromStep = step
-    setAssessmentAnswers((prev) => ({ ...prev, [key]: value }))
+    setQuestionnaireAnswers((prev) => ({ ...prev, [key]: value }))
     clearAdvanceTimer()
     advanceTimer.current = setTimeout(() => {
       advanceTimer.current = null
@@ -315,56 +339,68 @@ export default function ContactModal() {
     }, 300)
   }
 
-  async function submitAssessment(values: ContactFields) {
+  async function submitQuestionnaire(values: ContactFields) {
+    if (!isQuestionnaire) return
+    if (!questionnaireAnswersComplete(questionnaireAnswers)) {
+      toast.error("Please answer all questions", {
+        description: "Go back and complete each step before submitting.",
+      })
+      return
+    }
     setIsSubmitting(true)
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          flow: "assessment",
+          flow: mode,
           name: values.name,
           email: values.email,
           company: values.company,
-          interest: INTEREST_BY_PRODUCT.build,
+          interest: questionnaireInterest,
           answers: {
-            q1: assessmentAnswers.q1,
-            q2: assessmentAnswers.q2,
-            q3: assessmentAnswers.q3,
-            q4: assessmentAnswers.q4,
+            q1: questionnaireAnswers.q1,
+            q2: questionnaireAnswers.q2,
+            q3: questionnaireAnswers.q3,
+            q4: questionnaireAnswers.q4,
           },
         }),
       })
-      if (!response.ok) throw new Error("Failed to send message")
+      if (!response.ok) {
+        throw new Error(await readContactApiError(response))
+      }
       setShowSuccess(true)
-    } catch {
+    } catch (error) {
       toast.error("Failed to send message", {
-        description: "Please try again later.",
+        description: error instanceof Error ? error.message : "Please try again later.",
       })
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  async function submitContact(values: ContactFields) {
+  async function submitQuickContact(values: ContactFields) {
+    if (!isQuickContact) return
     setIsSubmitting(true)
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          flow: "contact",
+          flow: mode,
           name: values.name,
           email: values.email,
           company: values.company,
-          interest: INTEREST_BY_PRODUCT.build,
+          interest: questionnaireInterest,
         }),
       })
-      if (!response.ok) throw new Error("Failed to send message")
+      if (!response.ok) {
+        throw new Error(await readContactApiError(response))
+      }
       setShowSuccess(true)
-    } catch {
+    } catch (error) {
       toast.error("Failed to send message", {
-        description: "Please try again later.",
+        description: error instanceof Error ? error.message : "Please try again later.",
       })
     } finally {
       setIsSubmitting(false)
@@ -386,22 +422,30 @@ export default function ContactModal() {
         }),
       })
 
-      if (!response.ok) throw new Error("Failed to send message")
+      if (!response.ok) {
+        throw new Error(await readContactApiError(response))
+      }
 
       setShowSuccess(true)
       legacyForm.reset()
       toast.success("Thank you for your message", {
         description: "We'll get back to you within 24 hours.",
       })
-    } catch {
+    } catch (error) {
       toast.error("Failed to send message", {
-        description: "Please try again later.",
+        description: error instanceof Error ? error.message : "Please try again later.",
       })
     }
   }
 
-  const currentQuestion = step >= 1 && step <= 4 ? ASSESSMENT_QUESTIONS[step - 1] : null
+  const currentQuestion = isQuestionnaire && step >= 1 && step <= 4 ? questions[step - 1] : null
   const showCloseButton = isOpen && !discardConfirm
+  const questionnaireSubmitLabel =
+    mode === "pulseQuestionnaire" ? "Get my Pulse read" : "Get my HR Maturity read"
+  const quickContactTitle =
+    mode === "pulseContact"
+      ? "Curious what a relational diagnostic would surface in your org? Tell us where to send it."
+      : "Curious what an org design review would find? Tell us where to send it."
 
   return (
     <AnimatePresence>
@@ -432,7 +476,9 @@ export default function ContactModal() {
               <button
                 type="button"
                 onClick={requestClose}
-                data-modal-initial-focus={mode === "assessment" && step === 1 && !showSuccess ? true : undefined}
+                data-modal-initial-focus={
+                  isQuestionnaire && step === 1 && !showSuccess ? true : undefined
+                }
                 className="absolute right-3.5 top-3.5 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--frenem-bg-soft)] font-sans text-lg text-[var(--frenem-ink-secondary)] transition-colors hover:bg-[var(--frenem-border)]"
                 aria-label="Close"
               >
@@ -449,7 +495,7 @@ export default function ContactModal() {
                   Discard your answers?
                 </h3>
                 <p className="mb-6 font-sans text-sm text-[var(--frenem-ink-secondary)]">
-                  You&apos;ll lose progress on this assessment.
+                  You&apos;ll lose progress on this {isPulseFlow ? "Pulse check" : "assessment"}.
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-2.5">
                   <button
@@ -469,7 +515,7 @@ export default function ContactModal() {
                   </button>
                 </div>
               </div>
-            ) : mode === "assessment" ? (
+            ) : isQuestionnaire ? (
               showSuccess ? (
                 <div>
                   <h3
@@ -477,7 +523,7 @@ export default function ContactModal() {
                     className="absolute h-px w-px overflow-hidden whitespace-nowrap border-0 p-0"
                     style={{ clip: "rect(0, 0, 0, 0)" }}
                   >
-                    Assessment submitted
+                    {isPulseFlow ? "Pulse read submitted" : "Assessment submitted"}
                   </h3>
                   <SuccessCheck>
                     Thanks — we&apos;ll review your answers and reach out within a day with what stands out, plus a
@@ -528,7 +574,7 @@ export default function ContactModal() {
                         </h3>
                         <div className="flex flex-col gap-2.5" role="listbox" aria-labelledby="contact-modal-title">
                           {currentQuestion.options.map((option) => {
-                            const selected = assessmentAnswers[currentQuestion.key] === option
+                            const selected = questionnaireAnswers[currentQuestion.key] === option
                             return (
                               <button
                                 key={option}
@@ -554,7 +600,7 @@ export default function ContactModal() {
                       </motion.div>
                     ) : (
                       <motion.div
-                        key="assessment-contact"
+                        key="questionnaire-contact"
                         initial={{ opacity: 0, x: 12 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -12 }}
@@ -567,9 +613,9 @@ export default function ContactModal() {
                           Where should we send this?
                         </h3>
                         <ContactFieldsForm
-                          idPrefix="assessment"
-                          onSubmit={submitAssessment}
-                          submitLabel="Get my HR Maturity read"
+                          idPrefix={mode}
+                          onSubmit={submitQuestionnaire}
+                          submitLabel={questionnaireSubmitLabel}
                           isSubmitting={isSubmitting}
                         />
                       </motion.div>
@@ -577,7 +623,7 @@ export default function ContactModal() {
                   </AnimatePresence>
                 </>
               )
-            ) : mode === "contact" ? (
+            ) : isQuickContact ? (
               showSuccess ? (
                 <div>
                   <h3
@@ -595,11 +641,11 @@ export default function ContactModal() {
                     id="contact-modal-title"
                     className="mb-5 pr-8 font-sans text-[23px] font-semibold leading-[1.3] tracking-[-0.02em] text-[var(--frenem-ink)]"
                   >
-                    Curious what an org design review would find? Tell us where to send it.
+                    {quickContactTitle}
                   </h3>
                   <ContactFieldsForm
-                    idPrefix="quick-contact"
-                    onSubmit={submitContact}
+                    idPrefix={mode}
+                    onSubmit={submitQuickContact}
                     submitLabel="Get in touch"
                     isSubmitting={isSubmitting}
                   />
