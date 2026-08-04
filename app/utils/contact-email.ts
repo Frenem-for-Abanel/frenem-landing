@@ -1,5 +1,6 @@
 import { escapeHtml } from "./escape-html"
 import { ASSESSMENT_QUESTION_LABELS } from "./assessment-questions"
+import { PULSE_QUESTION_LABELS } from "./pulse-questions"
 import {
   contactFlowHeading,
   contactFlowLabel,
@@ -24,15 +25,18 @@ export function buildContactEmailHtml(data: ValidatedContactSubmission): string 
       : ""
 
   let answersBlock = ""
-  if (data.flow === "assessment" && data.answers) {
+  if (data.answers && (data.flow === "assessment" || data.flow === "pulseQuestionnaire")) {
+    const labels =
+      data.flow === "pulseQuestionnaire" ? PULSE_QUESTION_LABELS : ASSESSMENT_QUESTION_LABELS
+    const heading = data.flow === "pulseQuestionnaire" ? "Pulse answers" : "Assessment answers"
     const rows = (["q1", "q2", "q3", "q4"] as const)
       .map((key) => {
-        const label = ASSESSMENT_QUESTION_LABELS[key]
+        const label = labels[key]
         const value = escapeHtml(data.answers![key])
         return `<p><strong>${escapeHtml(label)}</strong><br/>${value}</p>`
       })
       .join("")
-    answersBlock = `<h3>Assessment answers</h3>${rows}`
+    answersBlock = `<h3>${heading}</h3>${rows}`
   }
 
   return `

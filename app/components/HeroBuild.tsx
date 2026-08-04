@@ -81,7 +81,7 @@ export default function HeroBuild() {
                 onClick={() => openModal("assessment")}
                 className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-colors duration-300 hover:translate-y-[-2px] hover:bg-[var(--frenem-accent)] md:py-4"
               >
-                Start your free assessment →
+                Get started →
               </button>
               <button
                 type="button"

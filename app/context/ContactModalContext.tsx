@@ -2,7 +2,12 @@
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
 
-export type ContactModalMode = "assessment" | "contact" | "default"
+export type ContactModalMode =
+  | "assessment"
+  | "contact"
+  | "pulseQuestionnaire"
+  | "pulseContact"
+  | "default"
 
 type ContactModalContextType = {
   isOpen: boolean

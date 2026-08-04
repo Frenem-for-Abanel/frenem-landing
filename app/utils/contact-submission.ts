@@ -1,6 +1,14 @@
 import { ASSESSMENT_QUESTIONS, type AssessmentAnswerKey } from "./assessment-questions"
+import { PULSE_QUESTIONS, type PulseAnswerKey } from "./pulse-questions"
 
-export type ContactFlow = "assessment" | "contact" | "default"
+export type ContactFlow =
+  | "assessment"
+  | "contact"
+  | "pulseQuestionnaire"
+  | "pulseContact"
+  | "default"
+
+export type QuestionnaireAnswerKey = AssessmentAnswerKey | PulseAnswerKey
 
 export type ContactSubmissionInput = {
   name?: unknown
@@ -22,16 +30,23 @@ export type ValidatedContactSubmission = {
   team_size?: string
   interest?: string
   notes?: string
-  answers?: Record<AssessmentAnswerKey, string>
+  answers?: Record<QuestionnaireAnswerKey, string>
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-const ALLOWED_ANSWERS: Record<AssessmentAnswerKey, Set<string>> = {
+const BUILD_ALLOWED_ANSWERS: Record<AssessmentAnswerKey, Set<string>> = {
   q1: new Set(ASSESSMENT_QUESTIONS[0].options),
   q2: new Set(ASSESSMENT_QUESTIONS[1].options),
   q3: new Set(ASSESSMENT_QUESTIONS[2].options),
   q4: new Set(ASSESSMENT_QUESTIONS[3].options),
+}
+
+const PULSE_ALLOWED_ANSWERS: Record<PulseAnswerKey, Set<string>> = {
+  q1: new Set(PULSE_QUESTIONS[0].options),
+  q2: new Set(PULSE_QUESTIONS[1].options),
+  q3: new Set(PULSE_QUESTIONS[2].options),
+  q4: new Set(PULSE_QUESTIONS[3].options),
 }
 
 function asTrimmedString(value: unknown): string {
@@ -47,8 +62,37 @@ export function sanitizeSubjectPart(value: string): string {
 }
 
 export function parseContactFlow(flow: unknown): ContactFlow {
-  if (flow === "assessment" || flow === "contact") return flow
+  if (
+    flow === "assessment" ||
+    flow === "contact" ||
+    flow === "pulseQuestionnaire" ||
+    flow === "pulseContact"
+  ) {
+    return flow
+  }
   return "default"
+}
+
+function parseQuestionnaireAnswers(
+  answers: unknown,
+  allowed: Record<"q1" | "q2" | "q3" | "q4", Set<string>>
+): { ok: true; data: Record<"q1" | "q2" | "q3" | "q4", string> } | { ok: false; error: string } {
+  if (!answers || typeof answers !== "object" || Array.isArray(answers)) {
+    return { ok: false, error: "Questionnaire answers are required." }
+  }
+
+  const raw = answers as Record<string, unknown>
+  const parsed = {} as Record<"q1" | "q2" | "q3" | "q4", string>
+
+  for (const key of ["q1", "q2", "q3", "q4"] as const) {
+    const value = asTrimmedString(raw[key])
+    if (!value || !allowed[key].has(value)) {
+      return { ok: false, error: `Invalid or missing answer for ${key}.` }
+    }
+    parsed[key] = value
+  }
+
+  return { ok: true, data: parsed }
 }
 
 export function validateContactSubmission(
@@ -74,24 +118,18 @@ export function validateContactSubmission(
   const notes =
     asTrimmedString(input.notes) || asTrimmedString(input.message) || undefined
 
-  let answers: Record<AssessmentAnswerKey, string> | undefined
+  let answers: Record<QuestionnaireAnswerKey, string> | undefined
 
   if (flow === "assessment") {
-    if (!input.answers || typeof input.answers !== "object" || Array.isArray(input.answers)) {
-      return { ok: false, error: "Assessment answers are required." }
-    }
+    const parsed = parseQuestionnaireAnswers(input.answers, BUILD_ALLOWED_ANSWERS)
+    if (!parsed.ok) return parsed
+    answers = parsed.data
+  }
 
-    const raw = input.answers as Record<string, unknown>
-    const parsed = {} as Record<AssessmentAnswerKey, string>
-
-    for (const key of ["q1", "q2", "q3", "q4"] as const) {
-      const value = asTrimmedString(raw[key])
-      if (!value || !ALLOWED_ANSWERS[key].has(value)) {
-        return { ok: false, error: `Invalid or missing answer for ${key}.` }
-      }
-      parsed[key] = value
-    }
-    answers = parsed
+  if (flow === "pulseQuestionnaire") {
+    const parsed = parseQuestionnaireAnswers(input.answers, PULSE_ALLOWED_ANSWERS)
+    if (!parsed.ok) return parsed
+    answers = parsed.data
   }
 
   return {
@@ -112,12 +150,16 @@ export function validateContactSubmission(
 export function contactFlowLabel(flow: ContactFlow): string {
   if (flow === "assessment") return "HR Maturity Assessment"
   if (flow === "contact") return "Build Contact"
+  if (flow === "pulseQuestionnaire") return "Pulse Read"
+  if (flow === "pulseContact") return "Pulse Contact"
   return "Contact Form"
 }
 
 export function contactFlowHeading(flow: ContactFlow): string {
   if (flow === "assessment") return "New HR Maturity Assessment"
   if (flow === "contact") return "New Build Contact Request"
+  if (flow === "pulseQuestionnaire") return "New Pulse Read"
+  if (flow === "pulseContact") return "New Pulse Contact Request"
   return "New Contact Form Submission"
 }
 
