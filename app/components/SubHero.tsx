@@ -2,26 +2,36 @@
 
 import { motion } from "framer-motion"
 import type { ReactNode } from "react"
-import { useContactModal } from "../context/ContactModalContext"
+import { useContactModal, type ContactModalMode } from "../context/ContactModalContext"
 import { smoothScrollTo } from "../utils/smooth-scroll"
 import ShaderBackground, { type ShaderBackgroundColors } from "./ShaderBackground"
+import { cn } from "@/lib/utils"
 
 interface SubHeroProps {
   label: string
   title: ReactNode
   subtitle: string
   ctaText?: string
+  ctaMode?: ContactModalMode
+  contactLinkText?: string
+  contactLinkMode?: ContactModalMode
   secondaryHref?: string
   secondaryText?: string
   visual?: ReactNode
   shaderColors?: ShaderBackgroundColors
 }
 
+const textLinkClass =
+  "inline-flex min-h-11 items-center self-center border-b border-[var(--frenem-ink)] pb-1 font-sans text-[14px] font-medium text-[var(--frenem-ink)] transition-colors hover:border-[var(--frenem-accent)] hover:text-[var(--frenem-accent)] sm:self-auto sm:text-[15px]"
+
 export default function SubHero({
   label,
   title,
   subtitle,
   ctaText = "Get started →",
+  ctaMode = "default",
+  contactLinkText,
+  contactLinkMode = "default",
   secondaryHref,
   secondaryText,
   visual,
@@ -38,97 +48,106 @@ export default function SubHero({
     smoothScrollTo(secondaryHref)
   }
 
+  const hasExtraLinks = Boolean(contactLinkText) || Boolean(secondaryHref && secondaryText)
+
   return (
     <section
-        className="relative w-full overflow-hidden text-[var(--frenem-ink)]"
-        data-section-name="Hero"
-        data-section-num="01"
-      >
-        {shaderColors && (
-          <>
-            <div className="absolute inset-0">
-              <ShaderBackground
-                colors={shaderColors}
-                intensity={1}
-                className="h-full w-full"
-              />
-            </div>
-            {/* Soft gradient overlay to ensure text readability over the shader */}
-            <div 
-              className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-white/80" 
-              style={{
-                background: `linear-gradient(to bottom, ${shaderColors.bg}99, transparent, ${shaderColors.bg}CC)`
-              }}
-            />
-          </>
-        )}
+      className="relative w-full overflow-hidden text-[var(--frenem-ink)]"
+      data-section-name="Hero"
+      data-section-num="01"
+    >
+      {shaderColors && (
+        <>
+          <div className="absolute inset-0">
+            <ShaderBackground colors={shaderColors} intensity={1} className="h-full w-full" />
+          </div>
+          <div
+            className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-white/80"
+            style={{
+              background: `linear-gradient(to bottom, ${shaderColors.bg}99, transparent, ${shaderColors.bg}CC)`,
+            }}
+          />
+        </>
+      )}
 
-        <div className="relative z-10 mx-auto grid min-h-0 w-full max-w-[var(--content-width)] grid-cols-1 items-center gap-8 px-5 pt-24 pb-14 sm:px-6 md:gap-12 md:px-8 md:pt-[120px] md:pb-20 lg:min-h-[80vh] lg:grid-cols-[1.2fr_1fr] lg:gap-16 lg:py-[120px]">
-          <motion.div className="flex min-w-0 flex-col justify-center">
-            <motion.div
-              className="frenem-hero-eyebrow mb-5 md:mb-8"
-              initial={hidden}
-              animate={shown}
-              transition={{ duration: 0.65, delay: shaderColors ? 0.05 : 0.1 }}
+      <div className="relative z-10 mx-auto grid min-h-0 w-full max-w-[var(--content-width)] grid-cols-1 items-center gap-8 px-5 pb-14 pt-24 sm:px-6 md:gap-12 md:px-8 md:pb-20 md:pt-[120px] lg:min-h-[80vh] lg:grid-cols-[1.2fr_1fr] lg:gap-16 lg:py-[120px]">
+        <motion.div className="flex min-w-0 flex-col justify-center">
+          <motion.div
+            className="frenem-hero-eyebrow mb-5 md:mb-8"
+            initial={hidden}
+            animate={shown}
+            transition={{ duration: 0.65, delay: shaderColors ? 0.05 : 0.1 }}
+          >
+            {label}
+          </motion.div>
+          <motion.h1
+            className="mb-5 font-sans text-[clamp(34px,6vw,88px)] font-semibold leading-[0.98] tracking-[-0.035em] md:mb-8"
+            initial={hidden}
+            animate={shown}
+            transition={{ duration: 0.65, delay: shaderColors ? 0.17 : 0.22 }}
+          >
+            {title}
+          </motion.h1>
+          <motion.p
+            className="mb-8 max-w-[480px] font-sans text-lg font-normal leading-normal tracking-[-0.005em] text-[var(--frenem-ink-secondary)] md:mb-10 md:text-xl"
+            initial={hidden}
+            animate={shown}
+            transition={{ duration: 0.65, delay: shaderColors ? 0.29 : 0.34 }}
+          >
+            {subtitle}
+          </motion.p>
+          <motion.div
+            className={
+              hasExtraLinks
+                ? "flex w-full flex-col items-stretch gap-3.5 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-4"
+                : undefined
+            }
+            initial={hidden}
+            animate={shown}
+            transition={{ duration: 0.65, delay: shaderColors ? 0.41 : 0.46 }}
+          >
+            <button
+              type="button"
+              onClick={() => openModal(ctaMode)}
+              className={cn(
+                "inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-all duration-300 hover:translate-y-[-2px] hover:bg-[var(--frenem-accent)] md:py-4",
+                hasExtraLinks && "w-full sm:w-auto"
+              )}
             >
-              {label}
-            </motion.div>
-            <motion.h1
-              className="mb-5 font-sans text-[clamp(34px,6vw,88px)] font-semibold leading-[0.98] tracking-[-0.035em] md:mb-8"
-              initial={hidden}
-              animate={shown}
-              transition={{ duration: 0.65, delay: shaderColors ? 0.17 : 0.22 }}
-            >
-              {title}
-            </motion.h1>
-            <motion.p
-              className="mb-8 max-w-[480px] font-sans text-lg font-normal leading-normal tracking-[-0.005em] text-[var(--frenem-ink-secondary)] md:mb-10 md:text-xl"
-              initial={hidden}
-              animate={shown}
-              transition={{ duration: 0.65, delay: shaderColors ? 0.29 : 0.34 }}
-            >
-              {subtitle}
-            </motion.p>
-            <motion.div
-              className={
-                secondaryHref && secondaryText
-                  ? "flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-4"
-                  : undefined
-              }
-              initial={hidden}
-              animate={shown}
-              transition={{ duration: 0.65, delay: shaderColors ? 0.41 : 0.46 }}
-            >
+              {ctaText}
+            </button>
+            {contactLinkText ? (
               <button
                 type="button"
-                onClick={openModal}
-                className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-all duration-300 hover:bg-[var(--frenem-accent)] hover:translate-y-[-2px] md:py-4"
+                onClick={() => openModal(contactLinkMode)}
+                className={textLinkClass}
               >
-                {ctaText}
+                {contactLinkText}
               </button>
-              {secondaryHref && secondaryText ? (
-                <a
-                  href={`#${secondaryHref.replace(/^#/, "")}`}
-                  onClick={handleSecondaryClick}
-                  className="inline-flex min-h-11 items-center border-b border-[var(--frenem-ink)] pb-1 font-sans text-[15px] font-medium text-[var(--frenem-ink)] transition-colors hover:border-[var(--frenem-accent)] hover:text-[var(--frenem-accent)]"
-                >
-                  {secondaryText}
-                </a>
-              ) : null}
-            </motion.div>
+            ) : null}
+            {secondaryHref && secondaryText ? (
+              <a
+                href={`#${secondaryHref.replace(/^#/, "")}`}
+                onClick={handleSecondaryClick}
+                className={textLinkClass}
+              >
+                {secondaryText}
+              </a>
+            ) : null}
           </motion.div>
+        </motion.div>
 
-          {visual ? (
-            <motion.div 
-              className="w-full min-w-0 justify-self-center lg:justify-self-start"
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.16, 1] }}
-            >
-              {visual}
-            </motion.div>
-          ) : null}
-        </div>
-      </section>
+        {visual ? (
+          <motion.div
+            className="w-full min-w-0 justify-self-center lg:justify-self-start"
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.16, 1] }}
+          >
+            {visual}
+          </motion.div>
+        ) : null}
+      </div>
+    </section>
   )
 }

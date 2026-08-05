@@ -125,6 +125,7 @@ export default function Home() {
           <FinalCtaSection
             sectionName="Contact"
             sectionNum="09"
+            modalMode="assessment"
             title={
               <>
                 Design the organisation your strategy <em className={emAccent}>needs.</em>
@@ -183,6 +184,9 @@ export default function Home() {
             }
             subtitle="Engagement surveys measure how people feel. Pulse measures how they work together: the friction, energy, and hidden connections between the people doing the work."
             ctaText="Get started →"
+            ctaMode="pulseQuestionnaire"
+            contactLinkText="Just get in touch"
+            contactLinkMode="pulseContact"
             secondaryHref="how-pulse"
             secondaryText="See how"
             visual={<PulseHeroVisual />}
@@ -206,6 +210,9 @@ export default function Home() {
             label="Get Started with Pulse"
             sectionName="Contact"
             sectionNum="07"
+            modalMode="pulseQuestionnaire"
+            secondaryButtonText="Just get in touch"
+            secondaryModalMode="pulseContact"
             title={
               <>
                 See your organisation as it <em className={emAccent}>really works.</em>

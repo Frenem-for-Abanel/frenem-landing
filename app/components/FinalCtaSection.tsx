@@ -1,7 +1,7 @@
 "use client"
 
 import Reveal from "./Reveal"
-import { useContactModal } from "../context/ContactModalContext"
+import { useContactModal, type ContactModalMode } from "../context/ContactModalContext"
 import type { ReactNode } from "react"
 
 interface FinalCtaSectionProps {
@@ -11,6 +11,9 @@ interface FinalCtaSectionProps {
   buttonText?: string
   sectionName?: string
   sectionNum?: string
+  modalMode?: ContactModalMode
+  secondaryButtonText?: string
+  secondaryModalMode?: ContactModalMode
 }
 
 export default function FinalCtaSection({
@@ -20,6 +23,9 @@ export default function FinalCtaSection({
   buttonText = "Talk to us →",
   sectionName = "Contact",
   sectionNum = "09",
+  modalMode = "default",
+  secondaryButtonText,
+  secondaryModalMode = "default",
 }: FinalCtaSectionProps) {
   const { openModal } = useContactModal()
 
@@ -43,14 +49,23 @@ export default function FinalCtaSection({
             <p className="max-w-[480px] font-sans text-base font-normal leading-relaxed text-[var(--frenem-ink-secondary)] md:text-lg">
               {subtitle}
             </p>
-            <div className="lg:justify-self-end">
+            <div className="flex w-full flex-col items-stretch gap-3.5 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:gap-x-5 lg:justify-self-end">
               <button
                 type="button"
-                onClick={openModal}
-                className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-all duration-300 hover:bg-[var(--frenem-accent)] hover:translate-y-[-2px] md:py-4"
+                onClick={() => openModal(modalMode)}
+                className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-all duration-300 hover:bg-[var(--frenem-accent)] hover:translate-y-[-2px] sm:w-auto md:py-4"
               >
                 {buttonText}
               </button>
+              {secondaryButtonText ? (
+                <button
+                  type="button"
+                  onClick={() => openModal(secondaryModalMode)}
+                  className="inline-flex min-h-11 items-center justify-center self-center border-b border-[var(--frenem-ink)] pb-1 font-sans text-[14px] font-medium text-[var(--frenem-ink)] transition-colors hover:border-[var(--frenem-accent)] hover:text-[var(--frenem-accent)] sm:self-auto sm:text-[15px]"
+                >
+                  {secondaryButtonText}
+                </button>
+              ) : null}
             </div>
           </div>
         </Reveal>

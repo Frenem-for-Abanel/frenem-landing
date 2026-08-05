@@ -7,6 +7,7 @@ import { useProduct } from "../context/ProductContext"
 import { useContactModal } from "../context/ContactModalContext"
 import { smoothScrollTo } from "../utils/smooth-scroll"
 import { getHowSectionId } from "../utils/how-section"
+import { headerContactMode } from "../utils/contact-modal-helpers"
 import type { ProductTab } from "../context/ProductContext"
 
 function tabClass(active: boolean) {
@@ -101,7 +102,7 @@ export default function Header() {
         ) : null}
         <button
           type="button"
-          onClick={openModal}
+          onClick={() => openModal(headerContactMode(activeProduct))}
           aria-label="Get in touch"
           className="inline-flex items-center justify-center font-sans text-[13px] font-medium h-11 w-11 shrink-0 rounded-full bg-[var(--frenem-ink)] text-[var(--frenem-bg)] hover:bg-[var(--frenem-accent)] transition-colors md:h-auto md:w-auto md:py-2 md:px-[18px]"
         >
