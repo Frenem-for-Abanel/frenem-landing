@@ -1,0 +1,115 @@
+---
+title: "Boring on purpose"
+summary: "Why Frenem runs on Django, PostgreSQL, and Next.js, and why the novelty budget is spent on the problem rather than the stack."
+date: "2026-07-28"
+type: "essay"
+pillar: "method"
+featured: true
+---
+
+{/* PLACEHOLDER COPY. Structure, components and voice are final; every
+    paragraph below is a stand-in to be rewritten before publication. */}
+
+<Tldr>
+
+- Frenem runs on Django, PostgreSQL, and Next.js, chosen so that the stack is never the interesting part.
+- The novelty budget goes to the domain: modelling organisations, computing diagnostics, and rendering structure people recognise.
+- Every dependency has to earn its place twice: once when it is installed, and again the first time it misbehaves.
+
+</Tldr>
+
+<Figure caption="The whole architecture fits in one diagram, which is the point.">
+  <svg viewBox="0 0 640 232" role="img" aria-label="Architecture diagram: Next.js as the surface, Django as the decision layer, PostgreSQL as the record">
+    <g fill="none" stroke="var(--color-ink)" strokeOpacity="0.72" strokeWidth="1.25">
+      <rect x="24" y="84" width="176" height="60" rx="6" />
+      <rect x="232" y="84" width="176" height="60" rx="6" />
+      <rect x="440" y="84" width="176" height="60" rx="6" />
+      <line x1="200" y1="114" x2="230" y2="114" />
+      <line x1="408" y1="114" x2="438" y2="114" />
+      <polyline points="224,110 230,114 224,118" />
+      <polyline points="432,110 438,114 432,118" />
+    </g>
+    <g fill="var(--tint-bright)">
+      <circle cx="207" cy="114" r="2.5" />
+      <circle cx="415" cy="114" r="2.5" />
+    </g>
+    <g fill="none" stroke="var(--color-ink)" strokeOpacity="0.35" strokeWidth="1">
+      <polyline points="24,172 24,180 616,180 616,172" />
+    </g>
+    <g
+      fontFamily="var(--font-mono)"
+      fontSize="10"
+      letterSpacing="0.08em"
+      fill="var(--color-ink-tertiary)"
+      textAnchor="middle"
+    >
+      <text x="112" y="70">THE SURFACE</text>
+      <text x="320" y="70">THE DECISIONS</text>
+      <text x="528" y="70">THE RECORD</text>
+      <text x="320" y="206">ONE DEPLOY, ONE DATABASE, ONE SOURCE OF RECORD</text>
+    </g>
+    <g
+      fontFamily="var(--font-mono)"
+      fontSize="14"
+      fill="var(--color-ink)"
+      textAnchor="middle"
+    >
+      <text x="112" y="119">Next.js</text>
+      <text x="320" y="119">Django</text>
+      <text x="528" y="119">PostgreSQL</text>
+    </g>
+  </svg>
+</Figure>
+
+Frenem sells organisational clarity. It would be strange if the system behind
+it were a puzzle. So the stack is deliberately unremarkable: Django for the
+decision layer, PostgreSQL for the record, Next.js for the surface. Nothing in
+that sentence will impress anyone at a conference, and that is the design goal.
+
+## Where the novelty budget goes
+
+Every product carries a fixed tolerance for the unproven. Spend it on an
+exotic database and you have less left for the parts that are actually hard.
+Our hard parts are domain problems: how to model an organisation without
+flattening it into a tree, how to keep a diagnostic honest when anonymity
+thresholds withhold data, how to draw a structure that a leadership team
+recognises as their own. Those problems deserve the whole budget. The
+framework underneath them should have had its surprises documented a decade
+ago, by someone else.
+
+## What each layer is for
+
+Django is where decisions live: permissions, migrations, the admin, and the
+object model that everything else defers to. It is boring precisely where
+mistakes are expensive. PostgreSQL is the record. There is one database, it is
+transactional, and no second store exists to drift out of agreement with it.
+Next.js is the surface: static where a page can be static, server-rendered
+where freshness matters, and never the layer where business rules hide.
+
+The discipline that holds the three together is a readiness check that asks
+one question per layer, answered before any deploy goes out:
+
+```python
+def readiness() -> dict[str, bool]:
+    """A deploy that cannot answer all three does not ship."""
+    return {
+        "record": database.select_one(),
+        "decisions": database.migrations_current(),
+        "surface": frontend.build_matches_release(),
+    }
+```
+
+## The cost we accept
+
+Boring has a price and it is worth naming. We occasionally write code that a
+newer framework would have generated, and we wait for features the ecosystem
+has already celebrated elsewhere. That trade is deliberate: we give up some
+convenience and get back predictability, upgrade paths measured in years, and
+failure modes that are already described in someone else's post-mortem.
+
+## What it buys
+
+A quiet stack keeps the promises loud. When the tools underneath never demand
+attention, every hour of attention goes to the product: sharper diagnostics,
+clearer structure, better answers. Boring is not a compromise here. It is the
+method.

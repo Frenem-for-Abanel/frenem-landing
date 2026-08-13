@@ -76,6 +76,17 @@ export default function Header() {
       </nav>
 
       <div className="flex min-w-0 items-center justify-end gap-3 md:gap-6">
+        <Link
+          href="/engineering"
+          aria-current={pathname.startsWith("/engineering") ? "page" : undefined}
+          className={`hidden md:block font-sans text-[13px] transition-colors ${
+            pathname.startsWith("/engineering")
+              ? "text-ink font-medium"
+              : "font-normal text-ink-secondary hover:text-ink"
+          }`}
+        >
+          Engineering
+        </Link>
         {howSectionId ? (
           <a
             href={`#${howSectionId}`}
