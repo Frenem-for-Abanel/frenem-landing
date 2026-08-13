@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Mail } from "lucide-react"
+import { Mail, Newspaper } from "lucide-react"
 import { useContactModal } from "../context/ContactModalContext"
 import { smoothScrollTo } from "../utils/smooth-scroll"
 import { getHowSectionId } from "../utils/how-section"
@@ -25,6 +25,7 @@ export default function Header() {
 
   const product = productFromPathname(pathname)
   const howSectionId = getHowSectionId(product)
+  const onEngineering = pathname === "/engineering" || pathname.startsWith("/engineering/")
 
   useEffect(() => {
     const handleScroll = () => {
@@ -75,7 +76,20 @@ export default function Header() {
         ))}
       </nav>
 
-      <div className="flex min-w-0 items-center justify-end gap-3 md:gap-6">
+      <div className="flex min-w-0 items-center justify-end gap-1.5 md:gap-6">
+        {/* Below 360px the three clusters already fill the bar, so the link
+            waits for room rather than overlapping the product tabs. */}
+        <Link
+          href="/engineering"
+          aria-current={onEngineering ? "page" : undefined}
+          aria-label="Engineering"
+          className={`hidden h-11 w-7 shrink-0 items-center justify-center font-sans text-[13px] transition-colors min-[360px]:inline-flex md:h-auto md:w-auto ${
+            onEngineering ? "font-medium text-ink" : "font-normal text-ink-secondary hover:text-ink"
+          }`}
+        >
+          <Newspaper className="size-5 shrink-0 md:hidden" aria-hidden />
+          <span className="hidden md:inline">Engineering</span>
+        </Link>
         {howSectionId ? (
           <a
             href={`#${howSectionId}`}
