@@ -1,9 +1,9 @@
-import type { ProductTab } from "../context/ProductContext"
+import type { ProductKey } from "./product"
 
 export type HeaderContactMode = "contact" | "pulseContact" | "default"
 
 /** Header "Get in Touch" opens the low-effort path for dual-path products. */
-export function headerContactMode(product: ProductTab): HeaderContactMode {
+export function headerContactMode(product: ProductKey | null): HeaderContactMode {
   if (product === "build") return "contact"
   if (product === "pulse") return "pulseContact"
   return "default"

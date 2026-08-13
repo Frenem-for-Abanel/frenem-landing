@@ -1,6 +1,7 @@
 "use client"
 
 import Reveal from "./Reveal"
+import { Section, SectionLabel, SectionHeading } from "./Section"
 
 const alumniTags = [
   "Goldman Sachs",
@@ -18,83 +19,85 @@ const educationTags = [
   "St. Stephen's College, Delhi",
 ]
 
-export default function TeamSection() {
+function TagRow({ label, tags }: { label: string; tags: string[] }) {
   return (
-    <section className="relative overflow-hidden bg-[var(--frenem-bg-soft)] py-16 md:py-[140px]" data-section-name="Team" data-section-num="07">
-      <div className="container-v2">
-        <div className="mb-12 grid grid-cols-1 items-end gap-8 md:mb-16 md:gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
-          <div>
-            <Reveal>
-              <div className="frenem-section-label">Who Built This</div>
-            </Reveal>
-            <Reveal delay={0.05}>
-              <h2 className="mb-6 font-sans text-[clamp(28px,5vw,72px)] font-semibold leading-none tracking-[-0.03em] md:mb-8">
-                A combined <em className="font-normal italic">100+ years</em> of consulting and HR experience.
-              </h2>
-            </Reveal>
-            <Reveal delay={0.08}>
-              <p className="max-w-[560px] font-sans text-lg font-normal leading-snug text-[var(--frenem-ink-secondary)] md:text-xl">
-                Frenem isn&apos;t a tool built by engineers guessing what organisations need. It&apos;s built by people
-                who&apos;ve done this work, in the room, for decades.
-              </p>
-            </Reveal>
-          </div>
-          <Reveal delay={0.06}>
-            <div className="flex flex-col justify-center rounded-2xl bg-[var(--frenem-ink)] p-6 text-[var(--frenem-bg)] md:p-8 lg:min-h-[200px]">
-              <div className="font-sans text-[48px] font-semibold leading-[0.9] tracking-[-0.04em] text-[var(--frenem-accent)] md:text-[72px]">
-                100+
-              </div>
-              <p className="mt-2 font-sans text-sm leading-snug text-white/70">
-                Years of combined consulting &amp; HR experience across the team.
-              </p>
-            </div>
+    <div className="grid grid-cols-1 gap-y-0 border-t border-line-strong md:grid-cols-[200px_1fr] md:items-baseline md:gap-8 md:py-6">
+      <span className="pb-2 pt-6 font-sans text-[13px] font-medium text-ink-tertiary md:py-6">
+        {label}
+      </span>
+      <ul className="flex flex-wrap gap-2 pb-6 md:gap-2.5 md:py-6">
+        {tags.map((tag) => (
+          <li
+            key={tag}
+            className="cursor-default rounded-full border border-line-strong bg-paper px-3.5 py-2 font-sans text-sm font-medium transition-colors hover:border-ink hover:bg-ink hover:text-paper md:px-4"
+          >
+            {tag}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+/** Team credibility: real backgrounds only, no fabricated logos. */
+export default function TeamSection({
+  label = "Who Built This",
+  compact = false,
+  soft = true,
+}: {
+  label?: string
+  compact?: boolean
+  soft?: boolean
+}) {
+  return (
+    <Section soft={soft}>
+      <div className="mb-12 grid grid-cols-1 items-end gap-8 md:mb-16 md:gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
+        <div>
+          <Reveal>
+            <SectionLabel>{label}</SectionLabel>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <SectionHeading className="mb-6 md:mb-8">
+              A combined <em>100+ years</em> of consulting and HR experience.
+            </SectionHeading>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <p className="max-w-[560px] font-sans text-lg font-normal leading-snug text-ink-secondary md:text-xl">
+              Frenem isn&apos;t a tool built by engineers guessing what organisations need.
+              It&apos;s built by people who&apos;ve done this work, in the room, for decades.
+            </p>
           </Reveal>
         </div>
-
-        <Reveal delay={0.1}>
-          <div className="grid grid-cols-1 gap-y-0 border-t border-[var(--frenem-border-strong)] md:grid-cols-[200px_1fr] md:items-baseline md:gap-8 md:py-6">
-            <span className="pb-2 pt-6 font-sans text-[13px] font-medium text-[var(--frenem-ink-tertiary)] md:py-6">
-              Team alumni from
-            </span>
-            <div className="flex flex-wrap gap-2 pb-6 md:gap-2.5 md:py-6">
-              {alumniTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="cursor-default rounded-full border border-[var(--frenem-border-strong)] bg-[var(--frenem-bg)] px-3.5 py-2 font-sans text-sm font-medium transition-colors hover:border-[var(--frenem-ink)] hover:bg-[var(--frenem-ink)] hover:text-[var(--frenem-bg)] md:px-4"
-                >
-                  {tag}
-                </span>
-              ))}
+        <Reveal delay={0.06}>
+          <div className="flex flex-col justify-center rounded-2xl bg-ink p-6 text-paper md:p-8 lg:min-h-[200px]">
+            <div className="font-display text-[48px] font-semibold leading-[0.9] tracking-[-0.04em] text-(--tint-bright) md:text-[72px]">
+              100+
             </div>
+            <p className="mt-2 font-sans text-sm leading-snug text-white/70">
+              Years of combined consulting &amp; HR experience across the team.
+            </p>
           </div>
-        </Reveal>
-
-        <Reveal delay={0.12}>
-          <div className="grid grid-cols-1 gap-y-0 border-t border-b border-[var(--frenem-border-strong)] md:grid-cols-[200px_1fr] md:items-baseline md:gap-8 md:py-6">
-            <span className="pb-2 pt-6 font-sans text-[13px] font-medium text-[var(--frenem-ink-tertiary)] md:py-6">
-              Educated at
-            </span>
-            <div className="flex flex-wrap gap-2 pb-6 md:gap-2.5 md:py-6">
-              {educationTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="cursor-default rounded-full border border-[var(--frenem-border-strong)] bg-[var(--frenem-bg)] px-3.5 py-2 font-sans text-sm font-medium transition-colors hover:border-[var(--frenem-ink)] hover:bg-[var(--frenem-ink)] hover:text-[var(--frenem-bg)] md:px-4"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        </Reveal>
-
-        <Reveal delay={0.14}>
-          <p className="mt-10 max-w-[720px] font-sans text-lg font-normal leading-snug text-[var(--frenem-ink)] md:mt-14 md:text-xl">
-            The playbooks we&apos;ve used across{" "}
-            <strong className="font-semibold">hundreds of engagements</strong> are now embedded directly in the
-            platform. You get the thinking without the billing.
-          </p>
         </Reveal>
       </div>
-    </section>
+
+      <Reveal delay={0.1}>
+        <TagRow label="Team alumni from" tags={alumniTags} />
+      </Reveal>
+      <Reveal delay={0.12}>
+        <div className="border-b border-line-strong">
+          <TagRow label="Educated at" tags={educationTags} />
+        </div>
+      </Reveal>
+
+      {!compact && (
+        <Reveal delay={0.14}>
+          <p className="mt-10 max-w-[720px] font-sans text-lg font-normal leading-snug text-ink md:mt-14 md:text-xl">
+            The playbooks we&apos;ve used across{" "}
+            <strong className="font-semibold">hundreds of engagements</strong> are now embedded
+            directly in the platform. You get the thinking without the billing.
+          </p>
+        </Reveal>
+      )}
+    </Section>
   )
 }

@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frenem marketing site
 
-## Getting Started
+Marketing site for [Frenem](https://frenem.com) — an organisation clarity suite from Bangalore, India:
 
-First, run the development server:
+- **Pulse** (`/pulse`) — relational diagnostics: a four-week pilot that maps how people actually work together (exit risk, hidden brokers, cross-team friction).
+- **Build** (`/build`) — an 8-week organisation-design sprint: decision rights, job architecture, governance, and succession.
+- **Prism** (`/prism`) — lightweight employee management: live org charts, KRAs, review cycles, and audit trails.
+
+## Stack
+
+Next.js 15 (App Router, static marketing routes), React 19, Tailwind CSS v4 (tokens in `app/globals.css` via `@theme`), framer-motion, react-hook-form + zod, nodemailer, vitest.
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run test     # vitest unit tests (app/**/*.test.ts)
+npm run lint     # eslint
+npm run build    # production build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable | Purpose |
+| --- | --- |
+| `EMAIL_USER` | GoDaddy SMTP username used to send contact notifications. Unset locally → submissions are logged to the server console instead of emailed. |
+| `EMAIL_PASSWORD` | GoDaddy SMTP password. |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, and JSON-LD (defaults to `https://frenem.com`). |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project structure
 
-## Learn More
+```
+app/
+  page.tsx              Homepage (umbrella positioning + product router)
+  pulse|build|prism/    Product pages, each with metadata + OG image
+  api/contact/          Contact endpoint (validation, honeypot, rate limit, SMTP)
+  components/           Shared sections and primitives
+    build|pulse|prism/  Page-specific sections and product visuals
+    contact/            Modal shell + the five contact flows
+  context/              Contact-modal provider
+  utils/                Pure logic (validation, questionnaires, emails) + tests
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Design system
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Colour, font, and layout tokens live in `app/globals.css` (`@theme`). Each page sets a signature tint via a `.tint-*` wrapper class; components read `--tint-ink` / `--tint-bright` / `--tint-soft` so the same section adapts per product. Display type is Fraunces, UI type is Inter, and the wordmark is League Spartan (all via `next/font`).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Contact flows
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+One modal, five flows: Build assessment questionnaire, Build quick contact, Pulse questionnaire, Pulse quick contact, and a general form. Deep links: `/pulse?intent=read`, `/build?intent=assessment`, `?intent=contact` on any page. Submissions post to `/api/contact` and are emailed to the team (recipients configured in `app/api/contact/route.ts`).
