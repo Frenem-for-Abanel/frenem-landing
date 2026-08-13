@@ -36,7 +36,7 @@ export default function EngineeringPage() {
           The Log
         </h2>
         <div className="mt-5 md:mt-6">
-          <LogStream entries={latest} />
+          <LogStream entries={latest} surface="cover" />
         </div>
         <p className="mt-2 border-t border-line pt-6">
           <Link

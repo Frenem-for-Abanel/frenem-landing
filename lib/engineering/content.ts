@@ -2,11 +2,16 @@ import fs from "node:fs"
 import path from "node:path"
 import matter from "gray-matter"
 import readingTime from "reading-time"
+import { parse as parseYaml } from "yaml"
 
 /**
  * Engineering content model. MDX on the filesystem, git as the CMS,
  * filenames as slugs. Frontmatter is validated here at build time and the
  * build fails loudly on any violation.
+ *
+ * Content is trusted input: MDX compiles to JavaScript that runs during the
+ * build, so anything committed under content/ has the privileges of the build
+ * itself. Never render MDX from an untrusted source through this module.
  */
 
 export type EntryType = "essay" | "shipped" | "note"
@@ -27,7 +32,7 @@ export interface EngineeringEntry {
   body: string
   /** e.g. "6 min read"; essays only. */
   readingTime?: string
-  /** The essay's opening <Figure> block; the cover renders it standalone. */
+  /** The essay's opening <Figure>; the cover renders it standalone. */
   openingFigure?: string
 }
 
@@ -51,8 +56,7 @@ const ENTRY_TYPES: EntryType[] = ["essay", "shipped", "note"]
 const PILLARS: Pillar[] = ["method", "design", "trust"]
 const PRODUCTS: ProductTint[] = ["pulse", "build", "prism"]
 
-const ESSAYS_DIR = path.join(process.cwd(), "content", "essays")
-const LOG_DIR = path.join(process.cwd(), "content", "log")
+const CONTENT_ROOT = path.join(process.cwd(), "content")
 
 const ALLOWED_KEYS = new Set([
   "title",
@@ -67,23 +71,59 @@ const ALLOWED_KEYS = new Set([
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
-const FIGURE_BLOCK_RE = /<Figure\b[\s\S]*?<\/Figure>/
-const FIGURE_SELF_CLOSING_RE = /<Figure\b[^>]*\/>/
+const TLDR_RE = /<Tldr\b[^>]*>([\s\S]*?)<\/Tldr>/
+const MIN_TLDR_BULLETS = 2
+const MAX_TLDR_BULLETS = 4
+
+/**
+ * gray-matter reaches for js-yaml 3.x by default, which is unmaintained and
+ * carries prototype-pollution advisories. Parse with the maintained `yaml`
+ * package instead. It follows YAML 1.2, so a bare `2026-08-13` stays a string
+ * rather than silently becoming a Date.
+ */
+const YAML_ENGINE = {
+  parse: (input: string): object => (parseYaml(input) as object | null) ?? {},
+  stringify: (): string => {
+    throw new Error("engineering frontmatter is read-only")
+  },
+}
 
 /** Tint wrapper class for an entry: the product's signature, else brand. */
 export function tintClass(entry: Pick<EngineeringEntry, "product">): string {
   return entry.product ? `tint-${entry.product}` : "tint-brand"
 }
 
-function toUtcDate(date: string): Date {
-  return new Date(`${date}T00:00:00.000Z`)
-}
-
-/** Word count on prose only: JSX tags and MDX comments don't read. */
+/** Word count on prose alone: code blocks, JSX, and comments don't read. */
 function proseOf(body: string): string {
   return body
+    .replace(/```[\s\S]*?```/g, " ")
     .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
-    .replace(/<[^>]+>/g, " ")
+    .replace(/<\/?[A-Za-z][^>]*>/g, " ")
+}
+
+/**
+ * The first <Figure> in document order, in either form. Self-closing is
+ * tested first: a lazy match for a closing tag would otherwise run from a
+ * self-closing figure all the way to a later figure's `</Figure>`.
+ */
+function firstFigure(body: string): { index: number; text: string } | null {
+  const index = body.search(/<Figure\b/)
+  if (index === -1) return null
+  const rest = body.slice(index)
+  const selfClosing = /^<Figure\b[^>]*\/>/.exec(rest)
+  if (selfClosing) return { index, text: selfClosing[0] }
+  const block = /^<Figure\b[\s\S]*?<\/Figure>/.exec(rest)
+  if (block) return { index, text: block[0] }
+  return null
+}
+
+/** Figure-first: only the Tldr card and comments may precede the figure. */
+function figureLeadsBody(body: string, figureIndex: number): boolean {
+  const before = body
+    .slice(0, figureIndex)
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, "")
+    .replace(TLDR_RE, "")
+  return before.trim() === ""
 }
 
 interface RawFile {
@@ -94,46 +134,64 @@ interface RawFile {
   body: string
 }
 
-function readDir(dir: string, kind: "essays" | "log", problems: string[]): RawFile[] {
-  if (!fs.existsSync(dir)) {
-    problems.push(`missing content directory: ${path.relative(process.cwd(), dir)}`)
-    return []
-  }
+/** Missing directories read as empty: git cannot track an empty content dir. */
+function readDir(root: string, kind: "essays" | "log", problems: string[]): RawFile[] {
+  const dir = path.join(root, kind)
+  if (!fs.existsSync(dir)) return []
+
   const out: RawFile[] = []
   for (const name of fs.readdirSync(dir).sort()) {
     if (name.startsWith(".")) continue
-    const file = path.join(path.relative(process.cwd(), dir), name)
+    const file = `content/${kind}/${name}`
     if (!name.endsWith(".mdx")) {
       problems.push(`${file}: only .mdx files belong in content/ (filenames are slugs)`)
       continue
     }
-    const slug = name.slice(0, -".mdx".length)
     const raw = fs.readFileSync(path.join(dir, name), "utf8")
-    const { data, content } = matter(raw)
-    out.push({ file, slug, dir: kind, data, body: content })
+    const { data, content } = matter(raw, { engines: { yaml: YAML_ENGINE } })
+    out.push({
+      file,
+      slug: name.slice(0, -".mdx".length),
+      dir: kind,
+      data: data as Record<string, unknown>,
+      body: content,
+    })
   }
   return out
 }
 
+/** A real calendar date, or null. Timestamps are rejected on purpose. */
 function asDateString(value: unknown): string | null {
-  if (typeof value === "string" && DATE_RE.test(value)) {
-    const parsed = toUtcDate(value)
-    if (!Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value) {
-      return value
-    }
-    return null
+  if (typeof value !== "string" || !DATE_RE.test(value)) return null
+  const parsed = new Date(`${value}T00:00:00.000Z`)
+  if (Number.isNaN(parsed.getTime())) return null
+  return parsed.toISOString().slice(0, 10) === value ? value : null
+}
+
+function validateTldr(body: string, issues: string[]): void {
+  const match = TLDR_RE.exec(body)
+  if (!match) {
+    issues.push(
+      `essays open with an authored <Tldr> card (${MIN_TLDR_BULLETS}-${MAX_TLDR_BULLETS} bullets)`
+    )
+    return
   }
-  // Unquoted YAML dates parse as Date objects at midnight UTC; accept those,
-  // but reject anything carrying a time component.
-  if (value instanceof Date && !Number.isNaN(value.getTime())) {
-    const isMidnightUtc =
-      value.getUTCHours() === 0 &&
-      value.getUTCMinutes() === 0 &&
-      value.getUTCSeconds() === 0 &&
-      value.getUTCMilliseconds() === 0
-    return isMidnightUtc ? value.toISOString().slice(0, 10) : null
+
+  const inner = match[1]
+  const blankLineAfterOpen = /^[^\S\n]*\n\s*\n/.test(inner)
+  const blankLineBeforeClose = /\n\s*\n[^\S\n]*$/.test(inner)
+  if (!blankLineAfterOpen || !blankLineBeforeClose) {
+    issues.push(
+      `<Tldr> needs a blank line above and below its list, or MDX renders the bullets as one paragraph`
+    )
   }
-  return null
+
+  const bullets = inner.split("\n").filter((line) => /^\s*[-*]\s+\S/.test(line)).length
+  if (bullets < MIN_TLDR_BULLETS || bullets > MAX_TLDR_BULLETS) {
+    issues.push(
+      `<Tldr> takes ${MIN_TLDR_BULLETS}-${MAX_TLDR_BULLETS} bullets, found ${bullets}`
+    )
+  }
 }
 
 function validate(raw: RawFile, problems: string[]): EngineeringEntry | null {
@@ -188,16 +246,16 @@ function validate(raw: RawFile, problems: string[]): EngineeringEntry | null {
       issues.push(`only essays may set "featured"`)
     }
   }
-  if (data.draft !== undefined && typeof data.draft !== "boolean") {
-    issues.push(`"draft" must be a boolean`)
-  }
 
+  const figure = type === "essay" ? firstFigure(body) : null
   if (type === "essay") {
-    if (!/<Tldr\b/.test(body)) {
-      issues.push(`essays open with an authored <Tldr> card (2-4 bullets)`)
-    }
-    if (!FIGURE_BLOCK_RE.test(body) && !FIGURE_SELF_CLOSING_RE.test(body)) {
+    validateTldr(body, issues)
+    if (!figure) {
       issues.push(`figure-first rule: every essay opens with a <Figure>`)
+    } else if (!figureLeadsBody(body, figure.index)) {
+      issues.push(
+        `figure-first rule: the opening <Figure> must come before the prose (only <Tldr> may precede it)`
+      )
     }
   }
 
@@ -207,10 +265,6 @@ function validate(raw: RawFile, problems: string[]): EngineeringEntry | null {
   }
 
   const isEssay = type === "essay"
-  const openingFigure = isEssay
-    ? (body.match(FIGURE_BLOCK_RE)?.[0] ?? body.match(FIGURE_SELF_CLOSING_RE)?.[0])
-    : undefined
-
   return {
     slug: raw.slug,
     title: (data.title as string).trim(),
@@ -222,21 +276,19 @@ function validate(raw: RawFile, problems: string[]): EngineeringEntry | null {
     featured: data.featured === true,
     body,
     readingTime: isEssay ? readingTime(proseOf(body)).text : undefined,
-    openingFigure,
+    openingFigure: figure?.text,
   }
 }
 
-let cache: EngineeringEntry[] | null = null
-
-function loadEntries(): EngineeringEntry[] {
-  if (cache) return cache
-
+/**
+ * Read and validate a content root, newest first. Exported so the rules can
+ * be tested against fixtures; application code goes through getAllEntries.
+ */
+export function loadEngineeringContent(root: string): EngineeringEntry[] {
   const problems: string[] = []
-  const raws = [
-    ...readDir(ESSAYS_DIR, "essays", problems),
-    ...readDir(LOG_DIR, "log", problems),
-  ]
+  const raws = [...readDir(root, "essays", problems), ...readDir(root, "log", problems)]
 
+  // Drafts still own their slug, so conflicts are caught before they publish.
   const seen = new Map<string, string>()
   for (const raw of raws) {
     const first = seen.get(raw.slug)
@@ -247,17 +299,27 @@ function loadEntries(): EngineeringEntry[] {
     }
   }
 
-  const drafts = new Set(
-    raws.filter((raw) => raw.data.draft === true).map((raw) => raw.slug)
-  )
-  const entries = raws
+  // Parked work is skipped before validation: a draft is exactly the state in
+  // which frontmatter is expected to be incomplete.
+  const published: RawFile[] = []
+  for (const raw of raws) {
+    const draft = raw.data.draft
+    if (draft === undefined || draft === false) {
+      published.push(raw)
+    } else if (draft !== true) {
+      problems.push(`${raw.file}: "draft" must be a boolean`)
+    }
+  }
+
+  const entries = published
     .map((raw) => validate(raw, problems))
     .filter((entry): entry is EngineeringEntry => entry !== null)
-    .filter((entry) => !drafts.has(entry.slug))
 
   const pinned = entries.filter((entry) => entry.featured)
   if (pinned.length === 0) {
-    problems.push(`exactly one essay must set "featured: true"; none is pinned`)
+    problems.push(
+      `exactly one published essay must set "featured: true"; none is pinned (a pinned essay left in draft counts as unpinned)`
+    )
   } else if (pinned.length > 1) {
     problems.push(
       `exactly one essay may set "featured: true"; found ${pinned
@@ -274,16 +336,24 @@ function loadEntries(): EngineeringEntry[] {
     )
   }
 
-  entries.sort((a, b) =>
+  return entries.sort((a, b) =>
     a.date === b.date ? a.slug.localeCompare(b.slug) : b.date.localeCompare(a.date)
   )
-  cache = entries
-  return entries
+}
+
+let cache: EngineeringEntry[] | null = null
+
+function loadEntries(): EngineeringEntry[] {
+  // Only cache in production. MDX files sit outside the module graph, so in
+  // dev nothing else would notice an edit short of restarting the server.
+  if (cache && process.env.NODE_ENV === "production") return cache
+  cache = loadEngineeringContent(CONTENT_ROOT)
+  return cache
 }
 
 /** Every published entry, newest first. */
 export function getAllEntries(): EngineeringEntry[] {
-  return loadEntries()
+  return [...loadEntries()]
 }
 
 export function getEssays(): EngineeringEntry[] {

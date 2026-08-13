@@ -29,7 +29,7 @@ export default function EngineeringLogPage() {
         </p>
       </header>
       <div className="mt-8 md:mt-10">
-        <LogStream entries={getAllEntries()} />
+        <LogStream entries={getAllEntries()} surface="archive" />
       </div>
     </div>
   )
