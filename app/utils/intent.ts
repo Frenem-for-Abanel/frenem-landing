@@ -26,3 +26,14 @@ export function modalModeForIntent(
 
   return null
 }
+
+/**
+ * The URL to replace after handling an intent: same path and query with only
+ * `intent` removed, so campaign params (utm_*, etc.) survive for analytics.
+ */
+export function hrefWithoutIntent(pathname: string, search: string | URLSearchParams): string {
+  const params = new URLSearchParams(search)
+  params.delete("intent")
+  const query = params.toString()
+  return query ? `${pathname}?${query}` : pathname
+}

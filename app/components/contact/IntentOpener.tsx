@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useRef } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useContactModal } from "../../context/ContactModalContext"
-import { modalModeForIntent } from "../../utils/intent"
+import { hrefWithoutIntent, modalModeForIntent } from "../../utils/intent"
 import { productFromPathname } from "../../utils/product"
 
 function IntentOpenerInner() {
@@ -20,8 +20,9 @@ function IntentOpenerInner() {
     if (mode) {
       handled.current = true
       openModal(mode)
-      // Strip the param so refresh/back doesn't re-open the modal.
-      router.replace(pathname, { scroll: false })
+      // Strip only `intent` so refresh/back doesn't re-open the modal while
+      // campaign params (utm_*, etc.) stay in the URL for analytics.
+      router.replace(hrefWithoutIntent(pathname, searchParams.toString()), { scroll: false })
     }
   }, [searchParams, pathname, router, openModal])
 

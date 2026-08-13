@@ -38,6 +38,15 @@ export async function POST(req: Request) {
 
     const { data } = validated
 
+    // A missing SMTP credential in production must fail loudly: returning 200
+    // without sending would silently drop leads.
+    if (!process.env.EMAIL_USER && process.env.NODE_ENV === "production") {
+      console.error(
+        "[contact] EMAIL_USER/EMAIL_PASSWORD are not configured; rejecting submission instead of dropping it."
+      )
+      return NextResponse.json({ error: "Failed to send email" }, { status: 500 })
+    }
+
     // Without SMTP credentials (local dev), log the message instead of sending.
     const transporter = process.env.EMAIL_USER
       ? nodemailer.createTransport({
