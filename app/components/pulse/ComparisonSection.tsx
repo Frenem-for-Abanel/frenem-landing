@@ -96,7 +96,7 @@ export default function ComparisonSection() {
 
       <Reveal delay={0.12}>
         <p className="mt-8 max-w-[560px] font-sans text-base leading-relaxed text-ink-secondary md:mt-10">
-          Not a replacement for listening to your people — a different instrument. Surveys ask how
+          Not a replacement for listening to your people. A different instrument. Surveys ask how
           everyone feels. Pulse shows where the work itself creates energy, friction, and risk.
         </p>
       </Reveal>

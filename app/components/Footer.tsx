@@ -17,13 +17,13 @@ export default function Footer() {
             Products
           </span>
           <Link href="/pulse" className={footerLinkClass}>
-            Pulse — Relational Diagnostics
+            Pulse · Relational Diagnostics
           </Link>
           <Link href="/build" className={footerLinkClass}>
-            Build — Organisation Design
+            Build · Organisation Design
           </Link>
           <Link href="/prism" className={footerLinkClass}>
-            Prism — Employee Management
+            Prism · Employee Management
           </Link>
         </nav>
 

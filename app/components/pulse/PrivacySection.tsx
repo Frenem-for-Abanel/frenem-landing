@@ -36,7 +36,7 @@ export default function PrivacySection() {
       <Reveal delay={0.06}>
         <p className="mb-10 max-w-[560px] font-sans text-lg leading-snug text-white/70 md:mb-16 md:text-xl">
           Honest answers are the whole product. Pulse only works if every person trusts where
-          their words go — so the guarantees are structural, not policy.
+          their words go, so the guarantees are structural, not policy.
         </p>
       </Reveal>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-12">

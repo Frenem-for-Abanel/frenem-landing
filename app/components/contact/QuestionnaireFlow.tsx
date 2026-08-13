@@ -112,7 +112,7 @@ export default function QuestionnaireFlow({
   if (success) {
     return (
       <SuccessState srTitle={isPulse ? "Pulse read submitted" : "Assessment submitted"}>
-        Thanks — we&apos;ll review your answers and reach out within a day with what stands out,
+        Thanks. We&apos;ll review your answers and reach out within a day with what stands out,
         plus a time to talk if useful.
       </SuccessState>
     )

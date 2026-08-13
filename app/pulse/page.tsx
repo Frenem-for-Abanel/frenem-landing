@@ -15,12 +15,12 @@ import FinalCtaSection from "../components/FinalCtaSection"
 import { SITE_URL } from "../utils/site"
 
 export const metadata: Metadata = {
-  title: "Pulse — Relational Diagnostics",
+  title: "Pulse · Relational Diagnostics",
   description:
     "Engagement surveys measure how people feel. Pulse measures how they work together: exit risk, hidden brokers, and cross-team friction, visible in a four-week pilot.",
   alternates: { canonical: "/pulse" },
   openGraph: {
-    title: "Frenem Pulse — Relational Diagnostics",
+    title: "Frenem Pulse · Relational Diagnostics",
     description:
       "See how your people actually work together: exit risk, hidden brokers, and friction, visible while you can still act on them.",
     url: "/pulse",
@@ -70,7 +70,7 @@ const faqItems = [
   {
     question: "Can leadership see individual answers?",
     answer:
-      "No. Individual reports go to the individual alone. Leadership sees patterns at team level and above, protected by response thresholds — never names.",
+      "No. Individual reports go to the individual alone. Leadership sees patterns at team level and above, protected by response thresholds, never names.",
   },
   {
     question: "How much time does it ask of each person?",
@@ -80,7 +80,7 @@ const faqItems = [
   {
     question: "What do we need to provide?",
     answer:
-      "One export from your HR system — reporting lines, teams, tenure — plus a short intake about what's changing in the business. That's the whole ask.",
+      "One export from your HR system (reporting lines, teams, tenure), plus a short intake about what's changing in the business. That's the whole ask.",
   },
   {
     question: "Is there a minimum team size?",

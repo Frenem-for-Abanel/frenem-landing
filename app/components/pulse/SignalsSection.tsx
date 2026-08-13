@@ -33,7 +33,7 @@ const signals = [
 const mechanics = [
   { stat: "15", label: "questions, tailored by who each person actually works with" },
   { stat: "~5 min", label: "per person, answered on a phone" },
-  { stat: "0 logins", label: "one secure link — no survey fatigue" },
+  { stat: "0 logins", label: "one secure link, no survey fatigue" },
 ]
 
 export default function SignalsSection() {

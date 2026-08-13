@@ -9,7 +9,7 @@ export interface FaqItem {
   answer: string
 }
 
-/** Native details/summary FAQ — zero JS to operate, styled to the system. */
+/** Native details/summary FAQ: zero JS to operate, styled to the system. */
 export default function FaqSection({
   label = "Questions",
   heading,

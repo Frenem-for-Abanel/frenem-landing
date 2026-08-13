@@ -66,7 +66,7 @@ export function buildContactEmailHtml(data: ValidatedContactSubmission): string 
   return `
     <div style="font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;">
       <div style="border-left:3px solid ${ACCENT};padding-left:14px;margin-bottom:20px;">
-        <p style="margin:0;color:${MUTED};font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">frenem — website</p>
+        <p style="margin:0;color:${MUTED};font-size:12px;text-transform:uppercase;letter-spacing:0.08em;">frenem · website</p>
         <h2 style="margin:4px 0 0;color:${INK};font-size:20px;">${contactFlowHeading(data.flow)}</h2>
       </div>
       <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${rows}</table>

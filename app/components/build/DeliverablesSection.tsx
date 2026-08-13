@@ -7,7 +7,7 @@ import { Section, SectionLabel, SectionHeading } from "../Section"
 const deliverables = [
   {
     title: "Decision-rights framework",
-    detail: "Who decides what, at which level — written down and delegated.",
+    detail: "Who decides what, at which level. Written down and delegated.",
   },
   {
     title: "Grade structure & role catalog",

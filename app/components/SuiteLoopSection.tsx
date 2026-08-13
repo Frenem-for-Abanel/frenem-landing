@@ -16,7 +16,7 @@ const steps: Array<{
     key: "pulse",
     phase: "Diagnose",
     name: "Pulse",
-    blurb: "See how people actually work together — friction, energy, and risk.",
+    blurb: "See how people actually work together: friction, energy, and risk.",
   },
   {
     key: "build",

@@ -45,7 +45,7 @@ const NODES = [
 
 /**
  * Relational network map: assembles in view, then flags the hidden broker.
- * Reduced motion collapses every transition to zero — same markup for all.
+ * Reduced motion collapses every transition to zero; the markup is the same for all users.
  */
 export default function PulseNetworkVisual() {
   const rootRef = useRef<HTMLDivElement>(null)

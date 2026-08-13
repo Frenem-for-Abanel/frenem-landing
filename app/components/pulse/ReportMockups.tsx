@@ -1,6 +1,6 @@
 /**
  * Miniature report previews for the "Three cuts" section. Deliberately
- * abstract — shapes and labels, no fabricated people or companies.
+ * abstract: shapes and labels, no fabricated people or companies.
  */
 
 const cardClass =

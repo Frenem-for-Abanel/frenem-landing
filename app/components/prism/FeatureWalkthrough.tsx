@@ -24,7 +24,7 @@ const features: Feature[] = [
     num: "01",
     title: "Dynamic org charts",
     description:
-      "Live org charts and reporting chains that update as your team grows. Always current, always visible — no more quarterly PowerPoint archaeology.",
+      "Live org charts and reporting chains that update as your team grows. Always current, always visible. No more quarterly PowerPoint archaeology.",
     Vignette: OrgChartVignette,
   },
   {
@@ -38,7 +38,7 @@ const features: Feature[] = [
     num: "03",
     title: "Seamless performance review cycles",
     description:
-      "From goal setting through to reviews. A complete, continuous cycle that doesn't live in spreadsheets — and doesn't stall waiting for HR to chase.",
+      "From goal setting through to reviews. A complete, continuous cycle that doesn't live in spreadsheets, and doesn't stall waiting for HR to chase.",
     Vignette: ReviewCycleVignette,
   },
   {
@@ -52,14 +52,14 @@ const features: Feature[] = [
     num: "05",
     title: "Secure whistleblower channel",
     description:
-      "A safe, anonymous channel for raising concerns. Built in, not bolted on — because trust infrastructure belongs inside the operating system.",
+      "A safe, anonymous channel for raising concerns. Built in, not bolted on, because trust infrastructure belongs inside the operating system.",
     Vignette: WhistleblowerVignette,
   },
   {
     num: "06",
     title: "Edit histories and audit trails",
     description:
-      "Every change tracked. Full transparency for governance, compliance, and peace of mind — the record keeps itself.",
+      "Every change tracked. Full transparency for governance, compliance, and peace of mind. The record keeps itself.",
     Vignette: AuditTrailVignette,
   },
 ]

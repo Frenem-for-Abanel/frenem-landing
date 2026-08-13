@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     if (!process.env.EMAIL_USER) {
       // jsonTransport puts the rendered mail on `message`; log it for dev visibility.
       const rendered = (info as { message?: string }).message ?? info.messageId
-      console.info("[contact] SMTP not configured — logged submission instead:", rendered)
+      console.info("[contact] SMTP not configured; logged submission instead:", rendered)
     }
 
     return NextResponse.json({ message: "Email sent successfully" }, { status: 200 })

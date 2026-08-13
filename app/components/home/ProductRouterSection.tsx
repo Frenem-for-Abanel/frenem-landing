@@ -10,7 +10,7 @@ const cards = [
     tintClass: "tint-pulse",
     product: "Pulse",
     tagline: "Relational Diagnostics",
-    problem: "People you counted on keep leaving — and it keeps surprising you.",
+    problem: "People you counted on keep leaving, and it keeps surprising you.",
     description:
       "Pulse maps how your people actually work together: exit risk, hidden brokers, and cross-team friction, visible early.",
     meta: ["4-week pilot", "5 min per person", "3 report cuts"],

@@ -39,7 +39,7 @@ export default function QuickContactForm({ mode }: { mode: QuickContactMode }) {
   if (success) {
     return (
       <SuccessState srTitle="Message sent">
-        Thanks — someone from the team will reach out within a day.
+        Thanks. Someone from the team will reach out within a day.
       </SuccessState>
     )
   }

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { motion, useReducedMotion } from "framer-motion"
 import { Mail } from "lucide-react"
 import { useContactModal } from "../context/ContactModalContext"
 import { smoothScrollTo } from "../utils/smooth-scroll"
@@ -23,7 +22,6 @@ export default function Header() {
   const pathname = usePathname()
   const { openModal } = useContactModal()
   const [scrolled, setScrolled] = useState(false)
-  const reduceMotion = useReducedMotion()
 
   const product = productFromPathname(pathname)
   const howSectionId = getHowSectionId(product)
@@ -44,15 +42,12 @@ export default function Header() {
   }
 
   return (
-    <motion.header
-      className={`fixed top-0 left-0 right-0 z-[100] min-w-0 h-16 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 px-2.5 sm:px-3 md:gap-0 md:px-8 transition-all duration-500 ${
+    <header
+      className={`anim-slide-down fixed top-0 left-0 right-0 z-[100] min-w-0 h-16 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 px-2.5 sm:px-3 md:gap-0 md:px-8 transition-[background,border-color,box-shadow] duration-500 ${
         scrolled
           ? "bg-white/90 backdrop-blur-[12px] border-b border-[rgba(10,10,10,0.05)] shadow-[0_1px_16px_rgba(0,0,0,0.02)]"
           : "bg-transparent border-b border-transparent shadow-none"
       }`}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={reduceMotion ? { duration: 0 } : { duration: 0.6 }}
     >
       <div className="flex min-w-0 items-center">
         <Link
@@ -100,6 +95,6 @@ export default function Header() {
           <span className="hidden md:inline">Get in Touch</span>
         </button>
       </div>
-    </motion.header>
+    </header>
   )
 }

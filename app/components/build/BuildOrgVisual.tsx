@@ -17,7 +17,7 @@ const FOUNDER = 0
 const LEADS = [1, 2, 3]
 
 const TODAY: NodeState[] = [
-  { x: 220, y: 118 }, // founder, dead centre — the hub
+  { x: 220, y: 118 }, // founder, dead centre: the hub
   { x: 84, y: 66 },
   { x: 350, y: 58 },
   { x: 120, y: 210 },

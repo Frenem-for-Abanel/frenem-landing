@@ -30,7 +30,7 @@ const leagueSpartan = League_Spartan({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Frenem | Organisation clarity — diagnose, design, operate",
+    default: "Frenem | Organisation clarity: diagnose, design, operate",
     template: "%s | Frenem",
   },
   description:
@@ -65,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en-GB">
+    <html lang="en-GB" data-scroll-behavior="smooth">
       <body
         className={`${inter.variable} ${fraunces.variable} ${leagueSpartan.variable} min-h-screen bg-paper font-sans text-ink antialiased`}
       >

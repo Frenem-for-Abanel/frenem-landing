@@ -17,12 +17,12 @@ import FinalCtaSection from "../components/FinalCtaSection"
 import { SITE_URL } from "../utils/site"
 
 export const metadata: Metadata = {
-  title: "Build — Organisation Design Sprint",
+  title: "Build · Organisation Design Sprint",
   description:
-    "An 8-week organisation-design sprint for founder-led companies: decision rights, job architecture, governance, and succession — a live operating system, not a slide deck.",
+    "An 8-week organisation-design sprint for founder-led companies: decision rights, job architecture, governance, and succession. A live operating system, not a slide deck.",
   alternates: { canonical: "/build" },
   openGraph: {
-    title: "Frenem Build — Organisation Design Sprint",
+    title: "Frenem Build · Organisation Design Sprint",
     description:
       "Build an organisation that scales beyond you. Structure, governance, roles, and talent, aligned to growth in one 8-week sprint.",
     url: "/build",
@@ -70,7 +70,7 @@ const faqItems = [
   {
     question: "What happens after week 8?",
     answer:
-      "You're left with a validated operating model your team runs day to day — decision rights, job architecture, governance, and succession live in the organisation, not in a deck. Prism can keep the structure current from there.",
+      "You're left with a validated operating model your team runs day to day: decision rights, job architecture, governance, and succession live in the organisation, not in a deck. Prism can keep the structure current from there.",
   },
   {
     question: "Will this feel like consultants rebuilding my company?",
@@ -80,7 +80,7 @@ const faqItems = [
   {
     question: "We're not raising or listing right now. Is this still relevant?",
     answer:
-      "Capital-readiness is a by-product, not the premise. The core outcome is founder-independent execution — decisions happening at the right level without routing through you — which pays off long before any transaction.",
+      "Capital-readiness is a by-product, not the premise. The core outcome is founder-independent execution: decisions happening at the right level without routing through you. That pays off long before any transaction.",
   },
 ]
 

@@ -30,7 +30,7 @@ const transforms: { before: string; after: string }[] = [
   },
 ]
 
-/** Before/after ledger — one responsive DOM, no duplicated mobile tree. */
+/** Before/after ledger: one responsive DOM, no duplicated mobile tree. */
 export default function TransformationSection() {
   return (
     <Section dark>

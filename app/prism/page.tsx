@@ -10,12 +10,12 @@ import FinalCtaSection from "../components/FinalCtaSection"
 import { SITE_URL } from "../utils/site"
 
 export const metadata: Metadata = {
-  title: "Prism — Employee Management",
+  title: "Prism · Employee Management",
   description:
     "Lightweight employee management: live org charts, transparent KRAs and KPIs, performance review cycles, moonshot ideas, a whistleblower channel, and full audit trails.",
   alternates: { canonical: "/prism" },
   openGraph: {
-    title: "Frenem Prism — Employee Management",
+    title: "Frenem Prism · Employee Management",
     description:
       "Your single source of truth: org charts, performance cycles, KPIs, and governance in a tool your team will actually use.",
     url: "/prism",

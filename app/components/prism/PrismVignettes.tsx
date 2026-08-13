@@ -2,7 +2,7 @@ import { Lock, ShieldCheck } from "lucide-react"
 
 /**
  * Small product-evidence vignettes for the Prism feature walkthrough.
- * Abstract UI shapes only — no fabricated people or customer data.
+ * Abstract UI shapes only; no fabricated people or customer data.
  */
 
 function VignetteFrame({
@@ -45,7 +45,7 @@ export function OrgChartVignette() {
         <circle cx="190" cy="118" fill="var(--tint-bright)" r="4.5" />
       </svg>
       <p className="mt-3 text-center font-sans text-[11px] text-ink-tertiary">
-        New joiner placed — chart updated instantly
+        New joiner placed, chart updated instantly
       </p>
     </VignetteFrame>
   )
@@ -72,7 +72,7 @@ export function KraVignette() {
           </div>
         ))}
         <p className="mt-1 font-sans text-[11px] text-ink-tertiary">
-          Owner, measure, and target — visible to the whole chain
+          Owner, measure, and target, visible to the whole chain
         </p>
       </div>
     </VignetteFrame>

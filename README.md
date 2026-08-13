@@ -1,10 +1,10 @@
 # Frenem marketing site
 
-Marketing site for [Frenem](https://frenem.com) — an organisation clarity suite from Bangalore, India:
+Marketing site for [Frenem](https://frenem.com), an organisation clarity suite from Bangalore, India:
 
-- **Pulse** (`/pulse`) — relational diagnostics: a four-week pilot that maps how people actually work together (exit risk, hidden brokers, cross-team friction).
-- **Build** (`/build`) — an 8-week organisation-design sprint: decision rights, job architecture, governance, and succession.
-- **Prism** (`/prism`) — lightweight employee management: live org charts, KRAs, review cycles, and audit trails.
+- **Pulse** (`/pulse`): relational diagnostics. A four-week pilot that maps how people actually work together (exit risk, hidden brokers, cross-team friction).
+- **Build** (`/build`): an 8-week organisation-design sprint covering decision rights, job architecture, governance, and succession.
+- **Prism** (`/prism`): lightweight employee management with live org charts, KRAs, review cycles, and audit trails.
 
 ## Stack
 

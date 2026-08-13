@@ -55,7 +55,7 @@ export default function HomePage() {
             Start with a <em>conversation.</em>
           </>
         }
-        subtitle="Tell us what's breaking — attrition, structure, or clarity — and we'll point you at the right starting place. No commitment, no decks."
+        subtitle="Tell us what's breaking, whether that's attrition, structure, or clarity, and we'll point you at the right starting place. No commitment, no decks."
       />
     </div>
   )
