@@ -1,4 +1,4 @@
-import { MDXRemote } from "next-mdx-remote/rsc"
+import { MDXRemote } from "next-mdx-remote-client/rsc"
 import rehypePrettyCode, { type Options } from "rehype-pretty-code"
 import type { ComponentPropsWithoutRef } from "react"
 import Figure from "./Figure"
