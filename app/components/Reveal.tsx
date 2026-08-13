@@ -1,10 +1,8 @@
 "use client"
 
-import { motion, useReducedMotion } from "framer-motion"
+import { useEffect, useRef, useState } from "react"
 import type { ReactNode } from "react"
-
-/** Approximates GSAP `power3.out` for HTML `.fade-up` parity */
-const FADE_UP_EASE = [0.22, 1, 0.16, 1] as const
+import { cn } from "@/lib/utils"
 
 interface RevealProps {
   children: ReactNode
@@ -12,22 +10,46 @@ interface RevealProps {
   className?: string
 }
 
+/**
+ * Fade-up on first view, driven by IntersectionObserver + CSS transitions.
+ * Content is visible by default (SSR, no-JS, reduced motion, throttled tabs);
+ * JS only hides elements that are still below the fold at mount, then reveals
+ * them as they scroll in.
+ */
 export default function Reveal({ children, delay = 0, className = "" }: RevealProps) {
-  const reduceMotion = useReducedMotion()
+  const ref = useRef<HTMLDivElement>(null)
+  const [hidden, setHidden] = useState(false)
 
-  if (reduceMotion) {
-    return <div className={className}>{children}</div>
-  }
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+
+    const rect = el.getBoundingClientRect()
+    const alreadyInView = rect.top < window.innerHeight * 0.95 && rect.bottom > 0
+    if (alreadyInView) return
+
+    setHidden(true)
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHidden(false)
+          io.disconnect()
+        }
+      },
+      { threshold: 0.12 }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.12 }}
-      transition={{ duration: 0.85, delay, ease: FADE_UP_EASE }}
-      className={className}
+    <div
+      ref={ref}
+      className={cn("reveal-item", hidden && "reveal-hidden", className)}
+      style={delay ? { transitionDelay: `${delay}s` } : undefined}
     >
       {children}
-    </motion.div>
+    </div>
   )
 }

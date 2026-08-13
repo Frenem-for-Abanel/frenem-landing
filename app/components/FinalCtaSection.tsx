@@ -1,70 +1,58 @@
 "use client"
 
-import Reveal from "./Reveal"
-import { useContactModal, type ContactModalMode } from "../context/ContactModalContext"
 import type { ReactNode } from "react"
+import Reveal from "./Reveal"
+import ContactCta from "./ContactCta"
+import type { ContactModalMode } from "../context/ContactModalContext"
 
 interface FinalCtaSectionProps {
   label?: string
   title: ReactNode
   subtitle: string
   buttonText?: string
-  sectionName?: string
-  sectionNum?: string
   modalMode?: ContactModalMode
   secondaryButtonText?: string
   secondaryModalMode?: ContactModalMode
 }
 
+/** Closing full-bleed CTA with the oversized display headline. */
 export default function FinalCtaSection({
   label = "Get Started",
   title,
   subtitle,
   buttonText = "Talk to us →",
-  sectionName = "Contact",
-  sectionNum = "09",
   modalMode = "default",
   secondaryButtonText,
   secondaryModalMode = "default",
 }: FinalCtaSectionProps) {
-  const { openModal } = useContactModal()
-
   return (
-    <section
-      className="relative overflow-hidden bg-[var(--frenem-bg)] px-0 py-16 text-left md:py-[120px] md:pb-24 md:pt-40"
-      data-section-name={sectionName}
-      data-section-num={sectionNum}
-    >
-      <div className="container-v2">
+    <section className="relative overflow-hidden bg-paper px-0 py-16 text-left md:py-[120px] md:pb-24 md:pt-40">
+      <div className="container-site">
         <Reveal>
-          <div className="frenem-section-label mb-6 md:mb-10">{label}</div>
+          <div className="type-eyebrow mb-6 md:mb-10">{label}</div>
         </Reveal>
         <Reveal delay={0.05}>
-          <h2 className="mb-10 max-w-[1100px] font-sans text-[clamp(32px,9vw,132px)] font-semibold leading-[0.95] tracking-[-0.04em] text-[var(--frenem-ink)] md:mb-16">
+          <h2 className="type-display-1 mb-10 max-w-[1100px] md:mb-16 md:text-[clamp(48px,8.5vw,124px)]">
             {title}
           </h2>
         </Reveal>
         <Reveal delay={0.1}>
-          <div className="grid grid-cols-1 items-end gap-8 border-t border-[var(--frenem-border)] pt-6 md:gap-10 md:pt-8 lg:grid-cols-2 lg:gap-16">
-            <p className="max-w-[480px] font-sans text-base font-normal leading-relaxed text-[var(--frenem-ink-secondary)] md:text-lg">
+          <div className="grid grid-cols-1 items-end gap-8 border-t border-line pt-6 md:gap-10 md:pt-8 lg:grid-cols-2 lg:gap-16">
+            <p className="max-w-[480px] font-sans text-base font-normal leading-relaxed text-ink-secondary md:text-lg">
               {subtitle}
             </p>
             <div className="flex w-full flex-col items-stretch gap-3.5 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:gap-x-5 lg:justify-self-end">
-              <button
-                type="button"
-                onClick={() => openModal(modalMode)}
-                className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-full border-none bg-[var(--frenem-ink)] px-7 py-3.5 font-sans text-[15px] font-medium text-[var(--frenem-bg)] transition-all duration-300 hover:bg-[var(--frenem-accent)] hover:translate-y-[-2px] sm:w-auto md:py-4"
-              >
+              <ContactCta mode={modalMode} className="w-full sm:w-auto">
                 {buttonText}
-              </button>
+              </ContactCta>
               {secondaryButtonText ? (
-                <button
-                  type="button"
-                  onClick={() => openModal(secondaryModalMode)}
-                  className="inline-flex min-h-11 items-center justify-center self-center border-b border-[var(--frenem-ink)] pb-1 font-sans text-[14px] font-medium text-[var(--frenem-ink)] transition-colors hover:border-[var(--frenem-accent)] hover:text-[var(--frenem-accent)] sm:self-auto sm:text-[15px]"
+                <ContactCta
+                  mode={secondaryModalMode}
+                  variant="text"
+                  className="justify-center self-center text-[14px] sm:self-auto sm:text-[15px]"
                 >
                   {secondaryButtonText}
-                </button>
+                </ContactCta>
               ) : null}
             </div>
           </div>

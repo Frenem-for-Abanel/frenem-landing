@@ -1,13 +1,15 @@
 "use client"
 
 import { type ReactNode } from "react"
+import { MotionConfig } from "framer-motion"
 import { ContactModalProvider } from "./ContactModalContext"
-import { ProductProvider } from "./ProductContext"
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <ProductProvider>
+    // reducedMotion="user" strips transform/layout animation for users who
+    // prefer reduced motion, while keeping gentle opacity fades.
+    <MotionConfig reducedMotion="user">
       <ContactModalProvider>{children}</ContactModalProvider>
-    </ProductProvider>
+    </MotionConfig>
   )
 }
