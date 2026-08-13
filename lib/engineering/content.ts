@@ -79,34 +79,6 @@ function toUtcDate(date: string): Date {
   return new Date(`${date}T00:00:00.000Z`)
 }
 
-/** Neutral instant for feeds and sitemaps: midnight UTC, never a real time. */
-export function neutralUtcInstant(date: string): Date {
-  return toUtcDate(date)
-}
-
-/** "3 Aug 2026" - day-first, en-GB, date only. */
-export function formatDate(date: string): string {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(toUtcDate(date))
-}
-
-/** "3 Aug" - for log rows, where the year marker carries the year. */
-export function formatDayMonth(date: string): string {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-  }).format(toUtcDate(date))
-}
-
-export function yearOf(date: string): string {
-  return date.slice(0, 4)
-}
-
 /** Word count on prose only: JSX tags and MDX comments don't read. */
 function proseOf(body: string): string {
   return body
@@ -327,21 +299,4 @@ export function getFeaturedEssay(): EngineeringEntry {
   const pinned = getEssays().find((entry) => entry.featured)
   if (!pinned) throw new Error(`no essay sets "featured: true"`)
   return pinned
-}
-
-/** Newest-first entries grouped by year, for the ledger's year markers. */
-export function groupByYear(
-  entries: EngineeringEntry[]
-): { year: string; entries: EngineeringEntry[] }[] {
-  const groups: { year: string; entries: EngineeringEntry[] }[] = []
-  for (const entry of entries) {
-    const year = yearOf(entry.date)
-    const last = groups[groups.length - 1]
-    if (last && last.year === year) {
-      last.entries.push(entry)
-    } else {
-      groups.push({ year, entries: [entry] })
-    }
-  }
-  return groups
 }

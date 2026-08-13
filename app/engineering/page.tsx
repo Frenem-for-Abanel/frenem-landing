@@ -8,10 +8,7 @@ export const metadata: Metadata = {
   title: "Engineering",
   description:
     "Essays and field notes from Frenem Engineering: the method, design, and trust decisions behind the clarity suite.",
-  alternates: {
-    canonical: "/engineering",
-    types: { "application/rss+xml": "/engineering/feed.xml" },
-  },
+  alternates: { canonical: "/engineering" },
   openGraph: {
     title: "Frenem Engineering",
     description:

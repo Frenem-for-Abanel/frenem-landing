@@ -1,36 +1,20 @@
 import Link from "next/link"
-import {
-  formatDayMonth,
-  tintClass,
-  TYPE_LABELS,
-  type EngineeringEntry,
-} from "../../../lib/engineering/content"
+import { tintClass, TYPE_LABELS, type EngineeringEntry } from "../../../lib/engineering/content"
 import Mdx from "./Mdx"
 
 /**
  * One ledger row. Essays link out to their page; shipped work and notes
- * render fully inline. Each row is an anchor target (id = slug) so the feed
- * can deep-link into the log.
+ * render fully inline. Each row is an anchor target (id = slug) so entries
+ * without a page of their own can still be linked to.
  */
 export default function LogEntry({ entry }: { entry: EngineeringEntry }) {
   const isEssay = entry.type === "essay"
   return (
-    <article
-      id={entry.slug}
-      className={`${tintClass(entry)} scroll-mt-24 py-5 md:py-6`}
-    >
-      <div className="grid gap-x-6 gap-y-2 md:grid-cols-[64px_88px_minmax(0,1fr)]">
-        <div className="flex items-baseline gap-5 md:contents">
-          <time
-            dateTime={entry.date}
-            className="whitespace-nowrap font-mono text-xs text-ink-tertiary md:pt-[3px]"
-          >
-            {formatDayMonth(entry.date)}
-          </time>
-          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-(--tint-ink) md:pt-[3px]">
-            {TYPE_LABELS[entry.type]}
-          </span>
-        </div>
+    <article id={entry.slug} className={`${tintClass(entry)} scroll-mt-24 py-5 md:py-6`}>
+      <div className="grid gap-x-6 gap-y-2 md:grid-cols-[88px_minmax(0,1fr)]">
+        <span className="font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-(--tint-ink) md:pt-[3px]">
+          {TYPE_LABELS[entry.type]}
+        </span>
         <div className="min-w-0">
           <h3 className="font-sans text-[15px] font-medium leading-snug text-ink md:text-base">
             {isEssay ? (

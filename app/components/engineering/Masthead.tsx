@@ -20,12 +20,6 @@ export default function Masthead() {
           <Link href="/engineering" className="transition-colors hover:text-ink">
             Essays
           </Link>
-          <span aria-hidden className="text-ink-tertiary">
-            ·
-          </span>
-          <a href="/engineering/feed.xml" className="transition-colors hover:text-ink">
-            RSS
-          </a>
         </nav>
       </div>
     </div>

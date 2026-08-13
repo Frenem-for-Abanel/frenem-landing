@@ -3,7 +3,6 @@ import { notFound } from "next/navigation"
 import Mdx from "../../components/engineering/Mdx"
 import {
   BYLINE,
-  formatDate,
   getEssayBySlug,
   getEssays,
   PILLAR_LABELS,
@@ -57,19 +56,13 @@ export default async function EssayPage({
                   {PILLAR_LABELS[essay.pillar]}
                 </span>
               ) : null}
-              <span aria-hidden className="text-ink-tertiary">
-                ·
-              </span>
-              <time dateTime={essay.date} className="text-ink-tertiary">
-                {formatDate(essay.date)}
-              </time>
+              {essay.pillar && essay.readingTime ? (
+                <span aria-hidden className="text-ink-tertiary">
+                  ·
+                </span>
+              ) : null}
               {essay.readingTime ? (
-                <>
-                  <span aria-hidden className="text-ink-tertiary">
-                    ·
-                  </span>
-                  <span className="text-ink-tertiary">{essay.readingTime}</span>
-                </>
+                <span className="text-ink-tertiary">{essay.readingTime}</span>
               ) : null}
             </p>
             <h1 className="type-display-2 mt-6">{essay.title}</h1>

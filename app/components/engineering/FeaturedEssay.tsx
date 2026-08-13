@@ -1,6 +1,5 @@
 import Link from "next/link"
 import {
-  formatDate,
   PILLAR_LABELS,
   tintClass,
   type EngineeringEntry,
@@ -18,22 +17,19 @@ export default function FeaturedEssay({ essay }: { essay: EngineeringEntry }) {
       aria-labelledby="featured-essay"
       className={`${tintClass(essay)} anim-fade-up border-b border-line py-10 md:py-14`}
     >
-      <div className="flex items-baseline justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.12em]">
-        <p>
-          <span className="text-ink-tertiary">Featured</span>
-          <span aria-hidden className="mx-2 text-ink-tertiary">
-            ·
-          </span>
-          {essay.pillar ? (
+      <p className="font-mono text-[11px] uppercase tracking-[0.12em]">
+        <span className="text-ink-tertiary">Featured</span>
+        {essay.pillar ? (
+          <>
+            <span aria-hidden className="mx-2 text-ink-tertiary">
+              ·
+            </span>
             <span className="font-medium text-(--tint-ink)">
               {PILLAR_LABELS[essay.pillar]}
             </span>
-          ) : null}
-        </p>
-        <time dateTime={essay.date} className="whitespace-nowrap text-ink-tertiary">
-          {formatDate(essay.date)}
-        </time>
-      </div>
+          </>
+        ) : null}
+      </p>
 
       <h1 id="featured-essay" className="type-display-2 mt-6 max-w-[18ch]">
         <Link href={href} className="transition-colors hover:text-(--tint-ink)">
