@@ -1,37 +1,28 @@
 ---
 title: "Boring on purpose"
-summary: "Why Frenem runs on Django, PostgreSQL, and Next.js, and why the novelty budget is spent on the problem rather than the stack."
+summary: "Novelty is a budget. We spend it on the organisation, not on the machinery underneath."
 date: "2026-07-28"
 type: "essay"
 pillar: "method"
 featured: true
 ---
 
-{/* PLACEHOLDER COPY. Structure, components and voice are final; every
-    paragraph below is a stand-in to be rewritten before publication. */}
-
 <Tldr>
 
-- Frenem runs on Django, PostgreSQL, and Next.js, chosen so that the stack is never the interesting part.
-- The novelty budget goes to the domain: modelling organisations, computing diagnostics, and rendering structure people recognise.
-- Every dependency has to earn its place twice: once when it is installed, and again the first time it misbehaves.
+- The interesting work is the domain: modelling organisations, keeping diagnostics honest, drawing structure people recognise.
+- Novelty is a scarce budget. Spend it on unsolved problems, and the substrate has to stay dull on purpose.
+- A system that never asks for attention is not a lack of ambition. It is the method.
 
 </Tldr>
 
-<Figure caption="The whole architecture fits in one diagram, which is the point.">
-  <svg viewBox="0 0 640 232" role="img" aria-label="Architecture diagram: Next.js as the surface, Django as the decision layer, PostgreSQL as the record">
+<Figure caption="Novelty is a budget. Most of it should never reach the machinery.">
+  <svg viewBox="0 0 640 232" role="img" aria-label="Novelty budget: a small share for the substrate, most of it for the problem">
     <g fill="none" stroke="var(--color-ink)" strokeOpacity="0.72" strokeWidth="1.25">
-      <rect x="24" y="84" width="176" height="60" rx="6" />
-      <rect x="232" y="84" width="176" height="60" rx="6" />
-      <rect x="440" y="84" width="176" height="60" rx="6" />
-      <line x1="200" y1="114" x2="230" y2="114" />
-      <line x1="408" y1="114" x2="438" y2="114" />
-      <polyline points="224,110 230,114 224,118" />
-      <polyline points="432,110 438,114 432,118" />
+      <rect x="24" y="84" width="120" height="60" rx="6" />
+      <rect x="168" y="84" width="448" height="60" rx="6" />
     </g>
     <g fill="var(--tint-bright)">
-      <circle cx="207" cy="114" r="2.5" />
-      <circle cx="415" cy="114" r="2.5" />
+      <circle cx="152" cy="114" r="2.5" />
     </g>
     <g fill="none" stroke="var(--color-ink)" strokeOpacity="0.35" strokeWidth="1">
       <polyline points="24,172 24,180 616,180 616,172" />
@@ -43,10 +34,9 @@ featured: true
       fill="var(--color-ink-tertiary)"
       textAnchor="middle"
     >
-      <text x="112" y="70">THE SURFACE</text>
-      <text x="320" y="70">THE DECISIONS</text>
-      <text x="528" y="70">THE RECORD</text>
-      <text x="320" y="206">ONE DEPLOY, ONE DATABASE, ONE SOURCE OF RECORD</text>
+      <text x="84" y="70">THE SUBSTRATE</text>
+      <text x="392" y="70">THE PROBLEM</text>
+      <text x="320" y="206">THE INTERESTING WORK IS NEVER THE MACHINERY</text>
     </g>
     <g
       fontFamily="var(--font-mono)"
@@ -54,62 +44,53 @@ featured: true
       fill="var(--color-ink)"
       textAnchor="middle"
     >
-      <text x="112" y="119">Next.js</text>
-      <text x="320" y="119">Django</text>
-      <text x="528" y="119">PostgreSQL</text>
+      <text x="84" y="119">Machinery</text>
+      <text x="392" y="119">The organisation</text>
     </g>
   </svg>
 </Figure>
 
 Frenem sells organisational clarity. It would be strange if the system behind
-it were a puzzle. So the stack is deliberately unremarkable: Django for the
-decision layer, PostgreSQL for the record, Next.js for the surface. Nothing in
-that sentence will impress anyone at a conference, and that is the design goal.
+it were a puzzle. The puzzle is the organisation: how people actually work,
+where decisions stall, which structure a leadership team will recognise as
+their own. The machinery underneath that work should not compete for
+attention, or for invention.
 
 ## Where the novelty budget goes
 
 Every product carries a fixed tolerance for the unproven. Spend it on an
-exotic database and you have less left for the parts that are actually hard.
-Our hard parts are domain problems: how to model an organisation without
-flattening it into a tree, how to keep a diagnostic honest when anonymity
-thresholds withhold data, how to draw a structure that a leadership team
-recognises as their own. Those problems deserve the whole budget. The
-framework underneath them should have had its surprises documented a decade
-ago, by someone else.
+unfamiliar way to keep state, or an untested way to cut a release, and you
+have less left for the parts that are actually hard. Our hard parts are
+domain problems: how to model an organisation without flattening it into a
+tree, how to keep a diagnostic honest when anonymity has to withhold data,
+how to draw a structure that a roomful of operators will accept as true.
+Those problems deserve the whole budget. The substrate should have had its
+surprises documented a decade ago, by someone else.
 
-## What each layer is for
+## What we refuse to invent
 
-Django is where decisions live: permissions, migrations, the admin, and the
-object model that everything else defers to. It is boring precisely where
-mistakes are expensive. PostgreSQL is the record. There is one database, it is
-transactional, and no second store exists to drift out of agreement with it.
-Next.js is the surface: static where a page can be static, server-rendered
-where freshness matters, and never the layer where business rules hide.
+We do not invent a new answer to a question the industry has already
+survived. How a request is served, how a change becomes a release, how a
+failure is recovered: those have known shapes, and known post-mortems. The
+discipline is to pick the shape whose failure modes are already written down,
+and to keep judgement out of the places that should only be machinery.
 
-The discipline that holds the three together is a readiness check that asks
-one question per layer, answered before any deploy goes out:
-
-```python
-def readiness() -> dict[str, bool]:
-    """A deploy that cannot answer all three does not ship."""
-    return {
-        "record": database.select_one(),
-        "decisions": database.migrations_current(),
-        "surface": frontend.build_matches_release(),
-    }
-```
+That sounds like conservatism. It is really a placement decision. Invention
+belongs where there is not yet a settled answer: in the model of the
+organisation, in the honesty of the diagnostic, in the picture that has to
+survive a sceptical reading.
 
 ## The cost we accept
 
-Boring has a price and it is worth naming. We occasionally write code that a
-newer framework would have generated, and we wait for features the ecosystem
+Boring has a price and it is worth naming. We occasionally write work that a
+newer tool would have generated, and we wait for capabilities the ecosystem
 has already celebrated elsewhere. That trade is deliberate: we give up some
 convenience and get back predictability, upgrade paths measured in years, and
 failure modes that are already described in someone else's post-mortem.
 
 ## What it buys
 
-A quiet stack keeps the promises loud. When the tools underneath never demand
-attention, every hour of attention goes to the product: sharper diagnostics,
-clearer structure, better answers. Boring is not a compromise here. It is the
-method.
+A quiet substrate keeps the promises loud. When the tools underneath never
+demand attention, every hour of attention goes to the product: sharper
+diagnostics, clearer structure, better answers. Boring is not a compromise
+here. It is the method.
