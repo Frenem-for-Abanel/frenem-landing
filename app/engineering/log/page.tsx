@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import LogStream from "../../components/engineering/LogStream"
+import LogHashRedirect from "../../components/engineering/LogHashRedirect"
 import { getAllEntries } from "../../../lib/engineering/content"
 
 export const metadata: Metadata = {
@@ -29,6 +30,7 @@ export default function EngineeringLogPage() {
         </p>
       </header>
       <div className="mt-8 md:mt-10">
+        <LogHashRedirect />
         <LogStream entries={getAllEntries()} surface="archive" />
       </div>
     </div>

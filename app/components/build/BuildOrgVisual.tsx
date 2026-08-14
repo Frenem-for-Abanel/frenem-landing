@@ -65,6 +65,9 @@ const AFTER_EDGES: Array<[number, number]> = [
 
 const HOLD_MS = 3400
 
+const CAPTION_CLASS =
+  "col-start-1 row-start-1 text-center font-sans text-[9px] font-semibold uppercase tracking-[0.06em] transition-opacity sm:text-[10px]"
+
 export default function BuildOrgVisual() {
   const rootRef = useRef<HTMLDivElement>(null)
   const inView = useInView(rootRef, { once: true, amount: 0.3 })
@@ -112,7 +115,7 @@ export default function BuildOrgVisual() {
           aria-label="Org chart morphing from founder-centric chaos into three clean tiers"
           className="block h-full w-full"
           role="img"
-          viewBox="0 0 440 280"
+          viewBox="0 0 440 252"
         >
           {/* Today's tangle */}
           <motion.g
@@ -167,36 +170,26 @@ export default function BuildOrgVisual() {
               />
             )
           })}
-
-          <motion.text
-            animate={{ opacity: after ? 0.9 : 0 }}
-            transition={reduceMotion ? { duration: 0 } : { duration: 0.5, delay: 0.4 }}
-            fontFamily="var(--font-sans), system-ui, sans-serif"
-            fontSize="10"
-            fontWeight="600"
-            letterSpacing="0.06em"
-            style={{ fill: "var(--tint-ink)", textTransform: "uppercase" }}
-            textAnchor="middle"
-            x={220}
-            y={266}
-          >
-            Decisions at the right level
-          </motion.text>
-          <motion.text
-            animate={{ opacity: after ? 0 : 0.9 }}
-            transition={reduceMotion ? { duration: 0 } : { duration: 0.5, delay: 0.4 }}
-            fontFamily="var(--font-sans), system-ui, sans-serif"
-            fontSize="10"
-            fontWeight="600"
-            letterSpacing="0.06em"
-            style={{ fill: "var(--color-ink-tertiary)", textTransform: "uppercase" }}
-            textAnchor="middle"
-            x={220}
-            y={266}
-          >
-            Every decision routes through one person
-          </motion.text>
         </svg>
+      </div>
+
+      <div className="grid px-1">
+        <p
+          aria-hidden={!after}
+          className={`${CAPTION_CLASS} ${reduceMotion ? "duration-0" : "duration-500"} ${
+            after ? "text-(--tint-ink) opacity-90" : "pointer-events-none opacity-0"
+          }`}
+        >
+          Decisions at the right level
+        </p>
+        <p
+          aria-hidden={after}
+          className={`${CAPTION_CLASS} ${reduceMotion ? "duration-0" : "duration-500"} ${
+            after ? "pointer-events-none opacity-0" : "text-ink-tertiary opacity-90"
+          }`}
+        >
+          Every decision routes through one person
+        </p>
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 font-sans text-[9px] font-semibold uppercase tracking-[0.08em] text-ink-tertiary sm:gap-5 sm:text-[10px]">
