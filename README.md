@@ -1,6 +1,6 @@
 # Frenem marketing site
 
-Marketing site for [Frenem](https://frenem.com), an organisation clarity suite from Bangalore, India:
+Marketing site for [Frenem](https://www.frenem.com), an organisation clarity suite from Bangalore, India:
 
 - **Pulse** (`/pulse`): relational diagnostics. A four-week pilot that maps how people actually work together (exit risk, hidden brokers, cross-team friction).
 - **Build** (`/build`): an 8-week organisation-design sprint covering decision rights, job architecture, governance, and succession.
@@ -26,7 +26,13 @@ npm run build    # production build
 | --- | --- |
 | `EMAIL_USER` | GoDaddy SMTP username used to send contact notifications. Unset locally → submissions are logged to the server console instead of emailed. |
 | `EMAIL_PASSWORD` | GoDaddy SMTP password. |
-| `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, and JSON-LD (defaults to `https://frenem.com`). |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, and JSON-LD (defaults to `https://www.frenem.com`). Apex (`https://frenem.com`) is rewritten to www so sitemap/canonicals never advertise URLs that 404 behind GoDaddy forwarding. |
+
+## Canonical host
+
+The live app is **`www.frenem.com`** (Railway custom domain). Sitemap, robots, and `metadataBase` use that origin.
+
+Apex → www redirects live in `middleware.ts` and `next.config.ts` (308). They only take effect once `frenem.com` DNS points at this Railway service. GoDaddy domain forwarding (A records `15.197.225.128` / `3.33.251.168`) currently intercepts the apex host: `/` 301s to www, but `/pulse`, `/build`, `/prism`, and `/engineering` 404. To finish the cutover, disable GoDaddy forwarding, add `frenem.com` as a Railway custom domain, and point the apex with ALIAS/ANAME or CNAME flattening at Railway (GoDaddy's root CNAME support is limited; Cloudflare flattening is the usual workaround). Then `curl -sI -X GET https://frenem.com/pulse` should 308 to `https://www.frenem.com/pulse`.
 
 ## Project structure
 

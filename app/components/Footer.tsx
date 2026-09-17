@@ -1,5 +1,6 @@
 import Link from "next/link"
 import ContactCta from "./ContactCta"
+import { SITE_URL } from "../utils/site"
 
 const footerLinkClass =
   "inline-flex min-h-11 items-center font-sans text-sm text-white/60 transition-colors hover:text-white md:min-h-0"
@@ -39,7 +40,7 @@ export default function Footer() {
             Get in touch
           </ContactCta>
           <a
-            href="https://frenem.com"
+            href={SITE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className={footerLinkClass}

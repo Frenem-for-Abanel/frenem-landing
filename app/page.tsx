@@ -10,6 +10,9 @@ import FinalCtaSection from "./components/FinalCtaSection"
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
+  openGraph: {
+    url: "/",
+  },
 }
 
 const HOME_SHADER_COLORS = {
