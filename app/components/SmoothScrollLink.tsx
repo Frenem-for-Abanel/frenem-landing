@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react"
 import { smoothScrollTo } from "../utils/smooth-scroll"
-import { textCtaClass } from "./ContactCta"
+import { CtaInner, magnetic, primaryCtaClass, textCtaClass } from "./ContactCta"
 import { cn } from "@/lib/utils"
 
 /** In-page anchor with header-offset smooth scrolling. */
@@ -10,10 +10,12 @@ export default function SmoothScrollLink({
   targetId,
   children,
   className,
+  variant = "text",
 }: {
   targetId: string
   children: ReactNode
   className?: string
+  variant?: "primary" | "text"
 }) {
   return (
     <a
@@ -22,9 +24,10 @@ export default function SmoothScrollLink({
         e.preventDefault()
         smoothScrollTo(targetId)
       }}
-      className={cn(textCtaClass, "justify-center self-center sm:self-auto", className)}
+      className={cn(variant === "primary" ? primaryCtaClass : textCtaClass, className)}
+      {...(variant === "primary" ? magnetic : {})}
     >
-      {children}
+      {variant === "primary" ? <CtaInner icon="down">{children}</CtaInner> : children}
     </a>
   )
 }

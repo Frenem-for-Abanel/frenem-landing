@@ -29,13 +29,13 @@ const components = {
   Tldr,
   h2: (props: ComponentPropsWithoutRef<"h2">) => (
     <h2
-      className="mb-4 mt-10 font-display text-[24px] font-semibold leading-tight tracking-[-0.012em] text-ink md:text-[28px]"
+      className="mb-4 mt-10 text-[26px] font-extrabold leading-tight tracking-[-0.03em] [font-stretch:106%] text-ink md:text-[28px]"
       {...props}
     />
   ),
   h3: (props: ComponentPropsWithoutRef<"h3">) => (
     <h3
-      className="mb-3 mt-8 font-display text-[19px] font-semibold leading-snug tracking-[-0.01em] text-ink md:text-[21px]"
+      className="mb-3 mt-8 text-[20px] font-bold leading-snug tracking-[-0.02em] text-ink md:text-[21px]"
       {...props}
     />
   ),
@@ -74,7 +74,7 @@ const components = {
   ),
   pre: (props: ComponentPropsWithoutRef<"pre">) => (
     <pre
-      className="my-6 overflow-x-auto rounded-lg border border-line bg-paper-soft p-4 font-mono text-[13px] leading-[1.7] sm:p-5"
+      className="my-6 overflow-x-auto bg-paper-soft p-4 font-mono text-[13px] leading-[1.7] sm:p-5"
       {...props}
     />
   ),

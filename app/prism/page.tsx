@@ -1,80 +1,87 @@
 import type { Metadata } from "next"
 import HeroShell from "../components/HeroShell"
 import ContactCta from "../components/ContactCta"
+import SmoothScrollLink from "../components/SmoothScrollLink"
 import IntentOpener from "../components/contact/IntentOpener"
-import PrismProductVisual from "../components/prism/PrismProductVisual"
 import FeatureWalkthrough from "../components/prism/FeatureWalkthrough"
 import SuiteLoopSection from "../components/SuiteLoopSection"
 import SecuritySection from "../components/SecuritySection"
 import FinalCtaSection from "../components/FinalCtaSection"
-import { SITE_URL } from "../utils/site"
+import JsonLd from "../components/JsonLd"
+import { pageMetadata } from "../utils/seo"
+import { absoluteUrl, breadcrumbs, graph, ORG_ID, webPage } from "../utils/structured-data"
 
-export const metadata: Metadata = {
-  title: "Prism · Employee Management",
-  description:
-    "Lightweight employee management: live org charts, transparent KRAs and KPIs, performance review cycles, moonshot ideas, a whistleblower channel, and full audit trails.",
-  alternates: { canonical: "/prism" },
-  openGraph: {
-    title: "Frenem Prism · Employee Management",
+const DESCRIPTION =
+  "Lightweight employee management: live org charts, transparent KRAs and KPIs, review cycles, moonshot ideas, a whistleblower channel, and audit trails."
+
+export const metadata: Metadata = pageMetadata({
+  path: "/prism",
+  title: "Prism by Frenem | Employee management software",
+  description: DESCRIPTION,
+  socialTitle: "Frenem Prism: your single source of truth",
+  socialDescription:
+    "Org charts, performance cycles, KPIs, and governance in a tool your team will actually use.",
+})
+
+const APP_ID = absoluteUrl("/prism#software")
+
+const jsonLd = graph(
+  webPage({ path: "/prism", name: "Frenem Prism", description: DESCRIPTION, about: APP_ID }),
+  {
+    "@type": "SoftwareApplication",
+    "@id": APP_ID,
+    name: "Frenem Prism",
+    alternateName: "Prism",
+    applicationCategory: "BusinessApplication",
+    applicationSubCategory: "Employee management",
+    operatingSystem: "Web",
     description:
-      "Your single source of truth: org charts, performance cycles, KPIs, and governance in a tool your team will actually use.",
-    url: "/prism",
+      "Lightweight employee management: dynamic org charts, KRAs and KPIs, review cycles, moonshot idea submissions, a secure whistleblower channel, and audit trails.",
+    featureList: [
+      "Dynamic org charts",
+      "Transparent KRAs, KPIs, and responsibilities",
+      "Seamless performance review cycles",
+      "Employee-driven innovation",
+      "Secure whistleblower channel",
+      "Edit histories and audit trails",
+    ],
+    url: absoluteUrl("/prism"),
+    publisher: { "@id": ORG_ID },
+    provider: { "@id": ORG_ID },
   },
-}
-
-const PRISM_SHADER_COLORS = {
-  bg: "#f0f9ff",
-  bg2: "#e0f2fe",
-  accent: "#ffffff",
-  accent2: "#0284c7",
-  highlight: "#bae6fd",
-} as const
-
-const appJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: "Frenem Prism",
-  applicationCategory: "BusinessApplication",
-  operatingSystem: "Web",
-  description:
-    "Lightweight employee management: dynamic org charts, KRAs and KPIs, review cycles, moonshot idea submissions, a secure whistleblower channel, and audit trails.",
-  url: `${SITE_URL}/prism`,
-  publisher: { "@type": "Organization", name: "Frenem", url: SITE_URL },
-}
+  breadcrumbs([{ name: "Prism", path: "/prism" }])
+)
 
 export default function PrismPage() {
   return (
     <div className="tint-prism">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
       <IntentOpener />
 
       <HeroShell
-        eyebrow="Frenem Prism · Employee Management"
+        eyebrow="Frenem Prism, employee management"
         title={
           <>
             Your single source of <em>truth.</em>
           </>
         }
         subtitle="Lightweight employee management that gives your people clarity on who does what, how they're measured, and where they stand."
-        colors={PRISM_SHADER_COLORS}
-        tall
         actions={
           <>
             <ContactCta mode="default" className="w-full sm:w-auto">
-              Get started →
+              Get started
             </ContactCta>
+            <SmoothScrollLink targetId="features">See what Prism does</SmoothScrollLink>
           </>
         }
-        visual={<PrismProductVisual />}
+        note="Org charts, KRAs, reviews, and audit trails, in one place."
+        scene="prism"
       />
 
       <FeatureWalkthrough />
       <SuiteLoopSection
         current="prism"
-        label="Works With Pulse and Build"
+        label="Works with Pulse and Build"
         heading={
           <>
             Designed once. Kept true. <em>Checked against reality.</em>
@@ -83,7 +90,7 @@ export default function PrismPage() {
       />
       <SecuritySection variant="strip" />
       <FinalCtaSection
-        label="Get Started with Prism"
+        label="Get started with Prism"
         title={
           <>
             One place for your people. <em>Always current.</em>

@@ -1,114 +1,243 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Mail, Newspaper } from "lucide-react"
+import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion"
 import { useContactModal } from "../context/ContactModalContext"
-import { smoothScrollTo } from "../utils/smooth-scroll"
-import { getHowSectionId } from "../utils/how-section"
 import { headerContactMode } from "../utils/contact-modal-helpers"
-import { productFromPathname, PRODUCTS, PRODUCT_LABELS } from "../utils/product"
+import { productFromPathname, PRODUCTS, PRODUCT_LABELS, type ProductKey } from "../utils/product"
 
-function tabClass(active: boolean) {
-  return `font-sans text-[11px] md:text-xs min-h-11 md:min-h-0 px-3 sm:px-3 md:px-[18px] py-2.5 md:py-1.5 rounded-full transition-all whitespace-nowrap inline-flex items-center justify-center ${
-    active
-      ? "text-ink font-medium bg-white shadow-sm"
-      : "text-ink-tertiary font-normal hover:text-ink-secondary"
-  }`
+const PRODUCT_FIELD: Record<ProductKey, string> = {
+  pulse: "bg-sage",
+  build: "bg-clay",
+  prism: "bg-heather",
 }
 
+const PRODUCT_DOT: Record<ProductKey, string> = {
+  pulse: "bg-sage-mid",
+  build: "bg-clay-mid",
+  prism: "bg-heather-mid",
+}
+
+const PRODUCT_ROLE: Record<ProductKey, string> = {
+  pulse: "Relational diagnostics",
+  build: "Organisation design",
+  prism: "Employee management",
+}
+
+/**
+ * Site header. Transparent over the hero, a frosted bar once you scroll,
+ * and out of the way while you read down (it returns as soon as you scroll
+ * back up). Phones get a full-screen menu of colour blocks.
+ */
 export default function Header() {
   const pathname = usePathname()
   const { openModal } = useContactModal()
-  const [scrolled, setScrolled] = useState(false)
-
+  const reduce = useReducedMotion()
   const product = productFromPathname(pathname)
-  const howSectionId = getHowSectionId(product)
   const onEngineering = pathname === "/engineering" || pathname.startsWith("/engineering/")
 
-  useEffect(() => {
-    const handleScroll = () => {
-      // Opaque chrome once the visitor is past ~75% of the hero.
-      setScrolled(window.scrollY > window.innerHeight * 0.75)
-    }
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    handleScroll()
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  const [atTop, setAtTop] = useState(true)
+  const [tucked, setTucked] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuButton = useRef<HTMLButtonElement>(null)
+  const { scrollY } = useScroll()
 
-  const handleHowClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    if (howSectionId) smoothScrollTo(howSectionId)
+  useMotionValueEvent(scrollY, "change", (y) => {
+    const prev = scrollY.getPrevious() ?? 0
+    setAtTop(y < 24)
+    if (menuOpen) return
+    if (y > prev + 4 && y > 160) setTucked(true)
+    else if (y < prev - 4) setTucked(false)
+  })
+
+  useEffect(() => setMenuOpen(false), [pathname])
+
+  useEffect(() => {
+    if (!menuOpen) return
+    document.body.style.overflow = "hidden"
+    // The menu covers the page, so the page behind it must not take focus
+    // or be read out: only the header and the menu stay reachable.
+    const behind = [document.querySelector("main"), document.querySelector("main ~ footer")]
+    behind.forEach((el) => el?.setAttribute("inert", ""))
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false)
+        menuButton.current?.focus()
+      }
+    }
+    document.addEventListener("keydown", onKey)
+    return () => {
+      document.body.style.overflow = ""
+      behind.forEach((el) => el?.removeAttribute("inert"))
+      document.removeEventListener("keydown", onKey)
+    }
+  }, [menuOpen])
+
+  const contact = () => {
+    setMenuOpen(false)
+    openModal(headerContactMode(product))
   }
 
   return (
-    <header
-      className={`anim-slide-down fixed top-0 left-0 right-0 z-[100] min-w-0 h-16 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 px-2.5 sm:px-3 md:gap-0 md:px-8 transition-[background,border-color,box-shadow] duration-500 ${
-        scrolled
-          ? "bg-white/90 backdrop-blur-[12px] border-b border-[rgba(10,10,10,0.05)] shadow-[0_1px_16px_rgba(0,0,0,0.02)]"
-          : "bg-transparent border-b border-transparent shadow-none"
-      }`}
-    >
-      <div className="flex min-w-0 items-center">
-        <Link
-          href="/"
-          className="font-logo font-bold text-base sm:text-lg md:text-[22px] tracking-[-0.5px] text-ink lowercase truncate"
-          aria-label="Frenem home"
-        >
-          frenem
-        </Link>
-      </div>
-
-      <nav
-        aria-label="Products"
-        className="flex min-w-0 max-w-full items-center gap-0.5 rounded-full p-[2px] md:p-[3px] bg-[rgba(10,10,10,0.04)]"
+    <>
+      <header
+        // Keyboard focus brings a tucked-away header back into view.
+        onFocus={() => setTucked(false)}
+        className={`fixed inset-x-0 top-0 z-[100] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          tucked && !menuOpen ? "-translate-y-full" : "translate-y-0"
+        }`}
       >
-        {PRODUCTS.map((key) => (
-          <Link
-            key={key}
-            href={`/${key}`}
-            aria-current={product === key ? "page" : undefined}
-            className={tabClass(product === key)}
-          >
-            {PRODUCT_LABELS[key]}
-          </Link>
-        ))}
-      </nav>
-
-      <div className="flex min-w-0 items-center justify-end gap-1.5 md:gap-6">
-        {/* Below 360px the three clusters already fill the bar, so the link
-            waits for room rather than overlapping the product tabs. */}
-        <Link
-          href="/engineering"
-          aria-current={onEngineering ? "page" : undefined}
-          aria-label="Engineering"
-          className={`hidden h-11 w-7 shrink-0 items-center justify-center font-sans text-[13px] transition-colors min-[360px]:inline-flex md:h-auto md:w-auto ${
-            onEngineering ? "font-medium text-ink" : "font-normal text-ink-secondary hover:text-ink"
+        <div
+          className={`transition-[background-color,backdrop-filter] duration-500 ${
+            menuOpen ? "bg-paper" : atTop ? "bg-transparent" : "bg-paper/85 backdrop-blur-md"
           }`}
         >
-          <Newspaper className="size-5 shrink-0 md:hidden" aria-hidden />
-          <span className="hidden md:inline">Engineering</span>
-        </Link>
-        {howSectionId ? (
-          <a
-            href={`#${howSectionId}`}
-            onClick={handleHowClick}
-            className="hidden md:block font-sans text-[13px] font-normal text-ink-secondary hover:text-ink transition-colors"
+          <div className="container-site flex h-16 items-center justify-between gap-4 md:h-20">
+            <Link
+              href="/"
+              className="font-logo text-[24px] font-bold lowercase tracking-[-0.5px] text-ink md:text-[28px]"
+              aria-label="Frenem home"
+            >
+              frenem
+            </Link>
+
+            <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
+              {PRODUCTS.map((key) => {
+                const active = product === key
+                return (
+                  <Link
+                    key={key}
+                    href={`/${key}`}
+                    aria-current={active ? "page" : undefined}
+                    className={`group inline-flex h-11 items-center gap-2.5 rounded-full px-4 text-[15px] font-semibold tracking-[-0.01em] [font-stretch:108%] transition-colors duration-300 ${
+                      active ? "bg-paper text-ink" : `text-ink ${hoverField(key)}`
+                    }`}
+                  >
+                    <span
+                      aria-hidden
+                      className={`h-2.5 w-2.5 rounded-full transition-transform duration-500 ${PRODUCT_DOT[key]} ${
+                        active ? "scale-100" : "scale-0 group-hover:scale-100"
+                      }`}
+                    />
+                    {PRODUCT_LABELS[key]}
+                  </Link>
+                )
+              })}
+              <Link
+                href="/engineering"
+                aria-current={onEngineering ? "page" : undefined}
+                className={`inline-flex h-11 items-center rounded-full px-4 text-[15px] font-semibold tracking-[-0.01em] [font-stretch:108%] transition-colors duration-300 ${
+                  onEngineering ? "bg-paper" : "hover:bg-paper-soft"
+                }`}
+              >
+                Engineering
+              </Link>
+            </nav>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={contact}
+                className="hidden h-11 items-center rounded-full bg-ink px-5 text-[15px] font-semibold tracking-[-0.01em] text-paper [font-stretch:108%] transition-transform duration-300 hover:scale-[1.04] md:inline-flex"
+              >
+                Get in touch
+              </button>
+              <button
+                ref={menuButton}
+                type="button"
+                aria-expanded={menuOpen}
+                aria-controls="mobile-menu"
+                onClick={() => setMenuOpen((v) => !v)}
+                className="inline-flex h-11 items-center gap-3 rounded-full bg-ink pl-4 pr-3 text-[15px] font-semibold text-paper md:hidden"
+              >
+                {menuOpen ? "Close" : "Menu"}
+                <span aria-hidden className="relative block h-3 w-5">
+                  <span
+                    className={`absolute left-0 h-0.5 w-5 bg-current transition-transform duration-300 ${
+                      menuOpen ? "top-[5px] rotate-45" : "top-0.5"
+                    }`}
+                  />
+                  <span
+                    className={`absolute left-0 h-0.5 w-5 bg-current transition-transform duration-300 ${
+                      menuOpen ? "top-[5px] -rotate-45" : "top-[9px]"
+                    }`}
+                  />
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <AnimatePresence>
+        {menuOpen ? (
+          <motion.div
+            id="mobile-menu"
+            className="fixed inset-0 z-[99] flex flex-col bg-paper pt-16 md:hidden"
+            initial={reduce ? { opacity: 0 } : { clipPath: "inset(0 0 100% 0)" }}
+            animate={reduce ? { opacity: 1 } : { clipPath: "inset(0 0 0% 0)" }}
+            exit={reduce ? { opacity: 0 } : { clipPath: "inset(0 0 100% 0)" }}
+            transition={{ duration: reduce ? 0.01 : 0.6, ease: [0.65, 0, 0.35, 1] }}
           >
-            How it works
-          </a>
+            <nav aria-label="Menu" className="flex flex-1 flex-col">
+              {PRODUCTS.map((key, i) => (
+                <MenuRow key={key} index={i} reduce={Boolean(reduce)} className={PRODUCT_FIELD[key]}>
+                  <Link href={`/${key}`} className="flex h-full flex-col justify-center px-5" aria-current={product === key ? "page" : undefined}>
+                    <span className="text-[44px] font-extrabold leading-none tracking-[-0.04em] [font-stretch:110%]">
+                      {PRODUCT_LABELS[key]}
+                    </span>
+                    <span className="mt-2 text-[15px] font-medium text-ink-secondary">{PRODUCT_ROLE[key]}</span>
+                  </Link>
+                </MenuRow>
+              ))}
+              <MenuRow index={3} reduce={Boolean(reduce)} className="bg-paper-soft">
+                <Link href="/engineering" className="flex h-full items-center px-5 text-[32px] font-extrabold tracking-[-0.035em] [font-stretch:110%]">
+                  Engineering
+                </Link>
+              </MenuRow>
+              <MenuRow index={4} reduce={Boolean(reduce)} className="bg-sand">
+                <button
+                  type="button"
+                  onClick={contact}
+                  className="flex h-full w-full items-center px-5 text-left text-[32px] font-extrabold tracking-[-0.035em] [font-stretch:110%]"
+                >
+                  Get in touch
+                </button>
+              </MenuRow>
+            </nav>
+          </motion.div>
         ) : null}
-        <button
-          type="button"
-          onClick={() => openModal(headerContactMode(product))}
-          aria-label="Get in touch"
-          className="inline-flex items-center justify-center font-sans text-[13px] font-medium h-11 w-11 shrink-0 rounded-full bg-ink text-paper hover:bg-accent transition-colors md:h-auto md:w-auto md:py-2 md:px-[18px]"
-        >
-          <Mail className="size-5 md:hidden shrink-0" aria-hidden />
-          <span className="hidden md:inline">Get in Touch</span>
-        </button>
-      </div>
-    </header>
+      </AnimatePresence>
+    </>
+  )
+}
+
+/** Tailwind needs the hover classes spelled out in full to generate them. */
+function hoverField(key: ProductKey) {
+  return { pulse: "hover:bg-sage", build: "hover:bg-clay", prism: "hover:bg-heather" }[key]
+}
+
+function MenuRow({
+  children,
+  index,
+  className,
+  reduce,
+}: {
+  children: React.ReactNode
+  index: number
+  className: string
+  reduce: boolean
+}) {
+  return (
+    <motion.div
+      className={`min-h-0 flex-1 ${className}`}
+      initial={reduce ? false : { x: "100%" }}
+      animate={{ x: 0 }}
+      transition={{ duration: 0.7, delay: 0.12 + index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {children}
+    </motion.div>
   )
 }

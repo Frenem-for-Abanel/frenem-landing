@@ -3,6 +3,9 @@
 import type { ReactNode } from "react"
 import Reveal from "./Reveal"
 import ContactCta from "./ContactCta"
+import SplitText from "./motion/SplitText"
+import Parallax from "./motion/Parallax"
+import FieldBackdrop from "./motion/FieldBackdrop"
 import type { ContactModalMode } from "../context/ContactModalContext"
 
 interface FinalCtaSectionProps {
@@ -15,42 +18,53 @@ interface FinalCtaSectionProps {
   secondaryModalMode?: ContactModalMode
 }
 
-/** Closing full-bleed CTA with the oversized display headline. */
+/**
+ * Closing call to action on the page's pastel field, with the three block
+ * shapes turning slowly as it scrolls past.
+ */
 export default function FinalCtaSection({
-  label = "Get Started",
+  label = "Get started",
   title,
   subtitle,
-  buttonText = "Talk to us →",
+  buttonText = "Talk to us",
   modalMode = "default",
   secondaryButtonText,
   secondaryModalMode = "default",
 }: FinalCtaSectionProps) {
   return (
-    <section className="relative overflow-hidden bg-paper px-0 py-16 text-left md:py-[120px] md:pb-24 md:pt-40">
-      <div className="container-site">
+    <section className="relative overflow-clip py-24 md:py-40">
+      <FieldBackdrop className="bg-(--tint-soft)" origin="100% 100%" />
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <Parallax y={[80, -80]} rotate={[0, 90]} className="absolute right-[6%] top-16 hidden md:block">
+          <div className="h-40 w-40 bg-(--tint-bright) md:h-64 md:w-64" />
+        </Parallax>
+        <Parallax y={[140, -40]} className="absolute right-[30%] -bottom-24 hidden md:block">
+          <div className="h-56 w-56 rounded-full bg-paper/70" />
+        </Parallax>
+        <Parallax y={[40, -120]} rotate={[-30, 20]} className="absolute bottom-10 right-[5%] hidden md:block">
+          <div className="h-10 w-36 rounded-full bg-(--tint-deep) md:h-14 md:w-52" />
+        </Parallax>
+      </div>
+
+      <div className="container-site relative">
         <Reveal>
-          <div className="type-eyebrow mb-6 md:mb-10">{label}</div>
+          <p className="type-kicker flex items-center gap-3 text-ink-secondary">
+            <span aria-hidden className="h-3 w-3 rounded-full bg-ink" />
+            {label}
+          </p>
         </Reveal>
-        <Reveal delay={0.05}>
-          <h2 className="type-display-1 mb-10 max-w-[1100px] md:mb-16 md:text-[clamp(48px,8.5vw,124px)]">
-            {title}
-          </h2>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <div className="grid grid-cols-1 items-end gap-8 border-t border-line pt-6 md:gap-10 md:pt-8 lg:grid-cols-2 lg:gap-16">
-            <p className="max-w-[480px] font-sans text-base font-normal leading-relaxed text-ink-secondary md:text-lg">
-              {subtitle}
-            </p>
-            <div className="flex w-full flex-col items-stretch gap-3.5 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:gap-x-5 lg:justify-self-end">
-              <ContactCta mode={modalMode} className="w-full sm:w-auto">
+        <SplitText as="h2" className="type-display-1 mt-8 max-w-[11ch] md:mt-10">
+          {title}
+        </SplitText>
+        <Reveal delay={0.15}>
+          <div className="mt-12 grid grid-cols-1 gap-10 md:mt-16 lg:grid-cols-12 lg:items-end">
+            <p className="type-lead max-w-[480px] text-ink-secondary lg:col-span-6">{subtitle}</p>
+            <div className="flex w-full flex-col items-stretch gap-5 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8 lg:col-span-6 lg:justify-self-start">
+              <ContactCta mode={modalMode} className="w-full bg-ink sm:w-auto">
                 {buttonText}
               </ContactCta>
               {secondaryButtonText ? (
-                <ContactCta
-                  mode={secondaryModalMode}
-                  variant="text"
-                  className="justify-center self-center text-[14px] sm:self-auto sm:text-[15px]"
-                >
+                <ContactCta mode={secondaryModalMode} variant="text">
                   {secondaryButtonText}
                 </ContactCta>
               ) : null}

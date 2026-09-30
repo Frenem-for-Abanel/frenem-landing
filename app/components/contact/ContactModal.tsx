@@ -1,11 +1,15 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react"
+import { usePathname } from "next/navigation"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
-import { useContactModal } from "../../context/ContactModalContext"
+import { X } from "lucide-react"
+import { useContactModal, type ContactModalMode } from "../../context/ContactModalContext"
+import { productFromPathname, PRODUCT_LABELS, type ProductKey } from "../../utils/product"
 import QuestionnaireFlow from "./QuestionnaireFlow"
 import QuickContactForm from "./QuickContactForm"
 import GeneralContactForm from "./GeneralContactForm"
+import BuildPlanForm from "./BuildPlanForm"
 
 function isQuestionnaireMode(mode: string): mode is "assessment" | "pulseQuestionnaire" {
   return mode === "assessment" || mode === "pulseQuestionnaire"
@@ -15,12 +19,20 @@ function isQuickContactMode(mode: string): mode is "contact" | "pulseContact" {
   return mode === "contact" || mode === "pulseContact"
 }
 
+/** Product flows take their product's tint; the general form follows the page. */
+function productForMode(mode: ContactModalMode, pathname: string): ProductKey | null {
+  if (mode === "assessment" || mode === "contact" || mode === "buildPlan") return "build"
+  if (mode === "pulseQuestionnaire" || mode === "pulseContact") return "pulse"
+  return productFromPathname(pathname)
+}
+
 /**
  * Modal shell: overlay, dialog chrome, focus management, and the
  * discard-confirm guard. Flow content lives in the flow components.
  */
 export default function ContactModal() {
   const { isOpen, mode, closeModal } = useContactModal()
+  const pathname = usePathname()
   const [discardConfirm, setDiscardConfirm] = useState(false)
   const panelRef = useRef<HTMLDivElement | null>(null)
   const previouslyFocused = useRef<HTMLElement | null>(null)
@@ -118,12 +130,13 @@ export default function ContactModal() {
   }
 
   const isPulseFlow = mode === "pulseQuestionnaire" || mode === "pulseContact"
+  const product = productForMode(mode, pathname)
 
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[1000] flex items-end justify-center bg-[rgba(10,10,10,0.5)] p-0 backdrop-blur-[8px] sm:items-center sm:p-5 md:p-6"
+          className="fixed inset-0 z-[1000] flex items-end justify-center bg-[rgba(21,21,21,0.5)] p-0 backdrop-blur-[4px] sm:items-center sm:p-5 md:p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -136,67 +149,77 @@ export default function ContactModal() {
             aria-modal="true"
             aria-labelledby="contact-modal-title"
             tabIndex={-1}
-            className="relative my-0 w-full max-h-[min(92dvh,calc(100dvh-1rem))] overflow-y-auto rounded-t-2xl bg-paper px-5 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.2)] outline-none sm:my-auto sm:max-h-[calc(100dvh-2rem)] sm:max-w-[460px] sm:rounded-xl sm:px-9 sm:py-9 md:px-9 md:pb-[34px] md:pt-9 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
-            initial={{ opacity: 0, y: 16, scale: 0.98 }}
+            className={`${product ? `tint-${product}` : "tint-brand"} relative my-0 w-full max-h-[min(92dvh,calc(100dvh-1rem))] overflow-y-auto rounded-t-[24px] bg-paper shadow-[0_40px_100px_rgba(0,0,0,0.3)] outline-none sm:my-auto sm:max-h-[calc(100dvh-2rem)] sm:max-w-[500px] sm:rounded-none [&::-webkit-scrollbar]:hidden [scrollbar-width:none]`}
+            initial={{ opacity: 0, y: 60, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.98 }}
-            transition={reduceMotion ? { duration: 0 } : { duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, y: 40, scale: 0.97 }}
+            transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 260, damping: 26, mass: 0.8 }}
             onClick={(e) => e.stopPropagation()}
             onKeyDown={handlePanelKeyDown}
           >
-            {!discardConfirm && (
-              <button
-                type="button"
-                onClick={requestClose}
-                data-modal-initial-focus={isQuestionnaireMode(mode) ? true : undefined}
-                className="absolute right-3.5 top-3.5 flex h-10 w-10 items-center justify-center rounded-full bg-paper-soft font-sans text-lg text-ink-secondary transition-colors hover:bg-line"
-                aria-label="Close"
-              >
-                <span aria-hidden>×</span>
-              </button>
-            )}
-
-            {/* Keep the flow mounted (hidden) during discard-confirm so answers survive. */}
-            <div className={discardConfirm ? "hidden" : undefined}>
-              {isQuestionnaireMode(mode) ? (
-                <QuestionnaireFlow mode={mode} registerCloseGuard={registerCloseGuard} />
-              ) : isQuickContactMode(mode) ? (
-                <QuickContactForm mode={mode} />
-              ) : (
-                <GeneralContactForm />
+            <div className="sticky top-0 z-[1] flex h-16 items-center justify-between bg-(--tint-soft) pl-5 pr-3 sm:pl-8">
+              <p className="flex items-center gap-3 text-[15px] font-bold [font-stretch:106%]">
+                <span aria-hidden className="h-3 w-3 rounded-full bg-(--tint-bright)" />
+                Frenem{product ? ` · ${PRODUCT_LABELS[product]}` : ""}
+              </p>
+              {!discardConfirm && (
+                <button
+                  type="button"
+                  onClick={requestClose}
+                  data-modal-initial-focus={isQuestionnaireMode(mode) ? true : undefined}
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-paper text-ink transition-transform duration-300 hover:rotate-90"
+                  aria-label="Close"
+                >
+                  <X aria-hidden className="h-5 w-5" strokeWidth={2.2} />
+                </button>
               )}
             </div>
 
-            {discardConfirm && (
-              <div className="px-1 py-6 text-center">
-                <h3
-                  id="contact-modal-title"
-                  className="mb-2.5 font-sans text-[22px] font-semibold tracking-[-0.02em] text-ink"
-                >
-                  Discard your answers?
-                </h3>
-                <p className="mb-6 font-sans text-sm text-ink-secondary">
-                  You&apos;ll lose progress on this {isPulseFlow ? "Pulse check" : "assessment"}.
-                </p>
-                <div className="flex flex-wrap items-center justify-center gap-2.5">
-                  <button
-                    type="button"
-                    data-modal-initial-focus
-                    onClick={() => setDiscardConfirm(false)}
-                    className="inline-flex h-11 cursor-pointer items-center rounded-full border-none bg-ink px-[22px] font-sans text-sm font-medium text-paper transition-colors hover:bg-accent"
-                  >
-                    Keep going
-                  </button>
-                  <button
-                    type="button"
-                    onClick={confirmDiscard}
-                    className="inline-flex h-11 cursor-pointer items-center rounded-full border border-line-strong bg-transparent px-[22px] font-sans text-sm font-medium text-ink-secondary transition-colors hover:border-ink hover:text-ink"
-                  >
-                    Discard
-                  </button>
-                </div>
+            <div className="px-5 pb-8 pt-7 sm:px-8 sm:pb-9 sm:pt-8">
+              {/* Keep the flow mounted (hidden) during discard-confirm so answers survive. */}
+              <div className={discardConfirm ? "hidden" : undefined}>
+                {isQuestionnaireMode(mode) ? (
+                  <QuestionnaireFlow mode={mode} registerCloseGuard={registerCloseGuard} />
+                ) : isQuickContactMode(mode) ? (
+                  <QuickContactForm mode={mode} />
+                ) : mode === "buildPlan" ? (
+                  <BuildPlanForm />
+                ) : (
+                  <GeneralContactForm />
+                )}
               </div>
-            )}
+
+              {discardConfirm && (
+                <div className="px-1 py-6 text-center">
+                  <h3
+                    id="contact-modal-title"
+                    className="mb-2.5 text-[30px] font-extrabold tracking-[-0.035em] [font-stretch:106%] text-ink"
+                  >
+                    Discard your answers?
+                  </h3>
+                  <p className="mb-7 text-[16px] text-ink-secondary">
+                    You&apos;ll lose progress on this {isPulseFlow ? "Pulse check" : "assessment"}.
+                  </p>
+                  <div className="flex flex-wrap items-center justify-center gap-2.5">
+                    <button
+                      type="button"
+                      data-modal-initial-focus
+                      onClick={() => setDiscardConfirm(false)}
+                      className="inline-flex h-11 cursor-pointer items-center rounded-full border-none bg-ink px-6 text-[15px] font-semibold text-paper transition-transform hover:scale-[1.03]"
+                    >
+                      Keep going
+                    </button>
+                    <button
+                      type="button"
+                      onClick={confirmDiscard}
+                      className="inline-flex h-11 cursor-pointer items-center rounded-full border-2 border-ink/15 bg-transparent px-6 text-[15px] font-semibold text-ink-secondary transition-colors hover:border-ink hover:text-ink"
+                    >
+                      Discard
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </motion.div>
         </motion.div>
       )}

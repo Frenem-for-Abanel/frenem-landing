@@ -4,7 +4,8 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
-import { FieldError, HoneypotField, inputClass, labelClass, submitBtnClass } from "./form-shared"
+import { CtaInner, primaryCtaClass } from "../ContactCta"
+import { FieldError, HoneypotField, inputClass, labelClass } from "./form-shared"
 
 const contactFieldsSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -75,8 +76,8 @@ export default function ContactFieldsForm({
         />
         <FieldError message={errors.company?.message} />
       </div>
-      <button type="submit" disabled={isSubmitting} className={submitBtnClass}>
-        {isSubmitting ? "Sending..." : submitLabel}
+      <button type="submit" disabled={isSubmitting} className={cn(primaryCtaClass, "mt-2 w-full")}>
+        <CtaInner>{isSubmitting ? "Sending…" : submitLabel}</CtaInner>
       </button>
     </form>
   )

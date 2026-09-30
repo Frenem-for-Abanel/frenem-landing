@@ -8,6 +8,7 @@ export default function Image() {
   return renderOgImage({
     title: "The whole organisation, in focus.",
     subtitle: "Diagnose with Pulse. Design with Build. Operate with Prism.",
-    tint: "#ff5b1f",
+    tint: "#ece5d5",
+    deep: "#c9b287",
   })
 }

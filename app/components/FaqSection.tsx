@@ -2,14 +2,14 @@
 
 import { Plus } from "lucide-react"
 import Reveal from "./Reveal"
-import { Section, SectionLabel, SectionHeading } from "./Section"
+import { Section, SectionHead } from "./Section"
 
 export interface FaqItem {
   question: string
   answer: string
 }
 
-/** Native details/summary FAQ: zero JS to operate, styled to the system. */
+/** Native details/summary FAQ: zero JS to operate; opens smoothly where the browser supports it. */
 export default function FaqSection({
   label = "Questions",
   heading,
@@ -20,28 +20,25 @@ export default function FaqSection({
   items: FaqItem[]
 }) {
   return (
-    <Section soft>
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
-        <Reveal>
-          <SectionLabel>{label}</SectionLabel>
-          <SectionHeading size={3}>{heading}</SectionHeading>
-        </Reveal>
-
-        <div>
+    <Section>
+      <div className="grid grid-cols-1 gap-y-4 lg:grid-cols-12 lg:gap-x-10">
+        <div className="lg:col-span-5">
+          <SectionHead kicker={label} title={heading} size={3} className="mb-8 lg:mb-0 lg:[&>div]:col-span-12" />
+        </div>
+        <div className="lg:col-span-7">
           {items.map((item, i) => (
             <Reveal key={item.question} delay={0.04 * i}>
-              <details className="group border-t border-line-strong last:border-b">
-                <summary className="flex min-h-11 items-center justify-between gap-6 py-5 font-sans text-base font-semibold tracking-[-0.01em] text-ink transition-colors hover:text-(--tint-ink) md:py-6 md:text-lg">
+              <details className="faq group border-t-2 border-ink last:border-b-2">
+                <summary className="flex min-h-11 items-center justify-between gap-6 py-6 text-[clamp(19px,1.8vw,24px)] font-bold leading-snug tracking-[-0.02em] [font-stretch:104%] md:py-7">
                   {item.question}
-                  <Plus
+                  <span
                     aria-hidden
-                    className="h-5 w-5 shrink-0 text-ink-tertiary transition-transform duration-300 group-open:rotate-45"
-                    strokeWidth={1.8}
-                  />
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-(--tint-soft) transition-[transform,background-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-open:rotate-[135deg] group-open:bg-(--tint-bright)"
+                  >
+                    <Plus className="h-5 w-5" strokeWidth={2.2} />
+                  </span>
                 </summary>
-                <p className="max-w-[560px] pb-6 font-sans text-[15px] leading-relaxed text-ink-secondary md:pb-7">
-                  {item.answer}
-                </p>
+                <p className="max-w-[600px] pb-8 text-[17px] leading-relaxed text-ink-secondary">{item.answer}</p>
               </details>
             </Reveal>
           ))}

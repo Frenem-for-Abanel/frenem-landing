@@ -7,6 +7,7 @@ import * as z from "zod"
 import { useState } from "react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { CtaInner, primaryCtaClass } from "../ContactCta"
 import { productFromPathname } from "../../utils/product"
 import { getInterestForProduct, INTEREST_BY_PRODUCT } from "../../utils/interest"
 import {
@@ -110,11 +111,11 @@ export default function GeneralContactForm() {
       <HoneypotField registration={form.register("website")} />
       <h3
         id="contact-modal-title"
-        className="pr-10 font-sans text-[26px] font-semibold leading-tight tracking-[-0.02em] md:text-[32px]"
+        className="text-[40px] font-extrabold leading-[0.95] tracking-[-0.045em] [font-stretch:108%]"
       >
-        Get in touch.
+        Get in <span className="font-light">touch.</span>
       </h3>
-      <p className="mb-2 font-sans text-[15px] leading-relaxed text-ink-secondary">
+      <p className="mb-2 text-[16px] leading-relaxed text-ink-secondary">
         Tell us a little about your business. We&apos;ll get back to you within 24 hours.
       </p>
 
@@ -214,12 +215,8 @@ export default function GeneralContactForm() {
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="mt-2 min-h-11 w-full cursor-pointer rounded-full border-none bg-ink px-7 py-3.5 font-sans text-[15px] font-medium text-paper transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        {isSubmitting ? "Sending..." : "Send →"}
+      <button type="submit" disabled={isSubmitting} className={cn(primaryCtaClass, "mt-2 w-full")}>
+        <CtaInner>{isSubmitting ? "Sending…" : "Send"}</CtaInner>
       </button>
       <p className="mt-3.5 text-center font-sans text-[13px] text-ink-tertiary">
         No commitment. No decks. Just a conversation.

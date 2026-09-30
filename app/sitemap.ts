@@ -1,21 +1,26 @@
 import type { MetadataRoute } from "next"
 import { SITE_URL } from "./utils/site"
-import { getEssays } from "../lib/engineering/content"
+import { getAllEntries, getEssays } from "../lib/engineering/content"
 
+/**
+ * Only real dates go in lastmod: search engines stop trusting a sitemap that
+ * says every page changed at build time. Essays carry their own date, and the
+ * engineering pages move with their newest entry. Marketing pages omit it.
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date()
+  const newest = getAllEntries()[0]?.date
   return [
-    { url: `${SITE_URL}/`, lastModified, changeFrequency: "monthly", priority: 1 },
-    { url: `${SITE_URL}/pulse`, lastModified, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${SITE_URL}/build`, lastModified, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${SITE_URL}/prism`, lastModified, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${SITE_URL}/engineering`, lastModified, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${SITE_URL}/engineering/log`, lastModified, changeFrequency: "weekly", priority: 0.6 },
+    { url: `${SITE_URL}/`, changeFrequency: "monthly", priority: 1 },
+    { url: `${SITE_URL}/pulse`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE_URL}/build`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE_URL}/prism`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE_URL}/engineering`, lastModified: newest, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${SITE_URL}/engineering/log`, lastModified: newest, changeFrequency: "weekly", priority: 0.5 },
     ...getEssays().map((essay) => ({
       url: `${SITE_URL}/engineering/${essay.slug}`,
-      lastModified,
+      lastModified: essay.date,
       changeFrequency: "yearly" as const,
-      priority: 0.7,
+      priority: 0.6,
     })),
   ]
 }

@@ -48,7 +48,7 @@ export default function QuickContactForm({ mode }: { mode: QuickContactMode }) {
     <>
       <h3
         id="contact-modal-title"
-        className="mb-5 pr-8 font-sans text-[23px] font-semibold leading-[1.3] tracking-[-0.02em] text-ink"
+        className="mb-7 text-[26px] font-bold leading-[1.1] tracking-[-0.03em] [font-stretch:104%] text-ink"
       >
         {isPulse
           ? "Curious what a relational diagnostic would surface in your org? Tell us where to send it."

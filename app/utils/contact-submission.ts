@@ -1,11 +1,13 @@
 import { ASSESSMENT_QUESTIONS, type AssessmentAnswerKey } from "./assessment-questions"
 import { PULSE_QUESTIONS, type PulseAnswerKey } from "./pulse-questions"
+import { parsePainIds, type PainId } from "./build-plan"
 
 export type ContactFlow =
   | "assessment"
   | "contact"
   | "pulseQuestionnaire"
   | "pulseContact"
+  | "buildPlan"
   | "default"
 
 export type QuestionnaireAnswerKey = AssessmentAnswerKey | PulseAnswerKey
@@ -20,6 +22,7 @@ export type ContactSubmissionInput = {
   message?: unknown
   flow?: unknown
   answers?: unknown
+  plan?: unknown
 }
 
 export type ValidatedContactSubmission = {
@@ -31,6 +34,8 @@ export type ValidatedContactSubmission = {
   interest?: string
   notes?: string
   answers?: Record<QuestionnaireAnswerKey, string>
+  /** Problems chosen in the Build planner (buildPlan flow only). */
+  plan?: PainId[]
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -66,7 +71,8 @@ export function parseContactFlow(flow: unknown): ContactFlow {
     flow === "assessment" ||
     flow === "contact" ||
     flow === "pulseQuestionnaire" ||
-    flow === "pulseContact"
+    flow === "pulseContact" ||
+    flow === "buildPlan"
   ) {
     return flow
   }
@@ -132,6 +138,14 @@ export function validateContactSubmission(
     answers = parsed.data
   }
 
+  let plan: PainId[] | undefined
+
+  if (flow === "buildPlan") {
+    const parsed = parsePainIds(input.plan)
+    if (!parsed) return { ok: false, error: "Please choose at least one problem for your plan." }
+    plan = parsed
+  }
+
   return {
     ok: true,
     data: {
@@ -143,23 +157,26 @@ export function validateContactSubmission(
       interest,
       notes,
       answers,
+      plan,
     },
   }
 }
 
 export function contactFlowLabel(flow: ContactFlow): string {
-  if (flow === "assessment") return "HR Maturity Assessment"
+  if (flow === "assessment") return "Build Assessment"
   if (flow === "contact") return "Build Contact"
-  if (flow === "pulseQuestionnaire") return "Pulse Read"
+  if (flow === "pulseQuestionnaire") return "Pulse Questionnaire"
   if (flow === "pulseContact") return "Pulse Contact"
+  if (flow === "buildPlan") return "Build Plan"
   return "Contact Form"
 }
 
 export function contactFlowHeading(flow: ContactFlow): string {
-  if (flow === "assessment") return "New HR Maturity Assessment"
+  if (flow === "assessment") return "New Build Assessment"
   if (flow === "contact") return "New Build Contact Request"
-  if (flow === "pulseQuestionnaire") return "New Pulse Read"
+  if (flow === "pulseQuestionnaire") return "New Pulse Questionnaire"
   if (flow === "pulseContact") return "New Pulse Contact Request"
+  if (flow === "buildPlan") return "New Build Plan"
   return "New Contact Form Submission"
 }
 

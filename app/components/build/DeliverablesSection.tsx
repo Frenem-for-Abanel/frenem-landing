@@ -1,75 +1,76 @@
 "use client"
 
-import { Check } from "lucide-react"
 import Reveal from "../Reveal"
-import { Section, SectionLabel, SectionHeading } from "../Section"
+import { Section, SectionHead } from "../Section"
+import ModuleGlyph from "./ModuleGlyph"
+import type { ModuleId } from "../../utils/build-plan"
 
-const deliverables = [
+/**
+ * What Build leaves behind, said as business outcomes. The method behind
+ * each one stays with the team; the glyphs only hint at its shape.
+ */
+const outcomes: Array<{ glyph: ModuleId; title: string; detail: string }> = [
   {
-    title: "Decision-rights framework",
-    detail: "Who decides what, at which level. Written down and delegated.",
+    glyph: "decision-rights",
+    title: "Decisions at the right level",
+    detail: "Clear calls on who decides what, so the business stops queueing at your door.",
   },
   {
-    title: "Grade structure & role catalog",
-    detail: "Every role mapped to a grade, family, and owner.",
+    glyph: "job-architecture",
+    title: "One owner for every outcome",
+    detail: "Accountability that is written down and lived, not negotiated in meetings.",
   },
   {
-    title: "Complete job architecture",
-    detail: "Job descriptions where every outcome has exactly one owner.",
+    glyph: "org-map",
+    title: "A leaner way of working",
+    detail: "Fewer layers and handoffs between a decision and the work it unlocks.",
   },
   {
-    title: "RACI matrix",
-    detail: "Accountability that kills the sign-off loops.",
+    glyph: "guardrails",
+    title: "Control, built in",
+    detail: "The controls you care about, designed into how the business runs.",
   },
   {
-    title: "Org map with spans & layers",
-    detail: "Fewer layers, clearer spans of control, designed for execution.",
+    glyph: "nine-box",
+    title: "A bench ready to lead",
+    detail: "Leaders who can step up, so growth never hinges on one person.",
   },
   {
-    title: "Governance guardrails",
-    detail: "The controls you define, with delegation built into the structure.",
-  },
-  {
-    title: "Competency framework",
-    detail: "What good looks like at every grade, in your language.",
-  },
-  {
-    title: "9-box talent map & bench",
-    detail: "A visible leadership pipeline and succession picture.",
-  },
-  {
-    title: "Boardroom-ready operating model",
-    detail: "Validated, documented, and live in your team's hands.",
+    glyph: "operating-model",
+    title: "An investor-grade operating model",
+    detail: "Documented, validated, and running in your business when we step back.",
   },
 ]
 
 export default function DeliverablesSection() {
   return (
-    <Section>
-      <Reveal>
-        <SectionLabel>What You Walk Away With</SectionLabel>
-      </Reveal>
-      <Reveal delay={0.04}>
-        <SectionHeading className="mb-10 max-w-[900px] md:mb-14">
-          A working operating system. <em>Not a binder.</em>
-        </SectionHeading>
-      </Reveal>
+    <Section tone="tint">
+      <SectionHead
+        kicker="What you walk away with"
+        title={
+          <>
+            A working operating system. <em>Not a binder.</em>
+          </>
+        }
+        aside={<p>Built with your leadership team, and left running in the business when we step back.</p>}
+      />
 
-      <ul className="grid grid-cols-1 gap-x-10 gap-y-0 sm:grid-cols-2 lg:grid-cols-3">
-        {deliverables.map((item, i) => (
-          <Reveal key={item.title} delay={0.03 * i}>
-            <li className="flex h-full gap-4 border-t border-line-strong py-6 md:py-7">
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--tint-soft)">
-                <Check aria-hidden className="h-3.5 w-3.5 text-(--tint-ink)" strokeWidth={2.4} />
-              </span>
-              <div>
-                <h3 className="mb-1 font-sans text-base font-semibold tracking-[-0.01em] md:text-[17px]">
+      <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        {outcomes.map((item, i) => (
+          <li key={item.title}>
+            <Reveal delay={0.05 * (i % 3)} variant="scale" className="h-full">
+              <div className="group flex h-full flex-col bg-paper p-7 md:p-8">
+                <ModuleGlyph
+                  id={item.glyph}
+                  className="h-11 w-11 text-ink transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:rotate-[-8deg] group-hover:scale-110"
+                />
+                <h3 className="mt-10 text-[22px] font-bold leading-tight tracking-[-0.025em] [font-stretch:106%]">
                   {item.title}
                 </h3>
-                <p className="font-sans text-sm leading-relaxed text-ink-secondary">{item.detail}</p>
+                <p className="mt-2 text-[16px] leading-relaxed text-ink-secondary">{item.detail}</p>
               </div>
-            </li>
-          </Reveal>
+            </Reveal>
+          </li>
         ))}
       </ul>
     </Section>

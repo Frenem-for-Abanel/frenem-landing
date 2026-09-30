@@ -1,157 +1,157 @@
 "use client"
 
-import { useEffect, useRef, useState, type ReactNode } from "react"
+import { useRef, useState, type ReactNode } from "react"
 import {
+  AnimatePresence,
   motion,
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useTransform,
+  type MotionValue,
 } from "framer-motion"
 import Reveal from "./Reveal"
-import { Section, SectionLabel, SectionHeading } from "./Section"
-
-const EMPTY_BG = "#ffffff"
-const EMPTY_BORDER = "rgba(10,10,10,0.16)"
+import { SectionHead } from "./Section"
+import { MorphField } from "./motion/Blocks"
+import type { Block } from "../utils/blocks"
 
 export interface TimelinePhase {
   label: string
   title: string
   description: string
-  time: string
 }
 
-function phaseLit(index: number, total: number, progress: number): boolean {
-  const threshold = (index + 0.5) / total
-  return progress >= threshold - 0.15
+/** Each phase gets this much scroll while the stage is pinned. */
+const SCROLL_PER_PHASE_SVH = 75
+
+function Segment({ progress, index, total }: { progress: MotionValue<number>; index: number; total: number }) {
+  const fill = useTransform(progress, (p) => Math.min(1, Math.max(0, p * total - index)))
+  return (
+    <span className="relative h-2 flex-1 overflow-hidden rounded-full bg-ink/10">
+      <motion.span className="absolute inset-0 origin-left rounded-full bg-ink" style={{ scaleX: fill }} />
+    </span>
+  )
 }
 
 /**
- * Scroll-scrubbed phase timeline shared by the Build sprint and Pulse pilot.
- * `tintHex` must be a concrete colour so framer-motion can interpolate it.
+ * "How it works" as a pinned stage. On wide screens the section holds still
+ * while you scroll: the phase text swaps and the blocks regroup into each
+ * phase's picture, with a segmented bar tracking progress. Phones get the
+ * same phases as a simple stacked sequence, no pinning.
  */
 export default function TimelineSection({
   id,
-  label = "How It Works",
+  label = "How it works",
   heading,
   sub,
   phases,
-  tintHex,
-  soft = false,
+  layouts,
+  viewBox,
 }: {
   id?: string
   label?: string
   heading: ReactNode
   sub: string
   phases: TimelinePhase[]
-  tintHex: string
-  soft?: boolean
+  layouts: Block[][]
+  viewBox: string
 }) {
-  const timelineRef = useRef<HTMLDivElement>(null)
-  const prefersReducedMotion = useReducedMotion()
-  const [scrubProgress, setScrubProgress] = useState(0)
-
-  const { scrollYProgress } = useScroll({
-    target: timelineRef,
-    offset: ["start 0.7", "end 0.6"],
-  })
-
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    if (!prefersReducedMotion) setScrubProgress(v)
-  })
-
-  useEffect(() => {
-    // Reduced motion: show the finished state instead of scroll-scrubbing.
-    setScrubProgress(prefersReducedMotion ? 1 : scrollYProgress.get())
-  }, [scrollYProgress, prefersReducedMotion])
-
-  const cursorLeft = useTransform(scrollYProgress, [0, 1], ["0%", "100%"])
-  const cursorOpacity = useTransform(scrollYProgress, [0, 0.02, 1], [0, 1, 1])
-
+  const trackRef = useRef<HTMLDivElement>(null)
+  const reduce = useReducedMotion()
+  const [active, setActive] = useState(0)
+  const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start start", "end end"] })
   const n = phases.length
-  // Track endpoints align with the centre of the first/last card column.
-  const inset = `${(100 / (n * 2)).toFixed(2)}%`
-  const gridClass =
-    n >= 4
-      ? "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
-      : "grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8"
+
+  useMotionValueEvent(scrollYProgress, "change", (p) => {
+    setActive(Math.min(n - 1, Math.max(0, Math.floor(p * n))))
+  })
+
+  const phase = phases[active]
 
   return (
-    <Section id={id} soft={soft}>
-      <div className="mb-12 grid grid-cols-1 items-end gap-8 md:mb-20 md:gap-10 lg:grid-cols-2 lg:gap-16">
-        <Reveal>
-          <SectionLabel>{label}</SectionLabel>
-          <SectionHeading>{heading}</SectionHeading>
-        </Reveal>
-        <Reveal delay={0.06}>
-          <p className="max-w-[480px] justify-self-end font-sans text-lg font-normal leading-normal tracking-[-0.005em] text-ink-secondary md:text-xl">
-            {sub}
-          </p>
-        </Reveal>
+    <section id={id} className="relative scroll-mt-20 bg-paper">
+      <div className="container-site pt-24 md:pt-36">
+        <SectionHead kicker={label} title={heading} aside={<p>{sub}</p>} className="mb-10 md:mb-12 lg:mb-0" />
       </div>
 
-      <div ref={timelineRef} className="relative mt-6 md:mt-10">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute top-[60px] z-0 hidden h-0.5 lg:block"
-          style={{ left: inset, right: inset }}
-        >
-          <div className="absolute inset-0 rounded-full bg-line-strong" />
-          <div
-            className="absolute inset-y-0 left-0 origin-left rounded-full will-change-transform"
-            style={{
-              backgroundColor: tintHex,
-              transform: `scaleX(${scrubProgress})`,
-            }}
-          />
-          <motion.div
-            className="absolute top-1/2 z-[1] h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-paper shadow-[0_2px_8px_rgba(0,0,0,0.12)]"
-            style={{
-              backgroundColor: tintHex,
-              left: cursorLeft,
-              opacity: prefersReducedMotion ? 0 : cursorOpacity,
-            }}
-          />
-        </div>
+      {/* Wide screens: pinned stage */}
+      <div ref={trackRef} className="relative hidden lg:block" style={{ height: `${n * SCROLL_PER_PHASE_SVH + 40}svh` }}>
+        <div className="sticky top-0 flex h-[100svh] items-center overflow-clip">
+          <div className="container-site grid w-full grid-cols-12 items-center gap-10">
+            <div className="col-span-5">
+              <div className="flex gap-2" aria-hidden>
+                {phases.map((p, i) => (
+                  <Segment key={p.title} progress={scrollYProgress} index={i} total={n} />
+                ))}
+              </div>
+              <ol className="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-[15px] font-semibold">
+                {phases.map((p, i) => (
+                  <li
+                    key={p.title}
+                    aria-current={i === active ? "step" : undefined}
+                    className={`transition-colors duration-300 ${i === active ? "text-ink" : "text-ink-tertiary"}`}
+                  >
+                    {p.title}
+                  </li>
+                ))}
+              </ol>
 
-        <div className={`relative z-[1] ${gridClass}`}>
-          {phases.map((phase, i) => {
-            const lit = prefersReducedMotion || phaseLit(i, n, scrubProgress)
-            return (
-              <Reveal key={phase.title} delay={0.05 * i}>
-                <div className="group flex h-full flex-col rounded-2xl border border-line-strong bg-paper p-6 transition-all duration-300 hover:-translate-y-1 hover:border-ink hover:shadow-[0_12px_32px_rgba(0,0,0,0.06)] md:p-10">
+              <div className="relative mt-14 min-h-[300px]">
+                <AnimatePresence mode="wait" initial={false}>
                   <motion.div
-                    aria-hidden
-                    className="relative z-[2] mb-6 h-6 w-6 shrink-0 rounded-full border-2"
-                    animate={{
-                      backgroundColor: lit ? tintHex : EMPTY_BG,
-                      borderColor: lit ? tintHex : EMPTY_BORDER,
-                    }}
-                    transition={{
-                      duration: prefersReducedMotion ? 0 : 0.35,
-                      ease: [0.25, 0.46, 0.45, 0.94],
-                    }}
-                  />
-                  <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-                    <span className="font-sans text-[13px] font-medium tracking-[0.03em] text-ink-tertiary">
-                      {phase.label}
-                    </span>
-                    <span className="rounded-full bg-(--tint-soft) px-2.5 py-1 font-sans text-xs font-medium text-(--tint-ink)">
-                      {phase.time}
-                    </span>
-                  </div>
-                  <h3 className="mb-4 font-sans text-[28px] font-semibold leading-none tracking-[-0.02em] md:text-[32px]">
-                    {phase.title}
-                  </h3>
-                  <p className="mt-auto font-sans text-[15px] leading-relaxed text-ink-secondary">
-                    {phase.description}
-                  </p>
+                    key={active}
+                    initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduce ? { opacity: 0 } : { opacity: 0, y: -30 }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <p className="type-kicker text-ink-secondary">{phase.label}</p>
+                    <h3 className="mt-4 text-[clamp(48px,5.4vw,84px)] font-extrabold leading-[0.92] tracking-[-0.045em] [font-stretch:108%]">
+                      {phase.title}
+                    </h3>
+                    <p className="type-lead mt-6 max-w-[440px] text-ink-secondary">{phase.description}</p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+
+            <div className="col-span-7">
+              <div className="grain dot-grid relative bg-(--tint-soft) p-6 xl:p-10">
+                <MorphField
+                  layouts={layouts}
+                  index={active}
+                  viewBox={viewBox}
+                  drift={1.8}
+                  label={`${phase.title}: ${phase.description}`}
+                  className="block h-auto w-full"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Phones and tablets: stacked */}
+      <div className="container-site pb-24 md:pb-36 lg:hidden">
+        <ol className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-x-8 md:gap-y-16">
+          {phases.map((p, i) => (
+            <li key={p.title}>
+              <Reveal variant="clip">
+                <div className="dot-grid bg-(--tint-soft) p-5">
+                  <MorphField layouts={layouts} index={i} viewBox={viewBox} drift={1.4} label={p.title} className="block h-auto w-full" />
                 </div>
               </Reveal>
-            )
-          })}
-        </div>
+              <Reveal delay={0.1}>
+                <p className="type-kicker mt-6 text-ink-secondary">{p.label}</p>
+                <h3 className="mt-2 text-[40px] font-extrabold leading-none tracking-[-0.04em] [font-stretch:108%]">
+                  {p.title}
+                </h3>
+                <p className="mt-4 text-[17px] leading-relaxed text-ink-secondary">{p.description}</p>
+              </Reveal>
+            </li>
+          ))}
+        </ol>
       </div>
-    </Section>
+    </section>
   )
 }

@@ -1,9 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowDown, ArrowRight, RotateCcw } from "lucide-react"
+import { ArrowRight, RotateCcw } from "lucide-react"
 import Reveal from "./Reveal"
-import { Section, SectionLabel, SectionHeading } from "./Section"
+import { Section, SectionHead } from "./Section"
 import type { ProductKey } from "../utils/product"
 
 const steps: Array<{
@@ -11,141 +11,109 @@ const steps: Array<{
   phase: string
   name: string
   blurb: string
+  field: string
+  shape: string
 }> = [
   {
     key: "pulse",
     phase: "Diagnose",
     name: "Pulse",
     blurb: "See how people actually work together: friction, energy, and risk.",
+    field: "bg-sage",
+    shape: "h-24 w-24 rounded-full bg-sage-mid group-hover:scale-110",
   },
   {
     key: "build",
     phase: "Design",
     name: "Build",
-    blurb: "Design the structure, decision rights, and succession your growth needs.",
+    blurb: "Redesign how decisions, ownership, and leadership work as you grow.",
+    field: "bg-clay",
+    shape: "h-24 w-24 bg-clay-mid group-hover:rotate-45",
   },
   {
     key: "prism",
     phase: "Operate",
     name: "Prism",
     blurb: "Keep the structure current: org charts, KRAs, reviews, and governance.",
+    field: "bg-heather",
+    shape: "h-12 w-32 rounded-full bg-heather-mid -rotate-12 group-hover:rotate-12",
   },
 ]
 
 /**
- * How the three products chain into one loop. `current` de-links the page
- * you're already on; `dark` renders it as a near-black band.
+ * How the three products chain into one loop: three colour blocks in a row
+ * and a return path underneath that keeps marching back to the start.
+ * `current` de-links the page you're on.
  */
 export default function SuiteLoopSection({
   current,
-  dark = false,
-  label = "One System",
+  label = "One system",
   heading,
 }: {
   current?: ProductKey
-  dark?: boolean
   label?: string
   heading: React.ReactNode
 }) {
   return (
-    <Section dark={dark} soft={!dark ? false : undefined}>
-      <Reveal>
-        <SectionLabel>{label}</SectionLabel>
-      </Reveal>
-      <Reveal delay={0.04}>
-        <SectionHeading className={`mb-10 max-w-[900px] md:mb-16 ${dark ? "text-paper" : ""}`}>
-          {heading}
-        </SectionHeading>
-      </Reveal>
+    <Section tone="soft">
+      <SectionHead kicker={label} title={heading} />
 
-      <Reveal delay={0.08}>
-        <div className="flex flex-col items-stretch gap-3 lg:flex-row lg:items-center lg:gap-4">
-          {steps.map((step, i) => {
-            const isCurrent = step.key === current
-            const cardInner = (
-              <>
-                <span
-                  className={`mb-3 block font-sans text-xs font-semibold uppercase tracking-[0.1em] ${
-                    dark ? "text-(--tint-bright)" : "text-(--tint-ink)"
-                  }`}
-                >
-                  {step.phase}
+      <ol className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        {steps.map((step, i) => {
+          const isCurrent = step.key === current
+          const inner = (
+            <>
+              <div className="flex h-28 items-start">
+                <span aria-hidden className={`block transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${step.shape}`} />
+              </div>
+              <p className="type-kicker mt-10 text-ink-secondary">
+                {String(i + 1)}. {step.phase}
+              </p>
+              <h3 className="mt-2 flex items-baseline gap-3 text-[56px] font-extrabold leading-none tracking-[-0.045em] [font-stretch:110%]">
+                {step.name}
+                {isCurrent ? <span className="text-[15px] font-semibold tracking-normal text-ink-secondary">This page</span> : null}
+              </h3>
+              <p className="mt-4 max-w-[320px] text-[17px] leading-relaxed text-ink-secondary">{step.blurb}</p>
+              {!isCurrent ? (
+                <span className="mt-8 inline-flex items-center gap-2 text-[16px] font-semibold">
+                  Explore {step.name}
+                  <ArrowRight aria-hidden className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1.5" />
                 </span>
-                <span
-                  className={`mb-2 flex items-baseline gap-2 font-sans text-xl font-semibold tracking-[-0.01em] md:text-2xl ${
-                    dark ? "text-paper" : "text-ink"
-                  }`}
-                >
-                  {step.name}
-                  {isCurrent ? (
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em] ${
-                        dark ? "bg-white/10 text-white/70" : "bg-(--tint-soft) text-(--tint-ink)"
-                      }`}
-                    >
-                      This page
-                    </span>
-                  ) : null}
-                </span>
-                <span
-                  className={`block font-sans text-sm leading-relaxed ${
-                    dark ? "text-white/60" : "text-ink-secondary"
-                  }`}
-                >
-                  {step.blurb}
-                </span>
-                {!isCurrent && (
-                  <span
-                    className={`mt-4 inline-flex items-center gap-1 font-sans text-[13px] font-medium ${
-                      dark ? "text-(--tint-bright)" : "text-(--tint-ink)"
-                    }`}
-                  >
-                    Explore {step.name}
-                    <ArrowRight aria-hidden className="h-3.5 w-3.5" />
-                  </span>
-                )}
-              </>
-            )
-            const cardClass = `flex h-full flex-1 flex-col rounded-2xl border p-6 transition-colors duration-300 md:p-8 ${
-              dark
-                ? `border-line-dark ${isCurrent ? "bg-white/[0.04]" : "hover:bg-white/[0.04]"}`
-                : `border-line-strong bg-paper ${isCurrent ? "" : "hover:border-ink"}`
-            }`
-
-            return (
-              <div key={step.key} className="contents">
+              ) : null}
+            </>
+          )
+          return (
+            <li key={step.key}>
+              <Reveal delay={0.08 * i} variant="clip" className="h-full">
                 {isCurrent ? (
-                  <div className={cardClass}>{cardInner}</div>
+                  <div className={`group flex h-full flex-col p-7 md:p-9 ${step.field}`}>{inner}</div>
                 ) : (
-                  <Link href={`/${step.key}`} className={cardClass}>
-                    {cardInner}
+                  <Link href={`/${step.key}`} className={`group flex h-full flex-col p-7 md:p-9 ${step.field}`}>
+                    {inner}
                   </Link>
                 )}
-                {i < steps.length - 1 && (
-                  <div
-                    aria-hidden
-                    className={`flex shrink-0 items-center justify-center ${
-                      dark ? "text-white/40" : "text-ink-tertiary"
-                    }`}
-                  >
-                    <ArrowRight className="hidden h-5 w-5 lg:block" />
-                    <ArrowDown className="h-5 w-5 lg:hidden" />
-                  </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      </Reveal>
+              </Reveal>
+            </li>
+          )
+        })}
+      </ol>
 
-      <Reveal delay={0.12}>
-        <p
-          className={`mt-8 flex items-center gap-2.5 font-sans text-sm md:mt-10 ${
-            dark ? "text-white/50" : "text-ink-tertiary"
-          }`}
-        >
-          <RotateCcw aria-hidden className="h-4 w-4 shrink-0" />
-          And around again: each Pulse read tests whether the design still matches reality.
+      {/* Return path, from the end of the loop back to its start. */}
+      <Reveal delay={0.2}>
+        <svg aria-hidden viewBox="0 0 1000 60" preserveAspectRatio="none" className="mt-3 hidden h-14 w-full md:block">
+          <path
+            d="M 833 0 V 44 Q 833 56 821 56 H 179 Q 167 56 167 44 V 8"
+            fill="none"
+            stroke="var(--color-ink)"
+            strokeWidth="2"
+            strokeDasharray="6 8"
+            vectorEffect="non-scaling-stroke"
+            className="motion-safe:animate-[dash-march_6s_linear_infinite]"
+          />
+        </svg>
+        <p className="mt-6 flex items-center gap-3 text-[17px] font-medium text-ink-secondary md:mt-2 md:justify-center">
+          <RotateCcw aria-hidden className="h-5 w-5 shrink-0" />
+          And around again: each new Pulse shows whether the design still matches reality.
         </p>
       </Reveal>
     </Section>

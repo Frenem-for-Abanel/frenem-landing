@@ -1,6 +1,9 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Mdx from "../../components/engineering/Mdx"
+import JsonLd from "../../components/JsonLd"
+import { pageMetadata } from "../../utils/seo"
+import { absoluteUrl, BLOG_ID, breadcrumbs, graph, ORG_ID } from "../../utils/structured-data"
 import {
   BYLINE,
   getEssayBySlug,
@@ -23,17 +26,14 @@ export async function generateMetadata({
   const { slug } = await params
   const essay = getEssayBySlug(slug)
   if (!essay) return {}
-  return {
-    title: essay.title,
+  return pageMetadata({
+    path: `/engineering/${essay.slug}`,
+    title: `${essay.title} | Frenem Engineering`,
     description: essay.summary,
-    alternates: { canonical: `/engineering/${essay.slug}` },
-    openGraph: {
-      title: essay.title,
-      description: essay.summary,
-      url: `/engineering/${essay.slug}`,
-      type: "article",
-    },
-  }
+    socialTitle: essay.title,
+    type: "article",
+    publishedTime: essay.date,
+  })
 }
 
 export default async function EssayPage({
@@ -45,8 +45,33 @@ export default async function EssayPage({
   const essay = getEssayBySlug(slug)
   if (!essay) notFound()
 
+  const path = `/engineering/${essay.slug}`
+  const jsonLd = graph(
+    {
+      "@type": "BlogPosting",
+      "@id": absoluteUrl(`${path}#article`),
+      headline: essay.title,
+      description: essay.summary,
+      url: absoluteUrl(path),
+      mainEntityOfPage: absoluteUrl(path),
+      image: absoluteUrl(`${path}/opengraph-image`),
+      datePublished: essay.date,
+      dateModified: essay.date,
+      inLanguage: "en-IN",
+      ...(essay.pillar ? { articleSection: PILLAR_LABELS[essay.pillar] } : {}),
+      author: { "@type": "Organization", name: BYLINE, url: absoluteUrl("/engineering") },
+      publisher: { "@id": ORG_ID },
+      isPartOf: { "@id": BLOG_ID },
+    },
+    breadcrumbs([
+      { name: "Engineering", path: "/engineering" },
+      { name: essay.title, path },
+    ])
+  )
+
   return (
     <div className={tintClass(essay)}>
+      <JsonLd data={jsonLd} />
       <article className="container-site pb-20 md:pb-28">
         <div className="mx-auto max-w-(--narrow-width) pt-10 md:pt-14">
           <header className="anim-fade-up">
