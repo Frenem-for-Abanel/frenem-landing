@@ -72,8 +72,8 @@ describe("validateContactSubmission", () => {
         flow: "assessment",
         answers: {
           q1: "Under 20",
-          q2: "Fewer than headcount",
-          q3: "Never had formal levels",
+          q2: "Most of them",
+          q3: "Never, it grew as we went",
           q4: "totally made up",
         },
       }).ok
@@ -84,14 +84,14 @@ describe("validateContactSubmission", () => {
       flow: "assessment",
       answers: {
         q1: "Under 20",
-        q2: "Fewer than headcount",
-        q3: "Never had formal levels",
-        q4: "Fundraising",
+        q2: "Most of them",
+        q3: "Never, it grew as we went",
+        q4: "Fundraising or listing plans",
       },
     })
     expect(result.ok).toBe(true)
     if (result.ok) {
-      expect(result.data.answers?.q4).toBe("Fundraising")
+      expect(result.data.answers?.q4).toBe("Fundraising or listing plans")
     }
   })
 
@@ -141,9 +141,9 @@ describe("validateContactSubmission", () => {
         flow: "pulseQuestionnaire",
         answers: {
           q1: "Under 20",
-          q2: "Fewer than headcount",
-          q3: "Never had formal levels",
-          q4: "Fundraising",
+          q2: "Most of them",
+          q3: "Never, it grew as we went",
+          q4: "Fundraising or listing plans",
         },
       }).ok
     ).toBe(false)
@@ -161,16 +161,58 @@ describe("validateContactSubmission", () => {
       }).ok
     ).toBe(false)
   })
+
+  it("requires a valid, non-empty plan for the buildPlan flow", () => {
+    expect(validateContactSubmission({ ...base, flow: "buildPlan" }).ok).toBe(false)
+    expect(validateContactSubmission({ ...base, flow: "buildPlan", plan: [] }).ok).toBe(false)
+    expect(validateContactSubmission({ ...base, flow: "buildPlan", plan: ["made-up"] }).ok).toBe(false)
+
+    const result = validateContactSubmission({
+      ...base,
+      flow: "buildPlan",
+      plan: ["succession", "bottleneck", "bottleneck"],
+    })
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.data.flow).toBe("buildPlan")
+      expect(result.data.plan).toEqual(["bottleneck", "succession"])
+    }
+  })
+
+  it("ignores a plan sent with any other flow", () => {
+    const result = validateContactSubmission({ ...base, flow: "contact", plan: ["bottleneck"] })
+    expect(result.ok).toBe(true)
+    if (result.ok) expect(result.data.plan).toBeUndefined()
+  })
 })
 
 describe("contact email builders", () => {
   it("builds a sanitized subject with flow label", () => {
     expect(buildContactEmailSubject("assessment", "Ada\nLovelace")).toBe(
-      "New HR Maturity Assessment from Ada Lovelace"
+      "New Build Assessment from Ada Lovelace"
     )
     expect(buildContactEmailSubject("contact", "Ada")).toBe("New Build Contact from Ada")
-    expect(buildContactEmailSubject("pulseQuestionnaire", "Ada")).toBe("New Pulse Read from Ada")
+    expect(buildContactEmailSubject("pulseQuestionnaire", "Ada")).toBe("New Pulse Questionnaire from Ada")
     expect(buildContactEmailSubject("pulseContact", "Ada")).toBe("New Pulse Contact from Ada")
+    expect(buildContactEmailSubject("buildPlan", "Ada")).toBe("New Build Plan from Ada")
+  })
+
+  it("lays out the chosen problems and resolved modules for a build plan", () => {
+    const html = buildContactEmailHtml({
+      flow: "buildPlan",
+      name: "Ada",
+      email: "ada@example.com",
+      company: "Engines",
+      interest: "Build · Org Design Sprint",
+      plan: ["succession"],
+    })
+    expect(html).toContain("New Build Plan")
+    expect(html).toContain("Succession feels risky")
+    expect(html).toContain("9-box talent map &amp; bench")
+    expect(html).toContain("Grade structure &amp; role catalog")
+    expect(html).toContain("(foundation for the competency framework)")
+    expect(html).toContain("A focused Build")
+    expect(html).not.toMatch(/week/i)
   })
 
   it("includes escaped assessment answers in html", () => {
@@ -182,15 +224,15 @@ describe("contact email builders", () => {
       interest: "Build · Org Design Sprint",
       answers: {
         q1: "Under 20",
-        q2: "Fewer than headcount",
-        q3: "Never had formal levels",
-        q4: "Fundraising",
+        q2: "Most of them",
+        q3: "Never, it grew as we went",
+        q4: "Fundraising or listing plans",
       },
     })
-    expect(html).toContain("New HR Maturity Assessment")
+    expect(html).toContain("New Build Assessment")
     expect(html).toContain("Ada &lt;script&gt;")
     expect(html).toContain("Assessment answers")
-    expect(html).toContain("Fundraising")
+    expect(html).toContain("Fundraising or listing plans")
     expect(html).not.toContain("<script>")
   })
 
@@ -208,7 +250,7 @@ describe("contact email builders", () => {
         q4: "None",
       },
     })
-    expect(html).toContain("New Pulse Read")
+    expect(html).toContain("New Pulse Questionnaire")
     expect(html).toContain("Pulse answers")
     expect(html).toContain("Rising attrition")
     expect(html).toContain("How many people are you looking to pulse-check?")

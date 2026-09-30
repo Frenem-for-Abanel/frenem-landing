@@ -8,6 +8,7 @@ export default function Image() {
   return renderOgImage({
     title: "Your single source of truth.",
     subtitle: "Live org charts, KRAs, review cycles, and governance in one place.",
-    tint: "#0284c7",
+    tint: "#dcd8ee",
+    deep: "#948cc9",
   })
 }

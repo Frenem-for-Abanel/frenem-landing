@@ -2,70 +2,76 @@ import { ImageResponse } from "next/og"
 
 export const OG_SIZE = { width: 1200, height: 630 }
 
-/** Shared OpenGraph card: ink background, wordmark, big title, tint bar. */
+/**
+ * Shared OpenGraph card: the page's pastel field, the headline in ink, and
+ * a deeper disc cropped off the corner, like the page heroes.
+ */
 export function renderOgImage({
   title,
   subtitle,
   tint,
+  deep,
 }: {
   title: string
   subtitle: string
+  /** The pastel field. */
   tint: string
+  /** The deeper shape colour. */
+  deep: string
 }) {
   return new ImageResponse(
     (
       <div
         style={{
+          position: "relative",
           width: "100%",
           height: "100%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#0a0a0a",
+          background: tint,
           padding: "72px 80px",
           fontFamily: "sans-serif",
+          overflow: "hidden",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", fontSize: 44, fontWeight: 700, color: "#ffffff", letterSpacing: -2 }}>
-            frenem
-          </div>
-          <div style={{ display: "flex", width: 120, height: 8, background: tint, borderRadius: 4 }} />
-        </div>
+        <div
+          style={{
+            position: "absolute",
+            right: -160,
+            top: -200,
+            width: 560,
+            height: 560,
+            borderRadius: 9999,
+            background: deep,
+            opacity: 0.55,
+            display: "flex",
+          }}
+        />
+        <div style={{ display: "flex", fontSize: 44, fontWeight: 700, color: "#151515", letterSpacing: -2 }}>frenem</div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div
             style={{
               display: "flex",
-              fontSize: 76,
-              fontWeight: 700,
-              color: "#ffffff",
-              letterSpacing: -3,
-              lineHeight: 1.05,
+              fontSize: 80,
+              fontWeight: 800,
+              color: "#151515",
+              letterSpacing: -4,
+              lineHeight: 1,
               maxWidth: 980,
             }}
           >
             {title}
           </div>
-          <div
-            style={{
-              display: "flex",
-              fontSize: 30,
-              fontWeight: 400,
-              color: "rgba(255,255,255,0.65)",
-              lineHeight: 1.4,
-              maxWidth: 900,
-            }}
-          >
+          <div style={{ display: "flex", fontSize: 30, color: "#454545", lineHeight: 1.4, maxWidth: 900 }}>
             {subtitle}
           </div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ display: "flex", width: 28, height: 4, background: tint }} />
-          <div style={{ display: "flex", fontSize: 24, color: "rgba(255,255,255,0.5)" }}>
-            frenem.com · Bangalore, India
-          </div>
+          <div style={{ display: "flex", width: 22, height: 22, borderRadius: 9999, background: "#151515" }} />
+          <div style={{ display: "flex", fontSize: 24, color: "#454545" }}>frenem.com · Bangalore, India</div>
         </div>
       </div>
     ),

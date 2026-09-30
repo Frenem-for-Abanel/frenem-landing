@@ -111,7 +111,7 @@ export default function QuestionnaireFlow({
 
   if (success) {
     return (
-      <SuccessState srTitle={isPulse ? "Pulse read submitted" : "Assessment submitted"}>
+      <SuccessState srTitle={isPulse ? "Pulse answers submitted" : "Assessment submitted"}>
         Thanks. We&apos;ll review your answers and reach out within a day with what stands out,
         plus a time to talk if useful.
       </SuccessState>
@@ -135,27 +135,32 @@ export default function QuestionnaireFlow({
           aria-valuemax={TOTAL_STEPS}
           aria-valuenow={step}
           aria-label="Questionnaire progress"
-          className="h-[3px] w-full overflow-hidden rounded-sm bg-[rgba(10,10,10,0.08)]"
+          className="grid gap-1"
+          style={{ gridTemplateColumns: `repeat(${TOTAL_STEPS}, minmax(0, 1fr))` }}
         >
-          <div
-            className="h-full rounded-sm bg-(--tint-bright) transition-[width] duration-300 ease-out"
-            style={{ width: `${(Math.min(step, TOTAL_STEPS) / TOTAL_STEPS) * 100}%` }}
-          />
+          {Array.from({ length: TOTAL_STEPS }, (_, i) => (
+            <span
+              key={i}
+              className={`h-1.5 rounded-full transition-colors duration-500 ${
+                i < Math.min(step, TOTAL_STEPS) ? "bg-ink" : "bg-ink/10"
+              }`}
+            />
+          ))}
         </div>
         <div className="mt-2.5 flex min-h-[18px] items-center justify-between">
           {step > 1 ? (
             <button
               type="button"
               onClick={goBack}
-              className="border-none bg-transparent p-0 font-sans text-[13px] text-ink-secondary transition-colors hover:text-ink"
+              className="border-none bg-transparent p-0 text-[14px] font-semibold text-ink-secondary transition-colors hover:text-ink"
             >
               ← Back
             </button>
           ) : (
             <span />
           )}
-          <span className="ml-auto font-sans text-xs text-ink-tertiary">
-            Step {Math.min(step, TOTAL_STEPS)} of {TOTAL_STEPS}
+          <span className="ml-auto text-[14px] font-semibold text-ink-tertiary">
+            {Math.min(step, TOTAL_STEPS)} / {TOTAL_STEPS}
           </span>
         </div>
       </div>
@@ -165,7 +170,7 @@ export default function QuestionnaireFlow({
           <motion.div key={currentQuestion.key} {...slide}>
             <h3
               id="contact-modal-title"
-              className="mb-5 pr-5 font-sans text-2xl font-semibold leading-[1.2] tracking-[-0.02em] text-ink"
+              className="mb-6 text-[30px] font-extrabold leading-[1.02] tracking-[-0.035em] [font-stretch:106%] text-ink"
             >
               {currentQuestion.title}
             </h3>
@@ -179,14 +184,22 @@ export default function QuestionnaireFlow({
                     aria-pressed={selected}
                     onClick={() => selectOption(currentQuestion.key, option)}
                     className={cn(
-                      "flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border-[1.5px] px-[18px] py-4 text-left font-sans text-[15px] font-medium text-ink transition-[border-color,background] duration-200",
+                      "group flex w-full cursor-pointer items-center gap-3.5 rounded-full border-2 px-5 py-3.5 text-left text-[16px] font-semibold text-ink transition-[border-color,background] duration-300",
                       selected
                         ? "border-ink bg-(--tint-soft)"
-                        : "border-[rgba(10,10,10,0.1)] bg-paper hover:border-ink"
+                        : "border-ink/12 bg-paper hover:border-ink"
                     )}
                   >
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+                        selected ? "border-ink bg-ink" : "border-ink/30 group-hover:border-ink"
+                      )}
+                    >
+                      {selected ? <span className="h-2 w-2 rounded-full bg-(--tint-soft)" /> : null}
+                    </span>
                     <span>{option}</span>
-                    {selected ? <span className="font-semibold text-(--tint-ink)">✓</span> : null}
                   </button>
                 )
               })}
@@ -196,14 +209,14 @@ export default function QuestionnaireFlow({
           <motion.div key="questionnaire-contact" {...slide}>
             <h3
               id="contact-modal-title"
-              className="mb-5 pr-5 font-sans text-2xl font-semibold tracking-[-0.02em] text-ink"
+              className="mb-6 text-[30px] font-extrabold leading-[1.02] tracking-[-0.035em] [font-stretch:106%] text-ink"
             >
               Where should we send this?
             </h3>
             <ContactFieldsForm
               idPrefix={mode}
               onSubmit={handleSubmit}
-              submitLabel={isPulse ? "Get my Pulse read" : "Get my HR Maturity read"}
+              submitLabel="Send my answers"
               isSubmitting={isSubmitting}
             />
           </motion.div>

@@ -4,17 +4,14 @@ import type { UseFormRegisterReturn } from "react-hook-form"
 import { cn } from "@/lib/utils"
 
 export const inputClass =
-  "w-full rounded-lg border border-line-strong bg-paper px-3.5 py-3 font-sans text-[15px] text-ink outline-none transition-[border-color,box-shadow] placeholder:text-ink-tertiary focus:border-ink focus:shadow-[0_0_0_3px_rgba(10,10,10,0.06)]"
+  "w-full border-2 border-ink/12 bg-paper px-4 py-3.5 text-[16px] text-ink outline-none transition-[border-color,box-shadow] duration-300 placeholder:text-ink-tertiary/80 focus:border-ink focus:shadow-[0_0_0_4px_var(--tint-soft)]"
 
 export const selectClass = cn(
   inputClass,
   "min-h-12 cursor-pointer appearance-none bg-[length:14px_14px] bg-[right_14px_center] bg-no-repeat pr-11 [-webkit-appearance:none]"
 )
 
-export const labelClass = "mb-1.5 block font-sans text-[13px] font-medium text-ink-secondary"
-
-export const submitBtnClass =
-  "mt-2 min-h-12 w-full cursor-pointer rounded-full border-none bg-ink px-7 py-3.5 font-sans text-[15px] font-medium text-paper transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
+export const labelClass = "mb-2 block text-[14px] font-semibold text-ink-secondary"
 
 export const SELECT_CHEVRON =
   "data:image/svg+xml," +

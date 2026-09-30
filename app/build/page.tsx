@@ -3,9 +3,7 @@ import HeroShell from "../components/HeroShell"
 import ContactCta from "../components/ContactCta"
 import SmoothScrollLink from "../components/SmoothScrollLink"
 import IntentOpener from "../components/contact/IntentOpener"
-import BuildOrgVisual from "../components/build/BuildOrgVisual"
-import ProblemSection from "../components/build/ProblemSection"
-import TransformationSection from "../components/build/TransformationSection"
+import PlanBuilder from "../components/build/PlanBuilder"
 import DeliverablesSection from "../components/build/DeliverablesSection"
 import CapitalReadySection from "../components/build/CapitalReadySection"
 import PositioningSection from "../components/build/PositioningSection"
@@ -14,63 +12,59 @@ import TeamSection from "../components/TeamSection"
 import SecuritySection from "../components/SecuritySection"
 import FaqSection from "../components/FaqSection"
 import FinalCtaSection from "../components/FinalCtaSection"
-import { SITE_URL } from "../utils/site"
+import { BUILD_PHASES, PHASE_VIEWBOX } from "../utils/compositions"
+import JsonLd from "../components/JsonLd"
+import { pageMetadata } from "../utils/seo"
+import { absoluteUrl, breadcrumbs, faq, graph, ORG_ID, webPage } from "../utils/structured-data"
 
-export const metadata: Metadata = {
-  title: "Build · Organisation Design Sprint",
-  description:
-    "An 8-week organisation-design sprint for founder-led companies: decision rights, job architecture, governance, and succession. A live operating system, not a slide deck.",
-  alternates: { canonical: "/build" },
-  openGraph: {
-    title: "Frenem Build · Organisation Design Sprint",
-    description:
-      "Build an organisation that scales beyond you. Structure, governance, roles, and talent, aligned to growth in one 8-week sprint.",
-    url: "/build",
-  },
-}
+const DESCRIPTION =
+  "Organisation design for founder-led businesses: faster decisions, clear ownership, and leaders who run the business. The whole of Build, or only the parts you need."
 
-const BUILD_SHADER_COLORS = {
-  bg: "#fffbeb",
-  bg2: "#fef3c7",
-  accent: "#ffffff",
-  accent2: "#d97706",
-  highlight: "#fde68a",
-} as const
+export const metadata: Metadata = pageMetadata({
+  path: "/build",
+  title: "Build by Frenem | Organisation design for founder-led companies",
+  description: DESCRIPTION,
+  socialTitle: "Frenem Build: an organisation that scales beyond you",
+  socialDescription:
+    "Build an organisation that scales beyond you. Faster decisions, clear ownership, and leaders who run the business.",
+})
 
 const phases = [
   {
     label: "Phase 01",
     title: "Diagnose",
     description:
-      "Understand the baseline. People maturity, employee data, employee voice, and how decisions actually flow today. Build the foundation everything else sits on.",
-    time: "Weeks 1–2",
+      "We learn how your business actually runs today: where decisions stall, where work doubles up, and where the risk sits.",
   },
   {
     label: "Phase 02",
     title: "Design",
     description:
-      "Build the architecture. The grade structure, role catalog, org map, job descriptions, and decision rights. Turn complexity into a simple organisation that executes.",
-    time: "Weeks 3–5",
+      "We shape the organisation your strategy needs, with you: who decides, who owns what, and how work moves.",
   },
   {
     label: "Phase 03",
     title: "Deploy",
     description:
-      "Lock in the competency framework, map talent, and deliver a validated, boardroom-ready operating model. A leadership blueprint that outlasts individuals.",
-    time: "Weeks 6–8",
+      "We put it to work and leave it running in your business, built to outlast any one person.",
   },
 ]
 
 const faqItems = [
+  {
+    question: "Can we do just part of Build?",
+    answer:
+      "Yes. Tick the problems you recognise in the planner above and we'll shape Build around them, only the parts that fix what you ticked. We agree the scope with you on the first call, designed against how your organisation actually works today.",
+  },
   {
     question: "How much of leadership's time does the sprint take?",
     answer:
       "Diagnose runs on structured interviews and data you already have, so the load comes in short, scheduled bursts rather than weeks of workshops. We agree the sprint calendar around your operating rhythm before we start.",
   },
   {
-    question: "What happens after week 8?",
+    question: "What happens when the sprint ends?",
     answer:
-      "You're left with a validated operating model your team runs day to day: decision rights, job architecture, governance, and succession live in the organisation, not in a deck. Prism can keep the structure current from there.",
+      "You're left with an operating model your team runs day to day: who decides, who owns what, and who leads next live in the business, not in a deck. Prism can keep it current from there.",
   },
   {
     question: "Will this feel like consultants rebuilding my company?",
@@ -84,52 +78,71 @@ const faqItems = [
   },
 ]
 
-const serviceJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Service",
-  name: "Frenem Build",
-  serviceType: "Organisation design sprint",
-  provider: { "@type": "Organization", name: "Frenem", url: SITE_URL },
-  description:
-    "An 8-week organisation-design sprint: decision rights, grade structure, job architecture, governance guardrails, and a 9-box succession map.",
-  url: `${SITE_URL}/build`,
-}
+const SERVICE_ID = absoluteUrl("/build#service")
+
+const OUTCOMES = [
+  "Decisions at the right level",
+  "One owner for every outcome",
+  "A leaner way of working",
+  "Control, built in",
+  "A bench ready to lead",
+  "An investor-grade operating model",
+]
+
+const jsonLd = graph(
+  webPage({ path: "/build", name: "Frenem Build", description: DESCRIPTION, about: SERVICE_ID }),
+  {
+    "@type": "Service",
+    "@id": SERVICE_ID,
+    name: "Frenem Build",
+    alternateName: "Build",
+    serviceType: "Organisation design",
+    category: "Organisation design and governance",
+    provider: { "@id": ORG_ID },
+    areaServed: { "@type": "Country", name: "India" },
+    audience: { "@type": "BusinessAudience", name: "Founders and promoters of growing businesses" },
+    description:
+      "Organisation design for founder-led businesses, as a complete sprint or only the parts you need: faster decisions, clear ownership, governance, and a leadership bench.",
+    url: absoluteUrl("/build"),
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "What you walk away with",
+      itemListElement: OUTCOMES.map((name) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name } })),
+    },
+  },
+  breadcrumbs([{ name: "Build", path: "/build" }]),
+  faq("/build", faqItems)
+)
 
 export default function BuildPage() {
   return (
     <div className="tint-build">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
       <IntentOpener />
 
       <HeroShell
-        eyebrow="Frenem Build · Organisation Design"
+        eyebrow="Frenem Build, organisation design"
         title={
           <>
             Build an organisation that scales <em>beyond you.</em>
           </>
         }
-        subtitle="Clarity in roles, decisions, and leadership. Without losing control. In weeks, not months."
-        colors={BUILD_SHADER_COLORS}
-        tall
+        subtitle="Faster decisions, clear ownership, and leaders who can run the business. Without losing control."
         actions={
           <>
-            <ContactCta mode="assessment" className="w-full sm:w-auto">
-              Get started →
-            </ContactCta>
-            <ContactCta mode="contact" variant="text" className="justify-center self-center sm:self-auto">
+            <SmoothScrollLink targetId="plan" variant="primary" className="w-full sm:w-auto">
+              Build my plan
+            </SmoothScrollLink>
+            <ContactCta mode="contact" variant="text" className="justify-center sm:justify-start">
               Just get in touch
             </ContactCta>
-            <SmoothScrollLink targetId="how-build">See how</SmoothScrollLink>
           </>
         }
-        visual={<BuildOrgVisual />}
+        note="The whole of Build, or only the parts you need."
+        scene="build"
       />
 
-      <ProblemSection />
-      <TransformationSection />
+      <PlanBuilder />
       <DeliverablesSection />
       <TimelineSection
         id="how-build"
@@ -138,14 +151,21 @@ export default function BuildPage() {
             Fit. Flat. Fast. <em>Ready for scale.</em>
           </>
         }
-        sub="A structured sprint. Not a meandering engagement. You get a working operating system, not a binder."
+        sub="A structured sprint, not a meandering engagement. You get a working operating system, not a binder."
         phases={phases}
-        tintHex="#d97706"
-        soft
+        layouts={BUILD_PHASES}
+        viewBox={PHASE_VIEWBOX}
       />
       <CapitalReadySection />
       <PositioningSection />
-      <TeamSection soft={false} />
+      <TeamSection
+        label="Who you'd work with"
+        title={
+          <>
+            A combined <em>100+ years</em> of consulting.
+          </>
+        }
+      />
       <SecuritySection />
       <FaqSection
         heading={
@@ -156,9 +176,9 @@ export default function BuildPage() {
         items={faqItems}
       />
       <FinalCtaSection
-        label="Get Started with Build"
+        label="Get started with Build"
         modalMode="assessment"
-        buttonText="Get started →"
+        buttonText="Get started"
         secondaryButtonText="Just get in touch"
         secondaryModalMode="contact"
         title={
@@ -166,7 +186,7 @@ export default function BuildPage() {
             Design the organisation your strategy <em>needs.</em>
           </>
         }
-        subtitle="Structure, governance, roles, and talent. Aligned to growth. One sprint. No consultant theatre."
+        subtitle="Decisions, ownership, governance, and leadership. Aligned to growth. No consultant theatre."
       />
     </div>
   )

@@ -8,15 +8,17 @@ interface RevealProps {
   children: ReactNode
   delay?: number
   className?: string
+  /** rise: fade up · scale: grow in · clip: wipe up from the bottom edge */
+  variant?: "rise" | "scale" | "clip"
 }
 
 /**
- * Fade-up on first view, driven by IntersectionObserver + CSS transitions.
+ * Entrance on first view, driven by IntersectionObserver + CSS transitions.
  * Content is visible by default (SSR, no-JS, reduced motion, throttled tabs);
  * JS only hides elements that are still below the fold at mount, then reveals
  * them as they scroll in.
  */
-export default function Reveal({ children, delay = 0, className = "" }: RevealProps) {
+export default function Reveal({ children, delay = 0, className = "", variant = "rise" }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [hidden, setHidden] = useState(false)
 
@@ -37,18 +39,28 @@ export default function Reveal({ children, delay = 0, className = "" }: RevealPr
           io.disconnect()
         }
       },
-      { threshold: 0.12 }
+      { threshold: 0.08, rootMargin: "0px 0px -6% 0px" }
     )
     io.observe(el)
     return () => io.disconnect()
   }, [])
 
+  const style = delay ? { transitionDelay: `${delay}s` } : undefined
+
+  // A fully clipped element never reports as intersecting, so the wipe runs
+  // on an inner layer while the unclipped wrapper is what gets observed.
+  if (variant === "clip") {
+    return (
+      <div ref={ref} className={className}>
+        <div className={cn("reveal-item reveal-clip h-full", hidden && "reveal-hidden")} style={style}>
+          {children}
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div
-      ref={ref}
-      className={cn("reveal-item", hidden && "reveal-hidden", className)}
-      style={delay ? { transitionDelay: `${delay}s` } : undefined}
-    >
+    <div ref={ref} className={cn("reveal-item", `reveal-${variant}`, hidden && "reveal-hidden", className)} style={style}>
       {children}
     </div>
   )

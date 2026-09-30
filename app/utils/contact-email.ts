@@ -1,6 +1,7 @@
 import { escapeHtml } from "./escape-html"
 import { ASSESSMENT_QUESTION_LABELS } from "./assessment-questions"
 import { PULSE_QUESTION_LABELS } from "./pulse-questions"
+import { BUILD_MODULES, resolveBuildPlan, SCOPE_LABELS } from "./build-plan"
 import {
   contactFlowHeading,
   contactFlowLabel,
@@ -63,6 +64,35 @@ export function buildContactEmailHtml(data: ValidatedContactSubmission): string 
       ${answerRows}`
   }
 
+  let planBlock = ""
+  if (data.flow === "buildPlan" && data.plan?.length) {
+    const plan = resolveBuildPlan(data.plan)
+    const problems = plan.pains
+      .map(
+        (p) => `
+          <li style="margin:0 0 6px;color:${INK};font-size:14px;">${escapeHtml(p.title)}</li>`
+      )
+      .join("")
+    const modules = plan.modules
+      .map((m) => {
+        const note = m.foundation
+          ? ` <span style="color:${MUTED};font-size:12px;">(foundation for the ${escapeHtml(
+              m.neededBy.map((id) => BUILD_MODULES[id].short).join(" and ")
+            )})</span>`
+          : ""
+        return `<li style="margin:0 0 4px;color:${INK};font-size:14px;">${escapeHtml(m.title)}${note}</li>`
+      })
+      .join("")
+    planBlock = `
+      <p style="margin:24px 0 10px;padding-top:16px;border-top:1px solid #ececea;color:${MUTED};font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">Plan · ${escapeHtml(
+        plan.scope ? SCOPE_LABELS[plan.scope] : ""
+      )}</p>
+      <p style="margin:0 0 6px;color:${MUTED};font-size:12px;">Problems chosen</p>
+      <ul style="margin:0;padding-left:18px;">${problems}</ul>
+      <p style="margin:14px 0 6px;color:${MUTED};font-size:12px;">Suggested modules (internal, not shown on the site)</p>
+      <ul style="margin:0;padding-left:18px;">${modules}</ul>`
+  }
+
   return `
     <div style="font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;">
       <div style="border-left:3px solid ${ACCENT};padding-left:14px;margin-bottom:20px;">
@@ -72,5 +102,6 @@ export function buildContactEmailHtml(data: ValidatedContactSubmission): string 
       <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${rows}</table>
       ${notesBlock}
       ${answersBlock}
+      ${planBlock}
     </div>`
 }

@@ -1,39 +1,112 @@
 @import "tailwindcss";
 
+/* Wide screens tall enough for a full sticky sidebar under the header
+   (the Build plan sheet is about 790px with every problem ticked). */
+@custom-variant lg-tall (@media (min-width: 1024px) and (min-height: 900px));
+
 /* ---------------------------------------------------------------------------
  * Frenem design tokens
  * One source of truth: colours, fonts, and layout metrics live here.
+ * The palette is pastel fields plus ink. Each pastel has a deeper partner
+ * for shapes and a dark partner that is safe for small text.
  * ------------------------------------------------------------------------- */
 
 @theme {
-  /* Neutrals */
-  --color-ink: #0a0a0a;
-  --color-ink-secondary: #52524e;
-  --color-ink-tertiary: #6e6e6a;
+  --color-ink: #151515;
+  --color-ink-secondary: #454545;
+  --color-ink-tertiary: #6a6a6a;
   --color-paper: #ffffff;
-  --color-paper-soft: #f5f5f2;
+  --color-paper-raised: #ffffff;
+  --color-paper-soft: #f0efea;
 
-  /* Brand accent (CTAs, brand moments). `accent-ink` passes AA for small text. */
-  --color-accent: #ff5b1f;
-  --color-accent-ink: #c2410c;
-  --color-accent-soft: rgb(255 91 31 / 0.08);
+  /* Each colour comes in three tiers: a soft field, a mid tone for shapes,
+     and a deep partner for dark bands and small text. Muted on purpose:
+     pastels read grown-up when they sit next to something deep. */
+  --color-sand: #ece5d5;
+  --color-sand-mid: #c9b287;
+  --color-sand-deep: #2d2a22;
+  --color-clay: #f0d7c7;
+  --color-clay-mid: #d4876a;
+  --color-clay-deep: #5c2419;
+  --color-sage: #d2e4d7;
+  --color-sage-mid: #7aad93;
+  --color-sage-deep: #1f4636;
+  --color-heather: #dcd8ee;
+  --color-heather-mid: #948cc9;
+  --color-heather-deep: #2c2758;
+  --color-mist: #d3e0e9;
+  --color-mist-mid: #7ba0bb;
+  --color-mist-deep: #1d3548;
+  --color-rose: #edd4d8;
+  --color-rose-mid: #c68893;
+  --color-rose-deep: #582331;
 
-  /* Product signature tints (text-safe on white) */
-  --color-pulse: #0f766e;
-  --color-build: #b45309;
-  --color-prism: #0369a1;
+  --color-line: rgb(21 21 21 / 0.1);
+  --color-line-strong: rgb(21 21 21 / 0.22);
+  --color-line-dark: rgb(255 255 255 / 0.16);
 
-  /* Hairlines */
-  --color-line: rgb(10 10 10 / 0.08);
-  --color-line-strong: rgb(10 10 10 / 0.16);
-  --color-line-dark: rgb(255 255 255 / 0.12);
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+}
 
-  --radius-btn: 100px;
+/* ---------------------------------------------------------------------------
+ * Font fallbacks
+ * Local fonts resized to Archivo's measured widths, so text wraps the same
+ * before and after the web font arrives and nothing below it jumps (CLS).
+ * next/font tunes Arial for body copy; these add Roboto for Android, where
+ * Arial is missing, and a wider cut for the ExtraBold display headlines.
+ * Overrides are Archivo's ascent (0.878) and descent (0.21) over size-adjust.
+ * ------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: "Archivo Fallback Roboto";
+  src: local("Roboto"), local("Roboto-Regular");
+  size-adjust: 98.9%;
+  ascent-override: 88.8%;
+  descent-override: 21.2%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Display Fallback";
+  src: local("Arial"), local("ArialMT");
+  font-weight: 1 500;
+  size-adjust: 100%;
+  ascent-override: 87.8%;
+  descent-override: 21%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Display Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 501 1000;
+  size-adjust: 107.5%;
+  ascent-override: 81.7%;
+  descent-override: 19.5%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Display Fallback Roboto";
+  src: local("Roboto"), local("Roboto-Regular");
+  font-weight: 1 500;
+  size-adjust: 99.8%;
+  ascent-override: 88%;
+  descent-override: 21%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Display Fallback Roboto";
+  src: local("Roboto Bold"), local("Roboto-Bold"), local("Roboto");
+  font-weight: 501 1000;
+  size-adjust: 114.7%;
+  ascent-override: 76.5%;
+  descent-override: 18.3%;
+  line-gap-override: 0%;
 }
 
 @theme inline {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-archivo), "Archivo Fallback Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-archivo-display, var(--font-archivo)), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
   --font-logo: var(--font-league-spartan), ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -43,12 +116,15 @@
 
 @layer base {
   :root {
-    /* Per-page signature tint; pages override via .tint-* wrappers. */
-    --tint-ink: var(--color-accent-ink);
-    --tint-bright: var(--color-accent);
-    --tint-soft: var(--color-accent-soft);
+    /* Per-page tint; pages override via .tint-* wrappers.
+       soft = the field, bright = the mid shape colour,
+       deep = the rich partner for dark bands (and text-safe as ink). */
+    --tint-soft: var(--color-sand);
+    --tint-bright: var(--color-sand-mid);
+    --tint-deep: var(--color-sand-deep);
+    --tint-ink: var(--color-sand-deep);
 
-    --content-width: 1240px;
+    --content-width: 1320px;
     --narrow-width: 820px;
   }
 
@@ -68,20 +144,19 @@
   body {
     background: var(--color-paper);
     color: var(--color-ink);
-    font-family: var(--font-sans);
-    font-feature-settings: "ss01" 1, "cv01" 1;
+    font-family: var(--font-archivo), "Archivo Fallback Roboto", ui-sans-serif, system-ui, sans-serif;
     line-height: 1.45;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   ::selection {
-    background: var(--color-accent);
-    color: #ffffff;
+    background: var(--tint-soft);
+    color: var(--color-ink);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-accent-ink);
-    outline-offset: 2px;
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
     border-radius: 2px;
   }
 
@@ -96,29 +171,33 @@
 }
 
 /* ---------------------------------------------------------------------------
- * Page tints: set the signature colour used across a whole page
+ * Page tints
  * ------------------------------------------------------------------------- */
 
 @layer components {
   .tint-brand {
-    --tint-ink: var(--color-accent-ink);
-    --tint-bright: var(--color-accent);
-    --tint-soft: var(--color-accent-soft);
+    --tint-soft: var(--color-sand);
+    --tint-bright: var(--color-sand-mid);
+    --tint-deep: var(--color-sand-deep);
+    --tint-ink: var(--color-sand-deep);
   }
   .tint-pulse {
-    --tint-ink: var(--color-pulse);
-    --tint-bright: #0d9488;
-    --tint-soft: rgb(15 118 110 / 0.08);
+    --tint-soft: var(--color-sage);
+    --tint-bright: var(--color-sage-mid);
+    --tint-deep: var(--color-sage-deep);
+    --tint-ink: var(--color-sage-deep);
   }
   .tint-build {
-    --tint-ink: var(--color-build);
-    --tint-bright: #d97706;
-    --tint-soft: rgb(180 83 9 / 0.08);
+    --tint-soft: var(--color-clay);
+    --tint-bright: var(--color-clay-mid);
+    --tint-deep: var(--color-clay-deep);
+    --tint-ink: var(--color-clay-deep);
   }
   .tint-prism {
-    --tint-ink: var(--color-prism);
-    --tint-bright: #0284c7;
-    --tint-soft: rgb(3 105 161 / 0.08);
+    --tint-soft: var(--color-heather);
+    --tint-bright: var(--color-heather-mid);
+    --tint-deep: var(--color-heather-deep);
+    --tint-ink: var(--color-heather-deep);
   }
 
   /* ---------------------------------------------------------------------
@@ -132,139 +211,241 @@
   }
   @media (min-width: 640px) {
     .container-site {
-      padding-inline: 24px;
+      padding-inline: 28px;
     }
   }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .container-site {
-      padding-inline: 32px;
+      padding-inline: 40px;
     }
   }
 
   /* ---------------------------------------------------------------------
-   * Type scale: display faces use Fraunces, UI stays Inter
+   * Type: one variable grotesk. Display sizes are heavy and wide; emphasis
+   * drops to a hairline weight instead of italics or colour.
    * ------------------------------------------------------------------- */
 
-  .type-display-1 {
-    font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
-    font-size: clamp(38px, 6.6vw, 96px);
-    font-weight: 560;
-    line-height: 1;
-    letter-spacing: -0.022em;
-    font-variation-settings: "SOFT" 0, "WONK" 0;
+  .type-display-1,
+  .type-display-2,
+  .type-display-3 {
+    font-family: var(--font-archivo-display, var(--font-archivo)), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
     text-wrap: balance;
+  }
+
+  .type-display-1 {
+    font-size: clamp(38px, 6.4vw, 104px);
+    font-stretch: 106%;
+    line-height: 0.9;
+    letter-spacing: -0.042em;
+  }
+
+  /* The hero headline shares its row with the scene, so it is sized to the
+     column: the longest word ("organisation,") must fit at every width. */
+  .type-hero {
+    font-family: var(--font-archivo-display, var(--font-archivo)), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    font-size: clamp(38px, 5.1vw, 82px);
+    font-stretch: 104%;
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+  @media (max-width: 1023px) {
+    .type-hero {
+      font-size: clamp(38px, 8.6vw, 72px);
+    }
   }
 
   .type-display-2 {
-    font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
-    font-size: clamp(30px, 4.6vw, 64px);
-    font-weight: 560;
-    line-height: 1.04;
-    letter-spacing: -0.018em;
-    font-variation-settings: "SOFT" 0, "WONK" 0;
-    text-wrap: balance;
+    font-size: clamp(32px, 4.8vw, 76px);
+    font-stretch: 104%;
+    line-height: 0.94;
+    letter-spacing: -0.038em;
   }
 
   .type-display-3 {
-    font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
-    font-size: clamp(24px, 3.4vw, 42px);
-    font-weight: 560;
-    line-height: 1.08;
-    letter-spacing: -0.014em;
-    font-variation-settings: "SOFT" 0, "WONK" 0;
-    text-wrap: balance;
+    font-size: clamp(24px, 2.9vw, 42px);
+    font-stretch: 104%;
+    line-height: 1.02;
+    letter-spacing: -0.028em;
   }
 
   .type-display-1 em,
+  .type-hero em,
   .type-display-2 em,
   .type-display-3 em {
-    font-style: italic;
-    font-weight: 480;
-    color: var(--tint-ink);
+    font-style: normal;
+    font-weight: 250;
+    letter-spacing: -0.035em;
   }
 
-  /* Dark sections flip the italic accent to the bright tint for contrast. */
-  .on-dark .type-display-1 em,
-  .on-dark .type-display-2 em,
-  .on-dark .type-display-3 em {
-    color: var(--tint-bright);
+  .type-kicker {
+    font-size: 15px;
+    font-weight: 600;
+    font-stretch: 110%;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
   }
 
-  .type-eyebrow {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: var(--font-sans);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    color: var(--color-ink-secondary);
+  .type-lead {
+    font-size: clamp(17px, 1.4vw, 20px);
+    line-height: 1.4;
+    letter-spacing: -0.012em;
   }
-  .type-eyebrow::before {
+
+  /* Fine print grain over colour fields: takes the flatness off the
+     pastels. Painted as ::before so positioned content sits above it. */
+  .grain {
+    isolation: isolate;
+  }
+  .grain::before {
     content: "";
-    width: 24px;
-    height: 1px;
-    background: var(--tint-ink);
-    flex-shrink: 0;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.09;
+    mix-blend-mode: multiply;
   }
-  .on-dark .type-eyebrow {
-    color: rgb(255 255 255 / 0.6);
+  .grain-light::before {
+    mix-blend-mode: screen;
+    opacity: 0.07;
+    filter: invert(1);
   }
-  .on-dark .type-eyebrow::before {
-    background: var(--tint-bright);
+
+  /* A quiet dot grid for figure panels. */
+  .dot-grid {
+    background-image: radial-gradient(circle, rgb(21 21 21 / 0.11) 1px, transparent 1.3px);
+    background-size: 18px 18px;
+    background-position: 9px 9px;
+  }
+
+  /* Animated underline for text links. */
+  .link-line {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 100% 2px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 3px;
+    transition: background-size 0.45s var(--ease-out-soft);
+  }
+  @media (hover: hover) {
+    .link-line:hover {
+      background-size: 0% 2px;
+      background-position: 100% 100%;
+    }
   }
 
   /* ---------------------------------------------------------------------
-   * Entrance animations
-   * CSS-driven (not JS/rAF-driven) so content is never stuck invisible in
-   * throttled tabs, and renders even before hydration.
+   * Motion
+   * CSS-driven entrances so content is never stuck invisible in throttled
+   * tabs, and renders before hydration. Scroll reveals hide an element only
+   * once JS has confirmed it is below the fold.
    * ------------------------------------------------------------------- */
 
   .anim-fade-up {
-    animation: fade-up 0.65s cubic-bezier(0.22, 1, 0.16, 1) both;
+    animation: fade-up 0.9s var(--ease-out-soft) both;
   }
 
-  .anim-scale-in {
-    animation: scale-in 0.7s cubic-bezier(0.22, 1, 0.16, 1) both;
+  /* Headline words rise out of their own line box, one after another. */
+  .split-word {
+    display: inline-block;
+    overflow: clip;
+    vertical-align: top;
+    /* Room for descenders without widening the line. */
+    padding-bottom: 0.12em;
+    margin-bottom: -0.12em;
+  }
+  .split-inner {
+    display: inline-block;
+    transform-origin: 0% 100%;
+  }
+  .split-pending .split-inner {
+    transform: translateY(110%) rotate(7deg);
+  }
+  .split-in .split-inner {
+    animation: word-rise 1.05s var(--ease-out-soft) both;
+    animation-delay: calc(var(--split-delay, 0s) + var(--i, 0) * 55ms);
+  }
+  /* Emphasised words rise heavy, then thin out to their hairline weight.
+     The weight itself never animates: a heavier cut is wider, so the line
+     would re-wrap mid-animation and shove the page (layout shift). The
+     words sit at their final weight and a text stroke paints the heft. */
+  .split-in em .split-inner {
+    -webkit-text-stroke-color: currentColor;
+    animation:
+      word-rise 1.05s var(--ease-out-soft) both,
+      em-thin 1.4s var(--ease-in-out-soft) both;
+    animation-delay:
+      calc(var(--split-delay, 0s) + var(--i, 0) * 55ms),
+      calc(var(--split-delay, 0s) + var(--i, 0) * 55ms + 0.45s);
   }
 
-  .anim-slide-down {
-    animation: slide-down 0.6s ease-out both;
+  /* FAQ answers open smoothly where the browser can animate to auto height. */
+  @supports (interpolate-size: allow-keywords) {
+    :root {
+      interpolate-size: allow-keywords;
+    }
+    .faq::details-content {
+      height: 0;
+      overflow: clip;
+      transition:
+        height 0.6s var(--ease-out-soft),
+        content-visibility 0.6s allow-discrete;
+    }
+    .faq[open]::details-content {
+      height: auto;
+    }
   }
 
-  /* Scroll reveals: hidden class is added by JS only after mount, so the
-     default (SSR, no-JS) state is fully visible. */
   .reveal-item {
     transition:
-      opacity 0.85s cubic-bezier(0.22, 1, 0.16, 1),
-      transform 0.85s cubic-bezier(0.22, 1, 0.16, 1);
+      opacity 1s var(--ease-out-soft),
+      transform 1.1s var(--ease-out-soft),
+      clip-path 1.2s var(--ease-out-soft);
   }
-
-  .reveal-hidden {
+  .reveal-hidden.reveal-rise {
     opacity: 0;
-    transform: translateY(28px);
+    transform: translateY(48px);
+  }
+  .reveal-hidden.reveal-scale {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  .reveal-hidden.reveal-clip {
+    clip-path: inset(100% 0 0 0);
   }
 
   @media (prefers-reduced-motion: reduce) {
     .anim-fade-up,
-    .anim-scale-in,
-    .anim-slide-down {
+    .split-in .split-inner,
+    .split-in em .split-inner {
       animation: none;
+    }
+    .split-pending .split-inner {
+      transform: none;
     }
     .reveal-item {
       transition: none;
     }
-    .reveal-hidden {
+    .reveal-hidden.reveal-rise,
+    .reveal-hidden.reveal-scale,
+    .reveal-hidden.reveal-clip {
       opacity: 1;
       transform: none;
+      clip-path: none;
     }
   }
 }
 
+/* Starts at 1% rather than 0: Chrome skips fully transparent text when timing
+   Largest Contentful Paint, so a hero line fading in from 0 would only count
+   once its fade ends. Visually identical. */
 @keyframes fade-up {
   from {
-    opacity: 0;
-    transform: translateY(20px);
+    opacity: 0.01;
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -275,19 +456,49 @@
 @keyframes scale-in {
   from {
     opacity: 0;
-    transform: scale(0.96);
+    transform: translateY(32px) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
   }
 }
 
-@keyframes slide-down {
+@keyframes word-rise {
   from {
-    transform: translateY(-100%);
+    transform: translateY(110%) rotate(7deg);
   }
   to {
-    transform: translateY(0);
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes em-thin {
+  from {
+    -webkit-text-stroke-width: 0.075em;
+  }
+  to {
+    -webkit-text-stroke-width: 0;
+  }
+}
+
+@keyframes rule-in {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash-march {
+  to {
+    stroke-dashoffset: -200;
   }
 }

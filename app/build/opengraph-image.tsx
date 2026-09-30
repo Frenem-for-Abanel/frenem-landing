@@ -7,7 +7,8 @@ export const alt = "Frenem Build, an organisation design sprint"
 export default function Image() {
   return renderOgImage({
     title: "Build an organisation that scales beyond you.",
-    subtitle: "Decision rights, job architecture, and succession in an 8-week sprint.",
-    tint: "#d97706",
+    subtitle: "Faster decisions, clear ownership, and a leadership bench, shaped around your business.",
+    tint: "#f0d7c7",
+    deep: "#d4876a",
   })
 }

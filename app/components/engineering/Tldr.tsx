@@ -6,7 +6,7 @@ import type { ReactNode } from "react"
  */
 export default function Tldr({ children }: { children: ReactNode }) {
   return (
-    <aside className="my-8 rounded-lg border border-line bg-paper-soft p-5 first:mt-0 sm:p-6">
+    <aside className="my-8 bg-(--tint-soft) p-5 first:mt-0 sm:p-7">
       <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-(--tint-ink)">
         TL;DR
       </p>

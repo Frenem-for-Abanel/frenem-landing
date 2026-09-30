@@ -1,66 +1,85 @@
 import Link from "next/link"
 import ContactCta from "./ContactCta"
+import FooterWordmark from "./FooterWordmark"
 
-const footerLinkClass =
-  "inline-flex min-h-11 items-center font-sans text-sm text-white/60 transition-colors hover:text-white md:min-h-0"
+const linkClass =
+  "group inline-flex min-h-11 items-center gap-3 text-[17px] font-medium text-white/75 transition-colors hover:text-white md:min-h-10"
+
+const products = [
+  { href: "/pulse", name: "Pulse", role: "Relational diagnostics", dot: "bg-sage-mid" },
+  { href: "/build", name: "Build", role: "Organisation design", dot: "bg-clay-mid" },
+  { href: "/prism", name: "Prism", role: "Employee management", dot: "bg-heather-mid" },
+]
 
 export default function Footer() {
   return (
-    <footer className="on-dark relative overflow-hidden bg-ink px-5 py-12 text-white/60 sm:px-6 md:px-8 md:pb-10 md:pt-16">
-      <div className="mx-auto grid max-w-[var(--content-width)] grid-cols-1 gap-10 md:grid-cols-[1fr_auto_auto] md:items-end md:gap-16">
-        <div className="font-logo text-[clamp(48px,12vw,140px)] font-bold lowercase leading-[0.85] tracking-[-0.04em] text-white">
-          frenem
+    <footer className="grain grain-light relative overflow-clip bg-ink text-paper">
+      <div className="container-site pt-20 md:pt-28">
+        <div className="grid grid-cols-1 gap-14 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-6">
+            <p className="type-display-3 max-w-[16ch] text-paper">
+              Organisation clarity: diagnose, design, <em>operate.</em>
+            </p>
+            <ContactCta mode="default" className="mt-10 bg-paper text-ink">
+              Get in touch
+            </ContactCta>
+          </div>
+
+          <nav className="lg:col-span-3 lg:col-start-8" aria-label="Products">
+            <p className="type-kicker mb-4 text-white/45">Products</p>
+            <ul>
+              {products.map((p) => (
+                <li key={p.href}>
+                  <Link href={p.href} className={linkClass}>
+                    <span
+                      aria-hidden
+                      className={`h-3 w-3 shrink-0 rounded-full transition-transform duration-500 group-hover:scale-150 ${p.dot}`}
+                    />
+                    <span className="font-semibold text-white">{p.name}</span>
+                    <span className="text-white/45">{p.role}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav className="lg:col-span-2" aria-label="Company">
+            <p className="type-kicker mb-4 text-white/45">Company</p>
+            <ul>
+              <li>
+                <Link href="/engineering" className={linkClass}>
+                  Engineering
+                </Link>
+              </li>
+              <li>
+                <a href="https://frenem.com" target="_blank" rel="noopener noreferrer" className={linkClass}>
+                  frenem.com
+                </a>
+              </li>
+              <li>
+                <a
+                  // TODO: confirm the company LinkedIn URL before launch.
+                  href="https://www.linkedin.com/company/frenem"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={linkClass}
+                >
+                  LinkedIn
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>
 
-        <nav className="flex flex-col gap-1 md:gap-2.5" aria-label="Products">
-          <span className="mb-1 font-sans text-xs font-semibold uppercase tracking-[0.1em] text-white/35">
-            Products
-          </span>
-          <Link href="/pulse" className={footerLinkClass}>
-            Pulse · Relational Diagnostics
-          </Link>
-          <Link href="/build" className={footerLinkClass}>
-            Build · Organisation Design
-          </Link>
-          <Link href="/prism" className={footerLinkClass}>
-            Prism · Employee Management
-          </Link>
-        </nav>
-
-        <nav className="flex flex-col gap-1 md:gap-2.5" aria-label="Company">
-          <span className="mb-1 font-sans text-xs font-semibold uppercase tracking-[0.1em] text-white/35">
-            Company
-          </span>
-          <ContactCta
-            mode="default"
-            variant="text"
-            className="min-h-11 justify-start self-start border-white/40 pb-0 text-sm font-normal text-white/60 hover:border-white hover:text-white md:min-h-0"
-          >
-            Get in touch
-          </ContactCta>
-          <a
-            href="https://frenem.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={footerLinkClass}
-          >
-            frenem.com
-          </a>
-          <a
-            // TODO: confirm the company LinkedIn URL before launch.
-            href="https://www.linkedin.com/company/frenem"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={footerLinkClass}
-          >
-            LinkedIn
-          </a>
-        </nav>
+        <div className="mt-20 flex flex-col justify-between gap-2 text-[14px] text-white/45 md:mt-28 md:flex-row">
+          <span>© Frenem {new Date().getFullYear()}</span>
+          <span>Bangalore, India</span>
+        </div>
       </div>
 
-      <div className="mx-auto mt-10 flex max-w-[var(--content-width)] flex-col justify-between gap-3 border-t border-line-dark pt-6 font-sans text-xs text-white/40 md:mt-12 md:flex-row md:items-center md:gap-6">
-        <span>© Frenem {new Date().getFullYear()}</span>
-        <span>Bangalore, India</span>
+      {/* The wordmark as a signature. */}
+      <div className="container-site">
+        <FooterWordmark />
       </div>
     </footer>
   )
