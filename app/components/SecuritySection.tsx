@@ -10,7 +10,7 @@ const ITEMS = [
   },
   {
     title: "Access Control",
-    body: "Secure OTP authentication with role-based permissions for promoter, HR, and employee levels.",
+    body: "Secure OTP authentication with role-based permissions for promoter, leadership, and employee levels.",
   },
   {
     title: "Monitoring",

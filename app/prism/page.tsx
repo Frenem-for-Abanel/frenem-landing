@@ -12,11 +12,11 @@ import { pageMetadata } from "../utils/seo"
 import { absoluteUrl, breadcrumbs, graph, ORG_ID, webPage } from "../utils/structured-data"
 
 const DESCRIPTION =
-  "Lightweight employee management: live org charts, transparent KRAs and KPIs, review cycles, moonshot ideas, a whistleblower channel, and audit trails."
+  "The organisation, kept current: live org charts, who owns what, how it's measured, governance, and a full audit trail."
 
 export const metadata: Metadata = pageMetadata({
   path: "/prism",
-  title: "Prism by Frenem | Employee management software",
+  title: "Prism by Frenem | The organisation, kept current",
   description: DESCRIPTION,
   socialTitle: "Frenem Prism: your single source of truth",
   socialDescription:
@@ -33,10 +33,10 @@ const jsonLd = graph(
     name: "Frenem Prism",
     alternateName: "Prism",
     applicationCategory: "BusinessApplication",
-    applicationSubCategory: "Employee management",
+    applicationSubCategory: "Organisation operations",
     operatingSystem: "Web",
     description:
-      "Lightweight employee management: dynamic org charts, KRAs and KPIs, review cycles, moonshot idea submissions, a secure whistleblower channel, and audit trails.",
+      "The organisation, kept current: dynamic org charts, ownership, measurement, review cycles, and a full audit trail.",
     featureList: [
       "Dynamic org charts",
       "Transparent KRAs, KPIs, and responsibilities",
@@ -59,13 +59,14 @@ export default function PrismPage() {
       <IntentOpener />
 
       <HeroShell
-        eyebrow="Frenem Prism, employee management"
+        crumbs={[{ name: "Prism", path: "/prism" }]}
+        eyebrow="Frenem Prism, the operating record"
         title={
           <>
             Your single source of <em>truth.</em>
           </>
         }
-        subtitle="Lightweight employee management that gives your people clarity on who does what, how they're measured, and where they stand."
+        subtitle="One place for who does what, how it's measured, and where the organisation stands."
         actions={
           <>
             <ContactCta mode="default" className="w-full sm:w-auto">

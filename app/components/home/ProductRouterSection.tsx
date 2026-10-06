@@ -34,10 +34,10 @@ const products = [
   {
     tintClass: "tint-prism",
     product: "Prism",
-    tagline: "Employee management",
+    tagline: "Operating record",
     problem: "Nobody's quite sure who owns what anymore.",
     description:
-      "Lightweight employee management: live org charts, KRAs, review cycles, and governance in one place your team actually uses.",
+      "The organisation, kept current: live org charts, ownership, measurement, and governance in one place your team actually uses.",
     meta: ["Live org charts", "KRAs and reviews", "Audit trails"],
     href: "/prism",
     mark: "prism",

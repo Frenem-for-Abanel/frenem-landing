@@ -30,7 +30,7 @@ export default function EngineeringPage() {
       name: "Frenem Engineering",
       description: DESCRIPTION,
       url: absoluteUrl("/engineering"),
-      inLanguage: "en-IN",
+      inLanguage: "en",
       publisher: { "@id": ORG_ID },
       blogPost: getEssays().map((essay) => ({
         "@type": "BlogPosting",

@@ -21,7 +21,7 @@ const reports = [
     Mock: OrgPulseMock,
   },
   {
-    audience: "For HR and people analytics",
+    audience: "For the people running the business",
     title: "The Relational Network Map",
     description:
       "The map itself: structural silos, hidden brokers, bottleneck managers, and an isolation watchlist. Leading indicators of attrition, visible weeks before a notice period.",

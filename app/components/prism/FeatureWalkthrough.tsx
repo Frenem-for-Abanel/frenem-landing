@@ -39,7 +39,7 @@ const features: Feature[] = [
     short: "Review cycles",
     title: "Seamless performance review cycles",
     description:
-      "From goal setting through to reviews. A complete, continuous cycle that doesn't live in spreadsheets, and doesn't stall waiting for HR to chase.",
+      "From goal setting through to reviews. A complete, continuous cycle that doesn't live in spreadsheets, and doesn't stall waiting for someone to chase.",
     Vignette: ReviewCycleVignette,
   },
   {

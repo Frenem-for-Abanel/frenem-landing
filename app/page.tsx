@@ -9,27 +9,24 @@ import TeamSection from "./components/TeamSection"
 import SecuritySection from "./components/SecuritySection"
 import FinalCtaSection from "./components/FinalCtaSection"
 import JsonLd from "./components/JsonLd"
-import { pageMetadata } from "./utils/seo"
+import { HOME_DESCRIPTION, HOME_TITLE, pageMetadata } from "./utils/seo"
 import { absoluteUrl, graph, ORG_ID, webPage } from "./utils/structured-data"
-
-const DESCRIPTION =
-  "A clarity suite for scaling organisations. Pulse maps how people actually work together, Build designs the structure your strategy needs, Prism keeps it current."
 
 export const metadata: Metadata = pageMetadata({
   path: "/",
-  title: "Frenem | Organisation diagnostics, design & employee management",
-  description: DESCRIPTION,
+  title: HOME_TITLE,
+  description: HOME_DESCRIPTION,
   socialTitle: "Frenem: the whole organisation, in focus",
 })
 
 const PRODUCTS = [
   { name: "Frenem Pulse", path: "/pulse", description: "Relational diagnostics: how your people actually work together." },
   { name: "Frenem Build", path: "/build", description: "Organisation design: the structure your strategy needs." },
-  { name: "Frenem Prism", path: "/prism", description: "Employee management: org charts, KRAs, reviews, and audit trails." },
+  { name: "Frenem Prism", path: "/prism", description: "The operating record: org charts, ownership, and governance, kept current." },
 ]
 
 const jsonLd = graph(
-  webPage({ path: "/", name: "Frenem: organisation clarity", description: DESCRIPTION, about: ORG_ID }),
+  webPage({ path: "/", name: "Frenem: organisation clarity", description: HOME_DESCRIPTION, about: ORG_ID }),
   {
     "@type": "ItemList",
     name: "Frenem products",
