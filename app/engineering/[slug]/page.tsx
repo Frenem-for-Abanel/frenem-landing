@@ -1,8 +1,11 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { notFound } from "next/navigation"
 import Mdx from "../../components/engineering/Mdx"
+import Breadcrumbs from "../../components/Breadcrumbs"
 import JsonLd from "../../components/JsonLd"
-import { pageMetadata } from "../../utils/seo"
+import { formatEntryDate } from "../../utils/dates"
+import { essayMetaDescription, pageMetadata } from "../../utils/seo"
 import { absoluteUrl, BLOG_ID, breadcrumbs, graph, ORG_ID } from "../../utils/structured-data"
 import {
   BYLINE,
@@ -29,7 +32,7 @@ export async function generateMetadata({
   return pageMetadata({
     path: `/engineering/${essay.slug}`,
     title: `${essay.title} | Frenem Engineering`,
-    description: essay.summary,
+    description: essayMetaDescription(essay),
     socialTitle: essay.title,
     type: "article",
     publishedTime: essay.date,
@@ -57,7 +60,7 @@ export default async function EssayPage({
       image: absoluteUrl(`${path}/opengraph-image`),
       datePublished: essay.date,
       dateModified: essay.date,
-      inLanguage: "en-IN",
+      inLanguage: "en",
       ...(essay.pillar ? { articleSection: PILLAR_LABELS[essay.pillar] } : {}),
       author: { "@type": "Organization", name: BYLINE, url: absoluteUrl("/engineering") },
       publisher: { "@id": ORG_ID },
@@ -73,9 +76,23 @@ export default async function EssayPage({
     <div className={tintClass(essay)}>
       <JsonLd data={jsonLd} />
       <article className="container-site pb-20 md:pb-28">
-        <div className="mx-auto max-w-(--narrow-width) pt-10 md:pt-14">
+        <div className="mx-auto max-w-(--narrow-width) pt-8 md:pt-10">
+          <Breadcrumbs
+            items={[
+              { name: "Engineering", path: "/engineering" },
+              { name: essay.title, path },
+            ]}
+          />
           <header className="anim-fade-up">
             <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-[0.12em]">
+              <time dateTime={essay.date} className="text-ink-tertiary">
+                {formatEntryDate(essay.date)}
+              </time>
+              {essay.pillar || essay.readingTime ? (
+                <span aria-hidden className="text-ink-tertiary">
+                  ·
+                </span>
+              ) : null}
               {essay.pillar ? (
                 <span className="font-medium text-(--tint-ink)">
                   {PILLAR_LABELS[essay.pillar]}
@@ -102,7 +119,9 @@ export default async function EssayPage({
 
           <footer className="mt-14 border-t border-line pt-6">
             <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-tertiary">
-              {BYLINE}
+              <Link href="/engineering" className="transition-colors hover:text-ink">
+                {BYLINE}
+              </Link>
             </p>
           </footer>
         </div>

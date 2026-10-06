@@ -74,7 +74,7 @@ export function NetworkMapMock() {
     <div className={cardClass} aria-hidden>
       <div className={cardHeaderClass}>
         <span className="text-ink">Network map</span>
-        <span>HR &amp; analytics</span>
+        <span>The operating view</span>
       </div>
       <div className="flex-1">
         <svg className="block h-full min-h-[96px] w-full" viewBox="0 0 220 110">

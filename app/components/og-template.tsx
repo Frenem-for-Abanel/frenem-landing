@@ -71,7 +71,7 @@ export function renderOgImage({
 
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ display: "flex", width: 22, height: 22, borderRadius: 9999, background: "#151515" }} />
-          <div style={{ display: "flex", fontSize: 24, color: "#454545" }}>frenem.com · Bangalore, India</div>
+          <div style={{ display: "flex", fontSize: 24, color: "#454545" }}>frenem.com</div>
         </div>
       </div>
     ),

@@ -41,7 +41,7 @@ export default function TeamSection({
   tone = "white",
   title = (
     <>
-      A combined <em>100+ years</em> of consulting and HR experience.
+      A combined <em>100+ years</em> of consulting experience.
     </>
   ),
 }: {

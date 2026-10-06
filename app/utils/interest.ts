@@ -2,7 +2,7 @@ import type { ProductKey } from "./product"
 
 export const INTEREST_BY_PRODUCT = {
   build: "Build · Org Design Sprint",
-  prism: "Prism · Employee Management",
+  prism: "Prism · Operating record",
   pulse: "Pulse · Relational Diagnostics",
 } as const satisfies Record<ProductKey, string>
 

@@ -1,6 +1,7 @@
 import Link from "next/link"
 import ContactCta from "./ContactCta"
 import FooterWordmark from "./FooterWordmark"
+import { LINKEDIN_URL } from "../utils/site"
 
 const linkClass =
   "group inline-flex min-h-11 items-center gap-3 text-[17px] font-medium text-white/75 transition-colors hover:text-white md:min-h-10"
@@ -8,7 +9,7 @@ const linkClass =
 const products = [
   { href: "/pulse", name: "Pulse", role: "Relational diagnostics", dot: "bg-sage-mid" },
   { href: "/build", name: "Build", role: "Organisation design", dot: "bg-clay-mid" },
-  { href: "/prism", name: "Prism", role: "Employee management", dot: "bg-heather-mid" },
+  { href: "/prism", name: "Prism", role: "Operating record", dot: "bg-heather-mid" },
 ]
 
 export default function Footer() {
@@ -52,18 +53,12 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="https://frenem.com" target="_blank" rel="noopener noreferrer" className={linkClass}>
+                <Link href="/" className={linkClass}>
                   frenem.com
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  // TODO: confirm the company LinkedIn URL before launch.
-                  href="https://www.linkedin.com/company/frenem"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={linkClass}
-                >
+                <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
                   LinkedIn
                 </a>
               </li>
@@ -73,7 +68,6 @@ export default function Footer() {
 
         <div className="mt-20 flex flex-col justify-between gap-2 text-[14px] text-white/45 md:mt-28 md:flex-row">
           <span>© Frenem {new Date().getFullYear()}</span>
-          <span>Bangalore, India</span>
         </div>
       </div>
 

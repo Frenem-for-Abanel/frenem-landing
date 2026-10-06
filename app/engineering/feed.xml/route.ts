@@ -41,7 +41,7 @@ export function GET() {
     <link>${channelUrl}</link>
     <atom:link href="${SITE_URL}/engineering/feed.xml" rel="self" type="application/rss+xml" />
     <description>Essays and field notes from Frenem Engineering: the method, design, and trust decisions behind the clarity suite.</description>
-    <language>en-IN</language>
+    <language>en</language>
 ${entries[0] ? `    <lastBuildDate>${rfc822(entries[0].date)}</lastBuildDate>\n` : ""}${items}
   </channel>
 </rss>

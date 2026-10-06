@@ -1,4 +1,5 @@
-import { SITE_NAME, SITE_URL } from "./site"
+import { HOME_DESCRIPTION } from "./seo"
+import { LINKEDIN_URL, SITE_NAME, SITE_URL } from "./site"
 
 /**
  * schema.org JSON-LD for search engines and AI answer engines. One linked
@@ -12,12 +13,12 @@ export const ORG_ID = `${SITE_URL}/#organization`
 export const WEBSITE_ID = `${SITE_URL}/#website`
 export const BLOG_ID = `${SITE_URL}/engineering#blog`
 
-/** TODO: confirm the company LinkedIn URL before launch (see Footer). */
-export const SAME_AS = ["https://www.linkedin.com/company/frenem"]
+export const SAME_AS = [LINKEDIN_URL]
 
 type Json = Record<string, unknown>
 
-const abs = (path: string) => `${SITE_URL}${path === "/" ? "/" : path}`
+/** Homepage has no trailing slash, matching the canonical tag Next emits for `/`. */
+const abs = (path: string) => (path === "/" || path === "" ? SITE_URL : `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`)
 
 export function siteGraph(): Json {
   return {
@@ -27,32 +28,30 @@ export function siteGraph(): Json {
         "@type": "Organization",
         "@id": ORG_ID,
         name: SITE_NAME,
+        alternateName: "frenem",
         url: abs("/"),
+        slogan: "The whole organisation, in focus.",
+        disambiguatingDescription:
+          "Organisation clarity firm. Pulse diagnoses how the business actually runs, Build redesigns it, and Prism keeps that design current.",
         logo: {
           "@type": "ImageObject",
+          "@id": `${SITE_URL}/#logo`,
           url: abs("/icon-512.png"),
           width: 512,
           height: 512,
+          caption: SITE_NAME,
         },
-        description:
-          "Organisation clarity for scaling companies: relational diagnostics (Pulse), organisation design (Build), and employee management (Prism).",
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: "Bangalore",
-          addressRegion: "Karnataka",
-          addressCountry: "IN",
-        },
-        areaServed: { "@type": "Country", name: "India" },
+        image: { "@id": `${SITE_URL}/#logo` },
+        description: HOME_DESCRIPTION,
         knowsAbout: [
           "Organisation design",
-          "Organisational network analysis",
+          "Organisation change",
           "Relational diagnostics",
-          "Decision rights",
           "Governance",
-          "Succession planning",
-          "Leadership development",
-          "Employee management",
-          "Performance management",
+          "Ownership",
+          "Succession",
+          "Operating model",
+          "Founder-led companies",
         ],
         sameAs: SAME_AS,
       },
@@ -61,7 +60,9 @@ export function siteGraph(): Json {
         "@id": WEBSITE_ID,
         url: abs("/"),
         name: SITE_NAME,
-        inLanguage: "en-IN",
+        alternateName: "frenem",
+        description: HOME_DESCRIPTION,
+        inLanguage: "en",
         publisher: { "@id": ORG_ID },
       },
     ],
@@ -89,7 +90,7 @@ export function webPage({
     url: abs(path),
     name,
     description,
-    inLanguage: "en-IN",
+    inLanguage: "en",
     isPartOf: { "@id": WEBSITE_ID },
     publisher: { "@id": ORG_ID },
     ...(about ? { about: { "@id": about }, mainEntity: { "@id": about } } : {}),

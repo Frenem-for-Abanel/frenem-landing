@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react"
 import SplitText from "./motion/SplitText"
 import { HeroScene, SceneStage } from "./motion/HeroScene"
+import Breadcrumbs, { type Crumb } from "./Breadcrumbs"
 import type { SceneSet } from "../utils/scenes"
 
 interface HeroShellProps {
@@ -13,6 +14,7 @@ interface HeroShellProps {
   note?: ReactNode
   /** Which dot-matrix story the hero tells. */
   scene: SceneSet
+  crumbs?: Crumb[]
 }
 
 const at = (delay: number): CSSProperties => ({ animationDelay: `${delay}s` })
@@ -24,12 +26,13 @@ const at = (delay: number): CSSProperties => ({ animationDelay: `${delay}s` })
  * On phones the copy comes first (headline, promise, action) and the scene
  * follows it. Entrances are CSS so the hero paints even before hydration.
  */
-export default function HeroShell({ eyebrow, title, subtitle, actions, note, scene }: HeroShellProps) {
+export default function HeroShell({ eyebrow, title, subtitle, actions, note, scene, crumbs }: HeroShellProps) {
   return (
     <section className="grain relative overflow-clip bg-(--tint-soft) text-ink">
       <HeroScene set={scene}>
         <div className="container-site relative grid grid-cols-1 items-center gap-x-12 gap-y-12 pb-16 pt-28 md:pt-32 lg:min-h-[max(calc(100svh-56px),620px)] lg:grid-cols-12 lg:py-20 xl:gap-x-16">
           <div className="flex min-w-0 flex-col lg:col-span-6">
+            {crumbs ? <Breadcrumbs items={crumbs} /> : null}
             <p className="type-kicker anim-fade-up flex items-center gap-3 text-ink-secondary" style={at(0.05)}>
               <span aria-hidden className="h-3 w-3 shrink-0 rounded-full bg-(--tint-deep)" />
               {eyebrow}

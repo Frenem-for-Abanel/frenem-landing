@@ -9,8 +9,12 @@ import Header from "./components/Header"
 import Footer from "./components/Footer"
 import ContactModal from "./components/contact/ContactModal"
 import JsonLd from "./components/JsonLd"
+import { HOME_DESCRIPTION, HOME_TITLE } from "./utils/seo"
 import { SITE_NAME, SITE_URL } from "./utils/site"
 import { siteGraph } from "./utils/structured-data"
+
+const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined
+const bingVerification = process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION || undefined
 
 /** One variable grotesk for everything: weight and width do the hierarchy. */
 const archivo = Archivo({
@@ -35,11 +39,10 @@ const leagueSpartan = League_Spartan({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Frenem | Organisation diagnostics, design & employee management",
+    default: HOME_TITLE,
     template: "%s | Frenem",
   },
-  description:
-    "Frenem is a clarity suite for scaling organisations. Pulse maps how people actually work together, Build designs the structure your strategy needs, and Prism keeps it current.",
+  description: HOME_DESCRIPTION,
   applicationName: SITE_NAME,
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
@@ -58,20 +61,20 @@ export const metadata: Metadata = {
   openGraph: {
     siteName: SITE_NAME,
     type: "website",
-    locale: "en_IN",
+    locale: "en_GB",
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
   },
-  // Set these in the deployment environment once the properties exist in
-  // Google Search Console and Bing Webmaster Tools.
-  verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
-    other: process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION
-      ? { "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION }
-      : undefined,
-  },
+  ...(googleVerification || bingVerification
+    ? {
+        verification: {
+          ...(googleVerification ? { google: googleVerification } : {}),
+          ...(bingVerification ? { other: { "msvalidate.01": bingVerification } } : {}),
+        },
+      }
+    : {}),
 }
 
 export const viewport: Viewport = {
@@ -84,7 +87,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en-IN" data-scroll-behavior="smooth">
+    <html lang="en" data-scroll-behavior="smooth">
       <body
         style={displayFont}
         className={`${archivo.variable} ${leagueSpartan.variable} min-h-screen bg-paper font-sans text-ink antialiased`}

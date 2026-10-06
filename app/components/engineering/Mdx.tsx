@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { MDXRemote } from "next-mdx-remote-client/rsc"
 import rehypePrettyCode, { type Options } from "rehype-pretty-code"
 import type { ComponentPropsWithoutRef } from "react"
@@ -42,12 +43,22 @@ const components = {
   p: (props: ComponentPropsWithoutRef<"p">) => (
     <p className="my-5 text-base leading-[1.75] text-ink-secondary" {...props} />
   ),
-  a: (props: ComponentPropsWithoutRef<"a">) => (
-    <a
-      className="text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:text-(--tint-ink) hover:decoration-(--tint-ink)"
-      {...props}
-    />
-  ),
+  a: ({ href, ...props }: ComponentPropsWithoutRef<"a">) => {
+    const className =
+      "text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:text-(--tint-ink) hover:decoration-(--tint-ink)"
+    if (href && href.startsWith("/")) {
+      return <Link href={href} className={className} {...props} />
+    }
+    const external = typeof href === "string" && href.startsWith("http")
+    return (
+      <a
+        href={href}
+        className={className}
+        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        {...props}
+      />
+    )
+  },
   strong: (props: ComponentPropsWithoutRef<"strong">) => (
     <strong className="font-semibold text-ink" {...props} />
   ),

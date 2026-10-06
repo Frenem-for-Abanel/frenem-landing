@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next"
-import { SITE_URL } from "./utils/site"
+import { absoluteUrl } from "./utils/structured-data"
 import { getAllEntries, getEssays } from "../lib/engineering/content"
 
 /**
@@ -10,14 +10,14 @@ import { getAllEntries, getEssays } from "../lib/engineering/content"
 export default function sitemap(): MetadataRoute.Sitemap {
   const newest = getAllEntries()[0]?.date
   return [
-    { url: `${SITE_URL}/`, changeFrequency: "monthly", priority: 1 },
-    { url: `${SITE_URL}/pulse`, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${SITE_URL}/build`, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${SITE_URL}/prism`, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${SITE_URL}/engineering`, lastModified: newest, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${SITE_URL}/engineering/log`, lastModified: newest, changeFrequency: "weekly", priority: 0.5 },
+    { url: absoluteUrl("/"), changeFrequency: "monthly", priority: 1 },
+    { url: absoluteUrl("/pulse"), changeFrequency: "monthly", priority: 0.9 },
+    { url: absoluteUrl("/build"), changeFrequency: "monthly", priority: 0.9 },
+    { url: absoluteUrl("/prism"), changeFrequency: "monthly", priority: 0.9 },
+    { url: absoluteUrl("/engineering"), lastModified: newest, changeFrequency: "weekly", priority: 0.7 },
+    { url: absoluteUrl("/engineering/log"), lastModified: newest, changeFrequency: "weekly", priority: 0.5 },
     ...getEssays().map((essay) => ({
-      url: `${SITE_URL}/engineering/${essay.slug}`,
+      url: absoluteUrl(`/engineering/${essay.slug}`),
       lastModified: essay.date,
       changeFrequency: "yearly" as const,
       priority: 0.6,

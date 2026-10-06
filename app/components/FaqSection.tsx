@@ -1,26 +1,25 @@
 "use client"
 
+import Link from "next/link"
 import { Plus } from "lucide-react"
 import Reveal from "./Reveal"
 import { Section, SectionHead } from "./Section"
-
-export interface FaqItem {
-  question: string
-  answer: string
-}
+import { linkSegments, type FaqEntry } from "../utils/faqs"
 
 /** Native details/summary FAQ: zero JS to operate; opens smoothly where the browser supports it. */
 export default function FaqSection({
   label = "Questions",
   heading,
   items,
+  id = "questions",
 }: {
   label?: string
   heading: React.ReactNode
-  items: FaqItem[]
+  items: FaqEntry[]
+  id?: string
 }) {
   return (
-    <Section>
+    <Section id={id}>
       <div className="grid grid-cols-1 gap-y-4 lg:grid-cols-12 lg:gap-x-10">
         <div className="lg:col-span-5">
           <SectionHead kicker={label} title={heading} size={3} className="mb-8 lg:mb-0 lg:[&>div]:col-span-12" />
@@ -38,7 +37,21 @@ export default function FaqSection({
                     <Plus className="h-5 w-5" strokeWidth={2.2} />
                   </span>
                 </summary>
-                <p className="max-w-[600px] pb-8 text-[17px] leading-relaxed text-ink-secondary">{item.answer}</p>
+                <p className="max-w-[600px] pb-8 text-[17px] leading-relaxed text-ink-secondary">
+                  {linkSegments(item.answer, item.links).map((segment, index) =>
+                    segment.href ? (
+                      <Link
+                        key={index}
+                        href={segment.href}
+                        className="text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:text-(--tint-ink)"
+                      >
+                        {segment.text}
+                      </Link>
+                    ) : (
+                      <span key={index}>{segment.text}</span>
+                    )
+                  )}
+                </p>
               </details>
             </Reveal>
           ))}
