@@ -30,6 +30,9 @@ const displayFont = {
 const leagueSpartan = League_Spartan({
   subsets: ["latin"],
   variable: "--font-league-spartan",
+  // Wordmark only (header plus the footer weight axis). Not the LCP text,
+  // so it must not compete with Archivo on the preload.
+  preload: false,
 })
 
 export const metadata: Metadata = {

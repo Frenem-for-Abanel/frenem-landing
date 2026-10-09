@@ -1,6 +1,7 @@
 import Link from "next/link"
 import ContactCta from "./ContactCta"
 import FooterWordmark from "./FooterWordmark"
+import { SITE_URL } from "../utils/site"
 
 const linkClass =
   "group inline-flex min-h-11 items-center gap-3 text-[17px] font-medium text-white/75 transition-colors hover:text-white md:min-h-10"
@@ -52,7 +53,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="https://frenem.com" target="_blank" rel="noopener noreferrer" className={linkClass}>
+                <a href={SITE_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
                   frenem.com
                 </a>
               </li>

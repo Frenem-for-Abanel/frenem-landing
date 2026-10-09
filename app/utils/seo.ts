@@ -6,6 +6,14 @@ export const FEED_ALTERNATE = {
   "application/rss+xml": [{ url: "/engineering/feed.xml", title: "Frenem Engineering" }],
 }
 
+/** Pixel size of every `opengraph-image.tsx`. Keep in step with `OG_SIZE`. */
+export const OG_IMAGE = { width: 1200, height: 630, type: "image/png" as const }
+
+/** Route Next serves for a page's generated share image. */
+export function openGraphImagePath(path: string): string {
+  return `${path === "/" ? "" : path.replace(/\/$/, "")}/opengraph-image`
+}
+
 /**
  * Complete metadata for one page. Next replaces nested objects like
  * `openGraph` wholesale rather than merging them with the layout's, so every
@@ -48,6 +56,10 @@ export function pageMetadata({
       card: "summary_large_image",
       title: socialTitle,
       description: socialDescription,
+      // images intentionally omitted: Next copies each page's
+      // opengraph-image (alt, size, and the hashed URL) onto the Twitter
+      // card when this field is absent. Setting it here would publish a
+      // second, unhashed image URL.
     },
   }
 }

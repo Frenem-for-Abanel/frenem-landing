@@ -13,7 +13,7 @@ import FinalCtaSection from "../components/FinalCtaSection"
 import { PHASE_VIEWBOX, PULSE_PHASES } from "../utils/compositions"
 import JsonLd from "../components/JsonLd"
 import { pageMetadata } from "../utils/seo"
-import { absoluteUrl, breadcrumbs, faq, graph, ORG_ID, webPage } from "../utils/structured-data"
+import { absoluteUrl, breadcrumbs, faq, graph, ogImage, ORG_ID, webPage } from "../utils/structured-data"
 
 const DESCRIPTION =
   "Engagement surveys measure how people feel. Pulse measures how they work together: exit risk, hidden brokers, and friction, visible while you can still act."
@@ -98,6 +98,7 @@ const jsonLd = graph(
     audience: { "@type": "BusinessAudience", name: "Leadership teams of scaling organisations" },
     description:
       "A relational diagnostic that maps how people actually work together: exit risk, hidden brokers, the manager effect, and cross-functional friction.",
+    image: ogImage("/pulse"),
     url: absoluteUrl("/pulse"),
     hasOfferCatalog: {
       "@type": "OfferCatalog",
