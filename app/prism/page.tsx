@@ -9,7 +9,7 @@ import SecuritySection from "../components/SecuritySection"
 import FinalCtaSection from "../components/FinalCtaSection"
 import JsonLd from "../components/JsonLd"
 import { pageMetadata } from "../utils/seo"
-import { absoluteUrl, breadcrumbs, graph, ORG_ID, webPage } from "../utils/structured-data"
+import { absoluteUrl, breadcrumbs, graph, ogImage, ORG_ID, webPage } from "../utils/structured-data"
 
 const DESCRIPTION =
   "Lightweight employee management: live org charts, transparent KRAs and KPIs, review cycles, moonshot ideas, a whistleblower channel, and audit trails."
@@ -37,6 +37,7 @@ const jsonLd = graph(
     operatingSystem: "Web",
     description:
       "Lightweight employee management: dynamic org charts, KRAs and KPIs, review cycles, moonshot idea submissions, a secure whistleblower channel, and audit trails.",
+    image: ogImage("/prism"),
     featureList: [
       "Dynamic org charts",
       "Transparent KRAs, KPIs, and responsibilities",

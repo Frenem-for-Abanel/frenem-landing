@@ -24,14 +24,20 @@ function Code(props: ComponentPropsWithoutRef<"code">) {
   )
 }
 
+const headingClass =
+  "mb-4 mt-10 text-[26px] font-extrabold leading-tight tracking-[-0.03em] [font-stretch:106%] text-ink md:text-[28px]"
+
 const components = {
   Figure,
   Tldr,
+  // The page already has one h1. A markdown `#` would be a second, unstyled one.
+  h1: ({ children, id }: ComponentPropsWithoutRef<"h1">) => (
+    <h2 id={id} className={headingClass}>
+      {children}
+    </h2>
+  ),
   h2: (props: ComponentPropsWithoutRef<"h2">) => (
-    <h2
-      className="mb-4 mt-10 text-[26px] font-extrabold leading-tight tracking-[-0.03em] [font-stretch:106%] text-ink md:text-[28px]"
-      {...props}
-    />
+    <h2 className={headingClass} {...props} />
   ),
   h3: (props: ComponentPropsWithoutRef<"h3">) => (
     <h3
