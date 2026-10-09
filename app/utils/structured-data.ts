@@ -1,4 +1,5 @@
-import { SITE_NAME, SITE_URL } from "./site"
+import { OG_IMAGE, openGraphImagePath } from "./seo"
+import { absoluteUrl, SITE_NAME, SITE_URL } from "./site"
 
 /**
  * schema.org JSON-LD for search engines and AI answer engines. One linked
@@ -17,7 +18,22 @@ export const SAME_AS = ["https://www.linkedin.com/company/frenem"]
 
 type Json = Record<string, unknown>
 
-const abs = (path: string) => `${SITE_URL}${path === "/" ? "/" : path}`
+const abs = absoluteUrl
+
+/** `@id` base. The homepage keeps a slash so fragments match `/#organization`. */
+function idBase(path: string): string {
+  return path === "/" ? `${SITE_URL}/` : abs(path)
+}
+
+/** Share image for a page, at the size the OG route actually renders. */
+export function ogImage(path: string): Json {
+  return {
+    "@type": "ImageObject",
+    url: abs(openGraphImagePath(path)),
+    width: OG_IMAGE.width,
+    height: OG_IMAGE.height,
+  }
+}
 
 export function siteGraph(): Json {
   return {
@@ -55,12 +71,21 @@ export function siteGraph(): Json {
           "Performance management",
         ],
         sameAs: SAME_AS,
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "customer support",
+          url: abs("/"),
+          areaServed: "IN",
+          availableLanguage: ["en"],
+        },
       },
       {
         "@type": "WebSite",
         "@id": WEBSITE_ID,
         url: abs("/"),
         name: SITE_NAME,
+        description:
+          "Organisation clarity for scaling companies: relational diagnostics (Pulse), organisation design (Build), and employee management (Prism).",
         inLanguage: "en-IN",
         publisher: { "@id": ORG_ID },
       },
@@ -85,13 +110,14 @@ export function webPage({
 }): Json {
   return {
     "@type": type,
-    "@id": `${abs(path)}#webpage`,
+    "@id": `${idBase(path)}#webpage`,
     url: abs(path),
     name,
     description,
     inLanguage: "en-IN",
     isPartOf: { "@id": WEBSITE_ID },
     publisher: { "@id": ORG_ID },
+    primaryImageOfPage: ogImage(path),
     ...(about ? { about: { "@id": about }, mainEntity: { "@id": about } } : {}),
   }
 }
@@ -112,7 +138,7 @@ export function breadcrumbs(trail: Array<{ name: string; path: string }>): Json 
 export function faq(path: string, items: Array<{ question: string; answer: string }>): Json {
   return {
     "@type": "FAQPage",
-    "@id": `${abs(path)}#faq`,
+    "@id": `${idBase(path)}#faq`,
     url: abs(path),
     isPartOf: { "@id": WEBSITE_ID },
     mainEntity: items.map((item) => ({
@@ -135,4 +161,4 @@ export function toJsonLd(data: Json): string {
   return JSON.stringify(data).replace(/</g, "\\u003c")
 }
 
-export { abs as absoluteUrl }
+export { absoluteUrl }

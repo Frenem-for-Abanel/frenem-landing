@@ -15,7 +15,7 @@ import FinalCtaSection from "../components/FinalCtaSection"
 import { BUILD_PHASES, PHASE_VIEWBOX } from "../utils/compositions"
 import JsonLd from "../components/JsonLd"
 import { pageMetadata } from "../utils/seo"
-import { absoluteUrl, breadcrumbs, faq, graph, ORG_ID, webPage } from "../utils/structured-data"
+import { absoluteUrl, breadcrumbs, faq, graph, ogImage, ORG_ID, webPage } from "../utils/structured-data"
 
 const DESCRIPTION =
   "Organisation design for founder-led businesses: faster decisions, clear ownership, and leaders who run the business. The whole of Build, or only the parts you need."
@@ -103,6 +103,7 @@ const jsonLd = graph(
     audience: { "@type": "BusinessAudience", name: "Founders and promoters of growing businesses" },
     description:
       "Organisation design for founder-led businesses, as a complete sprint or only the parts you need: faster decisions, clear ownership, governance, and a leadership bench.",
+    image: ogImage("/build"),
     url: absoluteUrl("/build"),
     hasOfferCatalog: {
       "@type": "OfferCatalog",

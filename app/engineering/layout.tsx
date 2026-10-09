@@ -10,6 +10,8 @@ const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   variable: "--font-plex-mono",
+  // Mono is for labels and captions. Essay headlines are Archivo.
+  preload: false,
 })
 
 export default function EngineeringLayout({

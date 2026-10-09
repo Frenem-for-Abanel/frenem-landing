@@ -1,6 +1,6 @@
 # Frenem marketing site
 
-Marketing site for [Frenem](https://frenem.com), an organisation clarity suite from Bangalore, India:
+Marketing site for [Frenem](https://www.frenem.com), an organisation clarity suite from Bangalore, India:
 
 - **Pulse** (`/pulse`): relational diagnostics. A pilot that maps how people actually work together (exit risk, hidden brokers, cross-team friction).
 - **Build** (`/build`): organisation design covering decision rights, job architecture, governance, and succession. Taken whole, or only the parts picked in the on-page planner.
@@ -26,17 +26,25 @@ npm run build    # production build
 | --- | --- |
 | `EMAIL_USER` | GoDaddy SMTP username used to send contact notifications. Unset locally → submissions are logged to the server console instead of emailed. |
 | `EMAIL_PASSWORD` | GoDaddy SMTP password. |
-| `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, and JSON-LD (defaults to `https://frenem.com`). |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, and JSON-LD (defaults to `https://www.frenem.com`). An apex value such as `https://frenem.com` is rewritten to www, so sitemap and canonicals cannot advertise URLs that 404 behind GoDaddy forwarding. |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Optional. Google Search Console verification token (the `content` of its meta tag). |
 | `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Optional. Bing Webmaster Tools verification token (`msvalidate.01`). |
+
+## Canonical host
+
+The live app is **`www.frenem.com`** (Railway custom domain). Sitemap, robots, canonicals, Open Graph, and JSON-LD use that origin.
+
+Apex → www redirects live in `middleware.ts` and `next.config.ts` (308, path and query preserved, host-gated on `frenem.com`). They only take effect once `frenem.com` DNS points at this Railway service. GoDaddy domain forwarding (A records `15.197.225.128` / `3.33.251.168`) currently intercepts the apex host: `/` 301s to www, but every other path, including `/sitemap.xml`, 404s. To finish the cutover, disable GoDaddy forwarding, add `frenem.com` as a Railway custom domain, and point the apex with ALIAS/ANAME or CNAME flattening at Railway (GoDaddy's root CNAME support is limited; Cloudflare flattening is the usual workaround). Then `curl -sI -X GET https://frenem.com/pulse` should 308 to `https://www.frenem.com/pulse`.
 
 ## Project structure
 
 ```
+middleware.ts             Host-gated 308 from frenem.com to www.frenem.com
 app/
   page.tsx              Homepage (umbrella positioning + product router)
   pulse|build|prism/    Product pages, each with metadata + OG image
   engineering/          Essays and log (MDX in content/), RSS feed, OG images
+  not-found.tsx         Unknown URLs: noindex, with links back into the site
   sitemap.ts robots.ts  Crawl files; manifest.ts, icon*, llms.txt/ alongside
   api/contact/          Contact endpoint (validation, honeypot, rate limit, SMTP)
   components/           Shared sections and primitives
@@ -71,7 +79,7 @@ Sections separate by colour field, not rules, with a fine print grain (`.grain`)
 
 ### SEO
 
-- Metadata: every page builds its tags with `pageMetadata()` in `app/utils/seo.ts` (absolute title under about 60 characters, description, canonical, full Open Graph and Twitter card). Next replaces a nested `openGraph` object instead of merging it with the layout's, so pages should never set it by hand. Every page has its own share image (`opengraph-image.tsx`), essays included.
+- Metadata: every page builds its tags with `pageMetadata()` in `app/utils/seo.ts` (absolute title, description, canonical, full Open Graph and Twitter card). Next replaces a nested `openGraph` object instead of merging it with the layout's, so pages should never set it by hand. Every page has its own share image (`opengraph-image.tsx`), essays included; the Twitter card points at that same image. The canonical origin is `https://www.frenem.com` (`app/utils/site.ts`). Unknown URLs render `app/not-found.tsx` (noindex, with links back to the real pages).
 - Structured data: `app/utils/structured-data.ts` builds one linked schema.org graph (Organization and WebSite by `@id`, then per page a WebPage, the Service or SoftwareApplication, breadcrumbs, FAQPage, Blog, and BlogPosting), rendered by `components/JsonLd.tsx`. FAQ markup mirrors the visible FAQ exactly; never add answers that aren't on the page.
 - Discovery: `sitemap.xml` (real dates only: essays carry theirs, marketing pages omit `lastmod`), `robots.txt` (open to all crawlers, including AI answer engines; only `/api/` is closed), an RSS feed at `/engineering/feed.xml`, and `/llms.txt`, a plain-text map of the site for AI assistants. Update `app/llms.txt/route.ts` when product positioning changes.
 - Core Web Vitals: headlines fall back to Arial or Roboto resized to Archivo's wide ExtraBold (`@font-face` blocks at the top of `globals.css`), so text wraps the same before and after the web font loads. The emphasis animation paints its heft with a text stroke instead of animating `font-weight`, which would re-wrap the line mid-animation. Fades start at 1% opacity so Chrome times the hero's Largest Contentful Paint when it appears. Keep all three when changing type or motion; target is CLS under 0.1 and LCP under 2.5s on mobile.
