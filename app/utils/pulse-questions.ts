@@ -16,7 +16,7 @@ export const PULSE_QUESTIONS: PulseQuestion[] = [
     key: "q2",
     title: "What's driving this?",
     options: [
-      "Rising attrition",
+      "Losing key people",
       "Cross-team friction or silos",
       "Manager effectiveness concerns",
       "Just want a health check",

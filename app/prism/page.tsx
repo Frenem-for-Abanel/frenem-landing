@@ -40,8 +40,8 @@ const jsonLd = graph(
     featureList: [
       "Dynamic org charts",
       "Transparent KRAs, KPIs, and responsibilities",
-      "Seamless performance review cycles",
-      "Employee-driven innovation",
+      "Goals and reviews, on one cycle",
+      "Ideas from every level",
       "Secure whistleblower channel",
       "Edit histories and audit trails",
     ],
@@ -91,7 +91,7 @@ export default function PrismPage() {
       <FinalCtaSection
         title={
           <>
-            One place for your people. <em>Always current.</em>
+            One place for your organisation. <em>Always current.</em>
           </>
         }
         subtitle="Org charts, performance cycles, KPIs, and governance. In a tool your team will actually use."

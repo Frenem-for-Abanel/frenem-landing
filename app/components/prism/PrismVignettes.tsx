@@ -148,7 +148,7 @@ export function MoonshotVignette() {
           <div className="h-2 w-2/3 rounded-[1px] bg-line" />
         </div>
         <p className="font-sans text-[11px] text-ink-tertiary">
-          Every employee can propose the next big move
+          Anyone in the company can propose the next big move
         </p>
       </div>
     </VignetteFrame>

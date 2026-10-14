@@ -51,7 +51,7 @@ ${notes}
 
 ## Contact
 
-- [Get in touch](${SITE_URL}/?intent=contact): Opens the contact form. Tell us what's breaking, whether that's attrition, structure, or clarity, and we'll point you at the right starting place.
+- [Get in touch](${SITE_URL}/?intent=contact): Opens the contact form. Tell us what's breaking, whether that's execution, structure, or losing key people, and we'll point you at the right starting place.
 `
 
   return new Response(body, {
