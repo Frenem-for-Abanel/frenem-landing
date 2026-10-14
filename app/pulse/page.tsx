@@ -93,8 +93,7 @@ export default function PulsePage() {
       <IntentOpener />
 
       <HeroShell
-        crumbs={[{ name: "Pulse", path: "/pulse" }]}
-        eyebrow="Frenem Pulse, relational diagnostics"
+        crumbs={[{ name: "Pulse, relational diagnostics", path: "/pulse" }]}
         title={
           <>
             See how your people <em>actually work together.</em>
@@ -142,7 +141,6 @@ export default function PulsePage() {
       />
       <SuiteLoopSection
         current="pulse"
-        label="Works with Build and Prism"
         heading={
           <>
             Three products. One <em>operating picture.</em>
@@ -150,7 +148,6 @@ export default function PulsePage() {
         }
       />
       <FinalCtaSection
-        label="Get started with Pulse"
         modalMode="pulseQuestionnaire"
         buttonText="Map my organisation"
         secondaryButtonText="Just get in touch"

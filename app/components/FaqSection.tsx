@@ -8,12 +8,10 @@ import { linkSegments, type FaqEntry } from "../utils/faqs"
 
 /** Native details/summary FAQ: zero JS to operate; opens smoothly where the browser supports it. */
 export default function FaqSection({
-  label = "Questions",
   heading,
   items,
   id = "questions",
 }: {
-  label?: string
   heading: React.ReactNode
   items: FaqEntry[]
   id?: string
@@ -22,7 +20,7 @@ export default function FaqSection({
     <Section id={id}>
       <div className="grid grid-cols-1 gap-y-4 lg:grid-cols-12 lg:gap-x-10">
         <div className="lg:col-span-5">
-          <SectionHead kicker={label} title={heading} size={3} className="mb-8 lg:mb-0 lg:[&>div]:col-span-12" />
+          <SectionHead title={heading} size={3} className="mb-8 lg:mb-0 lg:[&>div]:col-span-12" />
         </div>
         <div className="lg:col-span-7">
           {items.map((item, i) => (

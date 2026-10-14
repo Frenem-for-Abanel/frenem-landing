@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
+import { ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { ASSESSMENT_QUESTIONS } from "../../utils/assessment-questions"
@@ -152,9 +153,10 @@ export default function QuestionnaireFlow({
             <button
               type="button"
               onClick={goBack}
-              className="border-none bg-transparent p-0 text-[14px] font-semibold text-ink-secondary transition-colors hover:text-ink"
+              className="inline-flex items-center gap-1.5 border-none bg-transparent p-0 text-[14px] font-semibold text-ink-secondary transition-colors hover:text-ink"
             >
-              ← Back
+              <ArrowLeft aria-hidden className="h-4 w-4" strokeWidth={2.2} />
+              Back
             </button>
           ) : (
             <span />

@@ -30,7 +30,6 @@ export default function PrivacySection() {
     <Section tone="deep">
       <SectionHead
         dark
-        kicker="Privacy by design"
         title={
           <>
             Safe to answer <em>honestly.</em>

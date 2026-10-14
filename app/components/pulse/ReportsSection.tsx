@@ -33,7 +33,6 @@ export default function ReportsSection() {
   return (
     <Section tone="soft">
       <SectionHead
-        kicker="What you receive"
         title={
           <>
             Three cuts. Three <em>audiences.</em>

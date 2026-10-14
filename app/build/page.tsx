@@ -94,8 +94,7 @@ export default function BuildPage() {
       <IntentOpener />
 
       <HeroShell
-        crumbs={[{ name: "Build", path: "/build" }]}
-        eyebrow="Frenem Build, organisation design"
+        crumbs={[{ name: "Build, organisation design", path: "/build" }]}
         title={
           <>
             Build an organisation that scales <em>beyond you.</em>
@@ -133,7 +132,6 @@ export default function BuildPage() {
       <CapitalReadySection />
       <PositioningSection />
       <TeamSection
-        label="Who you'd work with"
         title={
           <>
             A combined <em>100+ years</em> of consulting.
@@ -151,7 +149,6 @@ export default function BuildPage() {
       />
       <SuiteLoopSection
         current="build"
-        label="Works with Pulse and Prism"
         heading={
           <>
             Three products. One <em>operating picture.</em>
@@ -159,7 +156,6 @@ export default function BuildPage() {
         }
       />
       <FinalCtaSection
-        label="Get started with Build"
         modalMode="assessment"
         buttonText="Get started"
         secondaryButtonText="Just get in touch"

@@ -47,16 +47,14 @@ const steps: Array<{
  */
 export default function SuiteLoopSection({
   current,
-  label = "One system",
   heading,
 }: {
   current?: ProductKey
-  label?: string
   heading: React.ReactNode
 }) {
   return (
     <Section tone="soft">
-      <SectionHead kicker={label} title={heading} />
+      <SectionHead title={heading} />
 
       <ol className="grid grid-cols-1 gap-3 md:grid-cols-3">
         {steps.map((step, i) => {

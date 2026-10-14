@@ -36,7 +36,6 @@ function Credits({ label, names }: { label: string; names: string[] }) {
 
 /** Team credibility, set as two big lists: real backgrounds only, no fabricated logos. */
 export default function TeamSection({
-  label = "Who built this",
   compact = false,
   tone = "white",
   title = (
@@ -45,7 +44,6 @@ export default function TeamSection({
     </>
   ),
 }: {
-  label?: string
   compact?: boolean
   tone?: "white" | "soft"
   title?: React.ReactNode
@@ -53,7 +51,6 @@ export default function TeamSection({
   return (
     <Section tone={tone}>
       <SectionHead
-        kicker={label}
         title={title}
         aside={
           <p>

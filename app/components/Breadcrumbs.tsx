@@ -1,12 +1,14 @@
 import Link from "next/link"
+import { cn } from "@/lib/utils"
 
 export type Crumb = { name: string; path: string }
 
 /** Visible trail. Home is always first; the current page is not a link. */
-export default function Breadcrumbs({ items }: { items: Crumb[] }) {
+/** `className` merges with the defaults, so a margin passed in replaces only the margin. */
+export default function Breadcrumbs({ items, className }: { items: Crumb[]; className?: string }) {
   const trail: Crumb[] = [{ name: "Home", path: "/" }, ...items]
   return (
-    <nav aria-label="Breadcrumb" className="anim-fade-up mb-5">
+    <nav aria-label="Breadcrumb" className={cn("anim-fade-up mb-5", className)}>
       <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[13px] text-ink-tertiary">
         {trail.map((crumb, index) => {
           const last = index === trail.length - 1

@@ -40,7 +40,6 @@ export default function SignalsSection() {
   return (
     <Section tone="tint">
       <SectionHead
-        kicker="What Pulse does"
         title={
           <>
             The signals standard tools <em>can&apos;t see.</em>

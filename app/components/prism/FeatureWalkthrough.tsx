@@ -87,7 +87,6 @@ export default function FeatureWalkthrough() {
   return (
     <Section id="features">
       <SectionHead
-        kicker="What Prism does"
         title={
           <>
             Clarity across your <em>entire</em> organisation.

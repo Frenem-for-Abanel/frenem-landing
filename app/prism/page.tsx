@@ -59,8 +59,7 @@ export default function PrismPage() {
       <IntentOpener />
 
       <HeroShell
-        crumbs={[{ name: "Prism", path: "/prism" }]}
-        eyebrow="Frenem Prism, the operating record"
+        crumbs={[{ name: "Prism, the operating record", path: "/prism" }]}
         title={
           <>
             Your single source of <em>truth.</em>
@@ -82,7 +81,6 @@ export default function PrismPage() {
       <FeatureWalkthrough />
       <SuiteLoopSection
         current="prism"
-        label="Works with Pulse and Build"
         heading={
           <>
             Designed once. Kept true. <em>Checked against reality.</em>
@@ -91,7 +89,6 @@ export default function PrismPage() {
       />
       <SecuritySection variant="strip" />
       <FinalCtaSection
-        label="Get started with Prism"
         title={
           <>
             One place for your people. <em>Always current.</em>

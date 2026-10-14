@@ -103,7 +103,6 @@ export default function ProductRouterSection() {
     <section id="products" className="relative scroll-mt-20 bg-paper pt-24 md:pt-36">
       <div className="container-site">
         <SectionHead
-          kicker="Start with the problem"
           title={
             <>
               Three products. One <em>operating picture.</em>

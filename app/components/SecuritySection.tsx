@@ -65,7 +65,6 @@ export default function SecuritySection({ variant = "full" }: { variant?: "full"
     <Section tone="deep" revealFrom="100% 0%">
       <SectionHead
         dark
-        kicker="Security and trust"
         title={
           <>
             Your <em>data,</em> protected.

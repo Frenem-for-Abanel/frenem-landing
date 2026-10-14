@@ -67,7 +67,6 @@ export default function LensesSection() {
   return (
     <Section>
       <SectionHead
-        kicker="What Pulse measures"
         title={
           <>
             Four lenses. One <em>diagnostic.</em>

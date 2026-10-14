@@ -41,7 +41,6 @@ export default function ComparisonSection() {
   return (
     <Section>
       <SectionHead
-        kicker="Why not just a survey"
         title={
           <>
             Surveys measure mood. Pulse measures <em>the machine.</em>

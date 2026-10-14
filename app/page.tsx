@@ -53,7 +53,6 @@ export default function HomePage() {
       <IntentOpener />
 
       <HeroShell
-        eyebrow="Frenem, organisation clarity"
         title={
           <>
             The whole organisation, <em>in focus.</em>
@@ -95,10 +94,9 @@ export default function HomePage() {
       </div>
 
       <ProductRouterSection />
-      <TeamSection label="Who we are" compact tone="soft" />
+      <TeamSection compact tone="soft" />
       <SecuritySection variant="strip" />
       <FinalCtaSection
-        label="Get started"
         title={
           <>
             Start with a <em>conversation.</em>

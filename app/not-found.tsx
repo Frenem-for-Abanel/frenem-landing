@@ -17,8 +17,7 @@ const links = [
 export default function NotFound() {
   return (
     <div className="container-site flex min-h-[70vh] flex-col justify-center pb-24 pt-36">
-      <p className="type-kicker text-ink-secondary">404</p>
-      <h1 className="type-display-3 mt-6 max-w-[14ch]">This page isn&apos;t on the site.</h1>
+      <h1 className="type-display-3 max-w-[14ch]">This page isn&apos;t on the site.</h1>
       <p className="mt-5 max-w-[46ch] text-[17px] leading-relaxed text-ink-secondary">
         The link may be out of date. The rest of Frenem is still here.
       </p>
