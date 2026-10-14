@@ -1,5 +1,5 @@
-import { HOME_DESCRIPTION } from "./seo"
-import { LINKEDIN_URL, SITE_NAME, SITE_URL } from "./site"
+import { HOME_DESCRIPTION, OG_IMAGE, openGraphImagePath } from "./seo"
+import { absoluteUrl, LINKEDIN_URL, SITE_NAME, SITE_URL } from "./site"
 
 /**
  * schema.org JSON-LD for search engines and AI answer engines. One linked
@@ -17,8 +17,22 @@ export const SAME_AS = [LINKEDIN_URL]
 
 type Json = Record<string, unknown>
 
-/** Homepage has no trailing slash, matching the canonical tag Next emits for `/`. */
-const abs = (path: string) => (path === "/" || path === "" ? SITE_URL : `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`)
+const abs = absoluteUrl
+
+/** `@id` base. The homepage keeps a slash so fragments match `/#organization`. */
+function idBase(path: string): string {
+  return path === "/" ? `${SITE_URL}/` : abs(path)
+}
+
+/** Share image for a page, at the size the OG route actually renders. */
+export function ogImage(path: string): Json {
+  return {
+    "@type": "ImageObject",
+    url: abs(openGraphImagePath(path)),
+    width: OG_IMAGE.width,
+    height: OG_IMAGE.height,
+  }
+}
 
 export function siteGraph(): Json {
   return {
@@ -54,6 +68,12 @@ export function siteGraph(): Json {
           "Founder-led companies",
         ],
         sameAs: SAME_AS,
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "customer support",
+          url: abs("/"),
+          availableLanguage: ["en"],
+        },
       },
       {
         "@type": "WebSite",
@@ -86,13 +106,14 @@ export function webPage({
 }): Json {
   return {
     "@type": type,
-    "@id": `${abs(path)}#webpage`,
+    "@id": `${idBase(path)}#webpage`,
     url: abs(path),
     name,
     description,
     inLanguage: "en",
     isPartOf: { "@id": WEBSITE_ID },
     publisher: { "@id": ORG_ID },
+    primaryImageOfPage: ogImage(path),
     ...(about ? { about: { "@id": about }, mainEntity: { "@id": about } } : {}),
   }
 }
@@ -113,7 +134,7 @@ export function breadcrumbs(trail: Array<{ name: string; path: string }>): Json 
 export function faq(path: string, items: Array<{ question: string; answer: string }>): Json {
   return {
     "@type": "FAQPage",
-    "@id": `${abs(path)}#faq`,
+    "@id": `${idBase(path)}#faq`,
     url: abs(path),
     isPartOf: { "@id": WEBSITE_ID },
     mainEntity: items.map((item) => ({
@@ -136,4 +157,4 @@ export function toJsonLd(data: Json): string {
   return JSON.stringify(data).replace(/</g, "\\u003c")
 }
 
-export { abs as absoluteUrl }
+export { absoluteUrl }

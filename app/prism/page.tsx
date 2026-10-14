@@ -9,7 +9,7 @@ import SecuritySection from "../components/SecuritySection"
 import FinalCtaSection from "../components/FinalCtaSection"
 import JsonLd from "../components/JsonLd"
 import { pageMetadata } from "../utils/seo"
-import { absoluteUrl, breadcrumbs, graph, ORG_ID, webPage } from "../utils/structured-data"
+import { absoluteUrl, breadcrumbs, graph, ogImage, ORG_ID, webPage } from "../utils/structured-data"
 
 const DESCRIPTION =
   "The organisation, kept current: live org charts, who owns what, how it's measured, governance, and a full audit trail."
@@ -37,6 +37,7 @@ const jsonLd = graph(
     operatingSystem: "Web",
     description:
       "The organisation, kept current: dynamic org charts, ownership, measurement, review cycles, and a full audit trail.",
+    image: ogImage("/prism"),
     featureList: [
       "Dynamic org charts",
       "Transparent KRAs, KPIs, and responsibilities",

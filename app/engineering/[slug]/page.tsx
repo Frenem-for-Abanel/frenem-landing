@@ -6,7 +6,7 @@ import Breadcrumbs from "../../components/Breadcrumbs"
 import JsonLd from "../../components/JsonLd"
 import { formatEntryDate } from "../../utils/dates"
 import { essayMetaDescription, pageMetadata } from "../../utils/seo"
-import { absoluteUrl, BLOG_ID, breadcrumbs, graph, ORG_ID } from "../../utils/structured-data"
+import { absoluteUrl, BLOG_ID, breadcrumbs, graph, ogImage, ORG_ID } from "../../utils/structured-data"
 import {
   BYLINE,
   getEssayBySlug,
@@ -56,8 +56,8 @@ export default async function EssayPage({
       headline: essay.title,
       description: essay.summary,
       url: absoluteUrl(path),
-      mainEntityOfPage: absoluteUrl(path),
-      image: absoluteUrl(`${path}/opengraph-image`),
+      mainEntityOfPage: { "@type": "WebPage", "@id": absoluteUrl(path) },
+      image: ogImage(path),
       datePublished: essay.date,
       dateModified: essay.date,
       inLanguage: "en",

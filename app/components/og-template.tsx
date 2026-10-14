@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og"
+import { OG_IMAGE } from "../utils/seo"
 
-export const OG_SIZE = { width: 1200, height: 630 }
+export const OG_SIZE = { width: OG_IMAGE.width, height: OG_IMAGE.height }
 
 /**
  * Shared OpenGraph card: the page's pastel field, the headline in ink, and
