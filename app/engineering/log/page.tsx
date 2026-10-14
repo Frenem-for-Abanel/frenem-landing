@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Breadcrumbs from "../../components/Breadcrumbs"
 import LogStream from "../../components/engineering/LogStream"
 import LogHashRedirect from "../../components/engineering/LogHashRedirect"
 import { getAllEntries } from "../../../lib/engineering/content"
@@ -28,7 +29,13 @@ export default function EngineeringLogPage() {
   return (
     <div className="tint-brand container-site pb-20 md:pb-28">
       <JsonLd data={jsonLd} />
-      <header className="anim-fade-up pt-10 md:pt-12">
+      <header className="anim-fade-up pt-8 md:pt-10">
+        <Breadcrumbs
+          items={[
+            { name: "Engineering", path: "/engineering" },
+            { name: "Log", path: "/engineering/log" },
+          ]}
+        />
         <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-ink-secondary">
           The Log
         </p>

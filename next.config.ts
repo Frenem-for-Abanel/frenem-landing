@@ -7,9 +7,12 @@ const securityHeaders = [
   // Two years. No includeSubDomains: apex DNS is still GoDaddy forwarding,
   // and preload is a one-way public commitment the owner should make later.
   { key: "Strict-Transport-Security", value: "max-age=63072000" },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 ]
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   experimental: {
     // framer-motion is on every page via the header. Direct imports shrink
     // the barrel the client has to parse.

@@ -1,4 +1,4 @@
-import { Lock, ShieldCheck } from "lucide-react"
+import { Check, Lock, ShieldCheck } from "lucide-react"
 
 /**
  * Small product-evidence vignettes for the Prism feature walkthrough.
@@ -99,7 +99,14 @@ export function ReviewCycleVignette() {
                       : "border border-line-strong text-ink-tertiary"
                 }`}
               >
-                {done ? "✓" : i + 1}
+                {done ? (
+                  <>
+                    <Check aria-hidden className="h-3 w-3" strokeWidth={3} />
+                    <span className="sr-only">Done:</span>
+                  </>
+                ) : (
+                  i + 1
+                )}
               </span>
               <span className={active ? "font-semibold text-ink" : done ? "text-ink-secondary" : "text-ink-tertiary"}>
                 {step}
@@ -141,7 +148,7 @@ export function MoonshotVignette() {
           <div className="h-2 w-2/3 rounded-[1px] bg-line" />
         </div>
         <p className="font-sans text-[11px] text-ink-tertiary">
-          Every employee can propose the next big move
+          Anyone in the company can propose the next big move
         </p>
       </div>
     </VignetteFrame>

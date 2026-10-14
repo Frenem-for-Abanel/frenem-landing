@@ -9,10 +9,12 @@ import ReportsSection from "../components/pulse/ReportsSection"
 import PrivacySection from "../components/pulse/PrivacySection"
 import TimelineSection from "../components/TimelineSection"
 import FaqSection from "../components/FaqSection"
+import SuiteLoopSection from "../components/SuiteLoopSection"
 import FinalCtaSection from "../components/FinalCtaSection"
 import { PHASE_VIEWBOX, PULSE_PHASES } from "../utils/compositions"
 import JsonLd from "../components/JsonLd"
 import { pageMetadata } from "../utils/seo"
+import { PULSE_FAQS } from "../utils/faqs"
 import { absoluteUrl, breadcrumbs, faq, graph, ogImage, ORG_ID, webPage } from "../utils/structured-data"
 
 const DESCRIPTION =
@@ -32,7 +34,7 @@ const phases = [
     label: "Phase 01",
     title: "Ingest",
     description:
-      "One export from your HR system: reporting lines, teams, tenure. Plus a short intake on what's changing in the business.",
+      "One export of how the organisation is structured: reporting lines, teams, tenure. Plus a short intake on what's changing in the business.",
   },
   {
     label: "Phase 02",
@@ -54,34 +56,6 @@ const phases = [
   },
 ]
 
-const faqItems = [
-  {
-    question: "Can leadership see individual answers?",
-    answer:
-      "No. Individual reports go to the individual alone. Leadership sees patterns at team level and above, protected by response thresholds, never names.",
-  },
-  {
-    question: "What does it ask of each person?",
-    answer:
-      "A focused set of questions, tailored to the people each person actually works with, answered through one secure link on any device. No login, no app, no survey fatigue.",
-  },
-  {
-    question: "What do we need to provide?",
-    answer:
-      "One export from your HR system (reporting lines, teams, tenure), plus a short intake about what's changing in the business. That's the whole ask.",
-  },
-  {
-    question: "Is there a minimum team size?",
-    answer:
-      "Pulse enforces response thresholds, so relationship and team views only appear when enough people take part. On the intro call we'll confirm whether your headcount and structure will produce a useful read.",
-  },
-  {
-    question: "Is this monitoring or surveillance?",
-    answer:
-      "No. Pulse never reads email, calendars, or chat. Every data point is an answer someone chose to give, and the privacy rules are structural, not policy.",
-  },
-]
-
 const SERVICE_ID = absoluteUrl("/pulse#service")
 
 const jsonLd = graph(
@@ -94,7 +68,6 @@ const jsonLd = graph(
     serviceType: "Relational diagnostics and organisational network analysis",
     category: "Organisational diagnostics",
     provider: { "@id": ORG_ID },
-    areaServed: { "@type": "Country", name: "India" },
     audience: { "@type": "BusinessAudience", name: "Leadership teams of scaling organisations" },
     description:
       "A relational diagnostic that maps how people actually work together: exit risk, hidden brokers, the manager effect, and cross-functional friction.",
@@ -111,7 +84,7 @@ const jsonLd = graph(
     },
   },
   breadcrumbs([{ name: "Pulse", path: "/pulse" }]),
-  faq("/pulse", faqItems)
+  faq("/pulse", PULSE_FAQS)
 )
 
 export default function PulsePage() {
@@ -121,7 +94,7 @@ export default function PulsePage() {
       <IntentOpener />
 
       <HeroShell
-        eyebrow="Frenem Pulse, relational diagnostics"
+        crumbs={[{ name: "Pulse, relational diagnostics", path: "/pulse" }]}
         title={
           <>
             See how your people <em>actually work together.</em>
@@ -152,7 +125,7 @@ export default function PulsePage() {
             Ingest. Route. Protect. <em>Deliver.</em>
           </>
         }
-        sub="From boundary to reports in four clear steps. Your part: one file from HR, and honest answers from your people."
+        sub="From boundary to reports in four clear steps. Your part: one file of how the organisation is structured, and honest answers from your people."
         phases={phases}
         layouts={PULSE_PHASES}
         viewBox={PHASE_VIEWBOX}
@@ -165,10 +138,17 @@ export default function PulsePage() {
             Asked before every <em>pilot.</em>
           </>
         }
-        items={faqItems}
+        items={PULSE_FAQS}
+      />
+      <SuiteLoopSection
+        current="pulse"
+        heading={
+          <>
+            Three products. One <em>operating picture.</em>
+          </>
+        }
       />
       <FinalCtaSection
-        label="Get started with Pulse"
         modalMode="pulseQuestionnaire"
         buttonText="Map my organisation"
         secondaryButtonText="Just get in touch"

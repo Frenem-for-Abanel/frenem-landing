@@ -33,7 +33,6 @@ export default function CapitalReadySection() {
   return (
     <Section>
       <SectionHead
-        kicker="Capital ready"
         title={
           <>
             Institution-ready. Before markets <em>force the change.</em>

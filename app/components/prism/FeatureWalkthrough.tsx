@@ -37,16 +37,16 @@ const features: Feature[] = [
   },
   {
     short: "Review cycles",
-    title: "Seamless performance review cycles",
+    title: "Goals and reviews, on one cycle",
     description:
-      "From goal setting through to reviews. A complete, continuous cycle that doesn't live in spreadsheets, and doesn't stall waiting for HR to chase.",
+      "From the goals the business sets through to the reviews that check them. A continuous cycle that doesn't live in spreadsheets, and doesn't stall waiting for someone to chase.",
     Vignette: ReviewCycleVignette,
   },
   {
     short: "Moonshots",
-    title: "Employee-driven innovation",
+    title: "Ideas from every level",
     description:
-      "Moonshot idea submissions that give every person in the company a voice in shaping what comes next. Good ideas stop dying in inboxes.",
+      "Moonshot submissions give everyone in the company a direct line into what the business does next. Good ideas stop dying in inboxes.",
     Vignette: MoonshotVignette,
   },
   {
@@ -87,7 +87,6 @@ export default function FeatureWalkthrough() {
   return (
     <Section id="features">
       <SectionHead
-        kicker="What Prism does"
         title={
           <>
             Clarity across your <em>entire</em> organisation.

@@ -9,7 +9,6 @@ import FieldBackdrop from "./motion/FieldBackdrop"
 import type { ContactModalMode } from "../context/ContactModalContext"
 
 interface FinalCtaSectionProps {
-  label?: string
   title: ReactNode
   subtitle: string
   buttonText?: string
@@ -23,7 +22,6 @@ interface FinalCtaSectionProps {
  * shapes turning slowly as it scrolls past.
  */
 export default function FinalCtaSection({
-  label = "Get started",
   title,
   subtitle,
   buttonText = "Talk to us",
@@ -47,13 +45,7 @@ export default function FinalCtaSection({
       </div>
 
       <div className="container-site relative">
-        <Reveal>
-          <p className="type-kicker flex items-center gap-3 text-ink-secondary">
-            <span aria-hidden className="h-3 w-3 rounded-full bg-ink" />
-            {label}
-          </p>
-        </Reveal>
-        <SplitText as="h2" className="type-display-1 mt-8 max-w-[11ch] md:mt-10">
+        <SplitText as="h2" className="type-display-1 max-w-[11ch]">
           {title}
         </SplitText>
         <Reveal delay={0.15}>

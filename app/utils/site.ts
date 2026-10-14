@@ -6,6 +6,9 @@ export const DEFAULT_SITE_URL = `https://${CANONICAL_HOST}`
 
 export const SITE_NAME = "Frenem"
 
+/** Company profile. Its homepage is frenem.com. */
+export const LINKEDIN_URL = "https://www.linkedin.com/company/frenem"
+
 function normalizedHostname(hostname: string): string {
   return hostname.replace(/\.$/, "").toLowerCase()
 }

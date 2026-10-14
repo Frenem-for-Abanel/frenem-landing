@@ -112,7 +112,6 @@ export default function PlanBuilder() {
   return (
     <Section id="plan">
       <SectionHead
-        kicker="The founder's dilemma"
         title={
           <>
             You built this business. Now it can&apos;t run <em>without you.</em>

@@ -28,6 +28,9 @@ const PALETTES: Record<SceneSet, string[]> = {
 }
 
 const TRAVEL_S = 1.35
+/** Stagger on top of the travel: a sweep by angle, plus a spread when gathering from scatter. */
+const SWEEP_S = 0.35
+const GATHER_SPREAD_S = 0.6
 const LATTICE_DOT = 0.13
 const LATTICE_ALPHA = 0.2
 
@@ -118,7 +121,10 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
   const [mode, setMode] = useState<Mode>("playing")
   const [cycle, setCycle] = useState(0)
   const [inView, setInView] = useState(false)
-  const [settled, setSettled] = useState(false)
+  // The step whose shapes have landed; its labels show only while it is
+  // also the current step, so a new step never inherits the old one's state.
+  const [settledIndex, setSettledIndex] = useState<number | null>(null)
+  const settled = settledIndex === index
 
   const scenes = useMemo(() => buildScenes(set, 24), [set])
   // The suite cycles through its three lenses; product stories play once
@@ -164,12 +170,15 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
     setIndex(loop ? 0 : last)
   }, [reduce, loop, last])
 
+  // Keep the canvas on the current step. The canvas may mount after the step
+  // has already moved (reduced motion opens on the outcome), so it starts
+  // from this ref rather than from scene 0. Labels are revealed by the canvas
+  // itself, once its shapes have landed (see `retarget`).
+  const indexRef = useRef(index)
   useEffect(() => {
+    indexRef.current = index
     goTo.current(index)
-    setSettled(false)
-    const timer = setTimeout(() => setSettled(true), reduce ? 0 : (TRAVEL_S + 0.5) * 1000)
-    return () => clearTimeout(timer)
-  }, [index, reduce])
+  }, [index])
 
   const choose = useCallback(
     (i: number) => {
@@ -211,7 +220,8 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
     let pitch = 0
     let slots: SceneDot[][] = []
     let particles: Particle[] = []
-    let current = 0
+    let current = indexRef.current
+    let settleTimer = 0
     let frame = 0
     let running = false
     let visible = false
@@ -242,15 +252,33 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
         p.tc = d.c
         p.tr = d.r
         p.start = t
-        p.delay = stillMotion ? 0 : ((angleOf(d) + Math.PI) / (Math.PI * 2)) * 0.35 + p.seed * (fromScatter ? 0.6 : 0.18)
+        p.delay = stillMotion ? 0 : ((angleOf(d) + Math.PI) / (Math.PI * 2)) * SWEEP_S + p.seed * (fromScatter ? GATHER_SPREAD_S : 0.18)
       })
       current = sceneIndex
+
+      // Labels appear once the last shape has landed, however this move began:
+      // a step change, the first gather, or fonts and resizes re-laying out.
+      window.clearTimeout(settleTimer)
+      // A change of colour or roundness is still a change in flight.
+      const moving = particles.some(
+        (p) =>
+          p.fc !== p.tc ||
+          Math.abs(p.tx - p.fx) + Math.abs(p.ty - p.fy) + Math.abs(p.ts - p.fs) + Math.abs(p.tr - p.fr) > 1e-4
+      )
+      if (stillMotion || !moving) {
+        setSettledIndex(sceneIndex)
+        return
+      }
+      setSettledIndex(null)
+      const landed = particles.reduce((max, p) => Math.max(max, p.delay), 0) + TRAVEL_S
+      settleTimer = window.setTimeout(() => setSettledIndex(sceneIndex), landed * 1000)
     }
 
     const paintLattice = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
       lattice.width = canvas.width
       lattice.height = canvas.height
+      if (!W || !H) return
       lctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       lctx.clearRect(0, 0, W, H)
       lctx.fillStyle = palette[0]
@@ -318,6 +346,9 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
       }
       pointer.strength += (pointer.target - pointer.strength) * 0.1
 
+      // Nothing to paint while the hero has no size (a hidden tab or embed,
+      // mid-resize); drawing a zero-sized canvas would throw.
+      if (!lattice.width || !lattice.height) return
       ctx.clearRect(0, 0, W, H)
       ctx.drawImage(lattice, 0, 0, W, H)
 
@@ -454,6 +485,7 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
 
     return () => {
       alive = false
+      window.clearTimeout(settleTimer)
       stop()
       ro.disconnect()
       io.disconnect()

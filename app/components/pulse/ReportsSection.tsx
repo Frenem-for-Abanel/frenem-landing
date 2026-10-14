@@ -21,10 +21,10 @@ const reports = [
     Mock: OrgPulseMock,
   },
   {
-    audience: "For HR and people analytics",
+    audience: "For the people running the business",
     title: "The Relational Network Map",
     description:
-      "The map itself: structural silos, hidden brokers, bottleneck managers, and an isolation watchlist. Leading indicators of attrition, visible weeks before a notice period.",
+      "The map itself: structural silos, hidden brokers, bottleneck managers, and an isolation watchlist. Early warning of who you could lose, weeks before anyone resigns.",
     Mock: NetworkMapMock,
   },
 ] as const
@@ -33,7 +33,6 @@ export default function ReportsSection() {
   return (
     <Section tone="soft">
       <SectionHead
-        kicker="What you receive"
         title={
           <>
             Three cuts. Three <em>audiences.</em>

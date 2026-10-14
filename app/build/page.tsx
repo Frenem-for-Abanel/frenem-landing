@@ -11,10 +11,12 @@ import TimelineSection from "../components/TimelineSection"
 import TeamSection from "../components/TeamSection"
 import SecuritySection from "../components/SecuritySection"
 import FaqSection from "../components/FaqSection"
+import SuiteLoopSection from "../components/SuiteLoopSection"
 import FinalCtaSection from "../components/FinalCtaSection"
 import { BUILD_PHASES, PHASE_VIEWBOX } from "../utils/compositions"
 import JsonLd from "../components/JsonLd"
 import { pageMetadata } from "../utils/seo"
+import { BUILD_FAQS } from "../utils/faqs"
 import { absoluteUrl, breadcrumbs, faq, graph, ogImage, ORG_ID, webPage } from "../utils/structured-data"
 
 const DESCRIPTION =
@@ -50,34 +52,6 @@ const phases = [
   },
 ]
 
-const faqItems = [
-  {
-    question: "Can we do just part of Build?",
-    answer:
-      "Yes. Tick the problems you recognise in the planner above and we'll shape Build around them, only the parts that fix what you ticked. We agree the scope with you on the first call, designed against how your organisation actually works today.",
-  },
-  {
-    question: "How much of leadership's time does the sprint take?",
-    answer:
-      "Diagnose runs on structured interviews and data you already have, so the load comes in short, scheduled bursts rather than weeks of workshops. We agree the sprint calendar around your operating rhythm before we start.",
-  },
-  {
-    question: "What happens when the sprint ends?",
-    answer:
-      "You're left with an operating model your team runs day to day: who decides, who owns what, and who leads next live in the business, not in a deck. Prism can keep it current from there.",
-  },
-  {
-    question: "Will this feel like consultants rebuilding my company?",
-    answer:
-      "No. You define the guardrails; Build makes control explicit instead of taking it away. The whole point is professionalising without losing the company's soul.",
-  },
-  {
-    question: "We're not raising or listing right now. Is this still relevant?",
-    answer:
-      "Capital-readiness is a by-product, not the premise. The core outcome is founder-independent execution: decisions happening at the right level without routing through you. That pays off long before any transaction.",
-  },
-]
-
 const SERVICE_ID = absoluteUrl("/build#service")
 
 const OUTCOMES = [
@@ -99,7 +73,6 @@ const jsonLd = graph(
     serviceType: "Organisation design",
     category: "Organisation design and governance",
     provider: { "@id": ORG_ID },
-    areaServed: { "@type": "Country", name: "India" },
     audience: { "@type": "BusinessAudience", name: "Founders and promoters of growing businesses" },
     description:
       "Organisation design for founder-led businesses, as a complete sprint or only the parts you need: faster decisions, clear ownership, governance, and a leadership bench.",
@@ -112,7 +85,7 @@ const jsonLd = graph(
     },
   },
   breadcrumbs([{ name: "Build", path: "/build" }]),
-  faq("/build", faqItems)
+  faq("/build", BUILD_FAQS)
 )
 
 export default function BuildPage() {
@@ -122,7 +95,7 @@ export default function BuildPage() {
       <IntentOpener />
 
       <HeroShell
-        eyebrow="Frenem Build, organisation design"
+        crumbs={[{ name: "Build, organisation design", path: "/build" }]}
         title={
           <>
             Build an organisation that scales <em>beyond you.</em>
@@ -160,7 +133,6 @@ export default function BuildPage() {
       <CapitalReadySection />
       <PositioningSection />
       <TeamSection
-        label="Who you'd work with"
         title={
           <>
             A combined <em>100+ years</em> of consulting.
@@ -174,10 +146,17 @@ export default function BuildPage() {
             Asked before every <em>sprint.</em>
           </>
         }
-        items={faqItems}
+        items={BUILD_FAQS}
+      />
+      <SuiteLoopSection
+        current="build"
+        heading={
+          <>
+            Three products. One <em>operating picture.</em>
+          </>
+        }
       />
       <FinalCtaSection
-        label="Get started with Build"
         modalMode="assessment"
         buttonText="Get started"
         secondaryButtonText="Just get in touch"

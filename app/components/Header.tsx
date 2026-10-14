@@ -23,7 +23,7 @@ const PRODUCT_DOT: Record<ProductKey, string> = {
 const PRODUCT_ROLE: Record<ProductKey, string> = {
   pulse: "Relational diagnostics",
   build: "Organisation design",
-  prism: "Employee management",
+  prism: "Operating record",
 }
 
 /**
