@@ -12,7 +12,7 @@ import MobileCtaBar from "../components/MobileCtaBar"
 import { PRISM_FAQS } from "../utils/faqs"
 import JsonLd from "../components/JsonLd"
 import { pageMetadata } from "../utils/seo"
-import { absoluteUrl, breadcrumbs, faq, graph, ogImage, ORG_ID, webPage } from "../utils/structured-data"
+import { absoluteUrl, breadcrumbs, faq, graph, mentionsFor, ogImage, ORG_ID, webPage } from "../utils/structured-data"
 
 const DESCRIPTION =
   "The organisation, kept current: live org charts, who owns what, how it's measured, governance, and a full audit trail."
@@ -52,6 +52,7 @@ const jsonLd = graph(
     url: absoluteUrl("/prism"),
     publisher: { "@id": ORG_ID },
     provider: { "@id": ORG_ID },
+    mentions: mentionsFor("prism"),
   },
   breadcrumbs([{ name: "Prism", path: "/prism" }]),
   faq("/prism", PRISM_FAQS)

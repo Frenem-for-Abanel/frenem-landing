@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next"
 import { absoluteUrl } from "./utils/site"
+import { openGraphImagePath } from "./utils/seo"
 import { entryPath, getAllEntries } from "../lib/engineering/content"
 
 /**
@@ -12,9 +13,15 @@ function lastmod(date: string | undefined): Date | undefined {
   return date ? new Date(`${date}T12:00:00.000Z`) : undefined
 }
 
+/** Every page has its own share card; listing it lets image search and answer engines find it. */
+function withImage(entry: MetadataRoute.Sitemap[number]): MetadataRoute.Sitemap[number] {
+  const path = new URL(entry.url).pathname
+  return { ...entry, images: [absoluteUrl(openGraphImagePath(path))] }
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const newest = lastmod(getAllEntries()[0]?.date)
-  return [
+  const entries: MetadataRoute.Sitemap = [
     { url: absoluteUrl("/"), changeFrequency: "monthly", priority: 1 },
     { url: absoluteUrl("/pulse"), changeFrequency: "monthly", priority: 0.9 },
     { url: absoluteUrl("/build"), changeFrequency: "monthly", priority: 0.9 },
@@ -30,4 +37,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // The glossary lives in code, so it carries no edit date of its own.
     { url: absoluteUrl("/glossary"), changeFrequency: "yearly", priority: 0.4 },
   ]
+  return entries.map(withImage)
 }

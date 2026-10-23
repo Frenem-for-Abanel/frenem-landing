@@ -30,3 +30,12 @@ describe("llms files", () => {
     expect(text).not.toContain("—")
   })
 })
+
+describe("machine-readable files stay out of search results", () => {
+  it("marks llms files noindex", async () => {
+    const { GET: index } = await import("../llms.txt/route")
+    const { GET: full } = await import("../llms-full.txt/route")
+    expect(index().headers.get("X-Robots-Tag")).toBe("noindex")
+    expect(full().headers.get("X-Robots-Tag")).toBe("noindex")
+  })
+})

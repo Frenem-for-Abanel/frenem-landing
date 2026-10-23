@@ -9,7 +9,7 @@ import Footer from "./components/Footer"
 import ContactModal from "./components/contact/ContactModal"
 import Analytics from "./components/Analytics"
 import JsonLd from "./components/JsonLd"
-import { HOME_DESCRIPTION, HOME_TITLE } from "./utils/seo"
+import { FEED_ALTERNATE, HOME_DESCRIPTION, HOME_TITLE } from "./utils/seo"
 import { SITE_NAME, SITE_URL } from "./utils/site"
 import { siteGraph } from "./utils/structured-data"
 
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
   },
   alternates: {
-    types: { "application/rss+xml": [{ url: "/engineering/feed.xml", title: "Frenem Engineering" }] },
+    types: FEED_ALTERNATE,
   },
   openGraph: {
     siteName: SITE_NAME,

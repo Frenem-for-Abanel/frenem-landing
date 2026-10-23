@@ -34,9 +34,22 @@ export function essayMetaDescription(essay: Pick<EngineeringEntry, "summary" | "
   return `${summary} ${sentence}.`
 }
 
-/** RSS discovery, repeated per page because a page's `alternates` replaces the layout's. */
+/**
+ * Alternate formats, repeated per page because a page's `alternates`
+ * replaces the layout's: the RSS feed, and the plain-text site maps for AI
+ * assistants (llms.txt and its full-text companion).
+ */
 export const FEED_ALTERNATE = {
   "application/rss+xml": [{ url: "/engineering/feed.xml", title: "Frenem Engineering" }],
+  "text/plain": [
+    { url: "/llms.txt", title: "llms.txt" },
+    { url: "/llms-full.txt", title: "llms-full.txt" },
+  ],
+}
+
+/** One language, one URL per page: declare it, with the same URL as the default. */
+export function languageAlternates(path: string) {
+  return { "en-GB": path, "x-default": path }
 }
 
 /** Pixel size of every `opengraph-image.tsx`. Keep in step with `OG_SIZE`. */
@@ -75,7 +88,7 @@ export function pageMetadata({
   return {
     title: { absolute: title },
     description,
-    alternates: { canonical: path, types: FEED_ALTERNATE },
+    alternates: { canonical: path, languages: languageAlternates(path), types: FEED_ALTERNATE },
     openGraph: {
       siteName: SITE_NAME,
       locale: "en_GB",

@@ -17,7 +17,7 @@ import { PHASE_VIEWBOX, PULSE_PHASES } from "../utils/compositions"
 import JsonLd from "../components/JsonLd"
 import { pageMetadata } from "../utils/seo"
 import { PULSE_FAQS } from "../utils/faqs"
-import { absoluteUrl, breadcrumbs, faq, graph, ogImage, ORG_ID, webPage } from "../utils/structured-data"
+import { absoluteUrl, breadcrumbs, faq, graph, mentionsFor, ogImage, ORG_ID, webPage } from "../utils/structured-data"
 
 const DESCRIPTION =
   "Engagement surveys measure sentiment. Pulse shows how your business actually runs: key-person risk, hidden brokers, and friction, visible while you can still act."
@@ -71,6 +71,7 @@ const jsonLd = graph(
     category: "Organisational diagnostics",
     provider: { "@id": ORG_ID },
     areaServed: "Worldwide",
+    mentions: mentionsFor("pulse"),
     audience: { "@type": "BusinessAudience", name: "Leadership teams of scaling organisations" },
     description:
       "A relational diagnostic that maps how work actually moves through a business: key-person risk, hidden brokers, the manager effect, and cross-functional friction.",
