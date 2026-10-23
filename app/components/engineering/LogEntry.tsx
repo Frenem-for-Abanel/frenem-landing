@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { tintClass, TYPE_LABELS, type EngineeringEntry } from "../../../lib/engineering/content"
+import { entryPath, tintClass, TYPE_LABELS, type EngineeringEntry } from "../../../lib/engineering/content"
 import { aliasesForSlug } from "../../../lib/engineering/slug-aliases"
 import { formatEntryDate } from "../../utils/dates"
 import Mdx from "./Mdx"
@@ -21,8 +21,9 @@ export default function LogEntry({
   const isArchive = surface === "archive"
   // The cover sits under an "The Log" h2; the archive has no such heading.
   const Heading = isArchive ? "h2" : "h3"
-  const href = entry.type === "essay" ? `/engineering/${entry.slug}` : `/engineering/log#${entry.slug}`
-  const linked = entry.type === "essay" || !isArchive
+  // Every entry has its own page; notes also render inline here, anchored
+  // so old /engineering/log#slug links still land on them.
+  const href = entryPath(entry)
 
   return (
     <article
@@ -50,13 +51,10 @@ export default function LogEntry({
         </span>
         <div className="min-w-0">
           <Heading className="font-sans text-[15px] font-medium leading-snug text-ink md:text-base">
-            {linked ? (
-              <Link href={href} className="transition-colors hover:text-(--tint-ink)">
-                {entry.title} <span aria-hidden>→</span>
-              </Link>
-            ) : (
-              entry.title
-            )}
+            <Link href={href} className="transition-colors hover:text-(--tint-ink)">
+              {entry.title}
+            </Link>
+            <span aria-hidden className="text-ink-tertiary"> →</span>
           </Heading>
           {entry.type !== "essay" ? (
             <div className="mt-3 max-w-(--narrow-width) border-l border-line pl-4 md:pl-5 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_p]:my-3 [&_p]:text-[15px]">

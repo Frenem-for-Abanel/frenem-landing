@@ -19,9 +19,9 @@ const DESCRIPTION =
 
 export const metadata: Metadata = pageMetadata({
   path: "/prism",
-  title: "Prism by Frenem | The organisation, kept current",
+  title: "Prism by Frenem | Live org chart and accountability software",
   description: DESCRIPTION,
-  socialTitle: "Frenem Prism: your single source of truth",
+  socialTitle: "Frenem Prism: the organisation, kept current",
   socialDescription:
     "Org charts, performance cycles, KPIs, and governance in a tool your team will actually use.",
 })

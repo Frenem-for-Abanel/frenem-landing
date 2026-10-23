@@ -10,16 +10,33 @@ import { essayMetaDescription, pageMetadata } from "../../utils/seo"
 import { absoluteUrl, BLOG_ID, breadcrumbs, graph, ogImage, ORG_ID } from "../../utils/structured-data"
 import {
   BYLINE,
-  getEssayBySlug,
-  getEssays,
+  getAllEntries,
+  getEntryBySlug,
   PILLAR_LABELS,
+  proseOf,
   tintClass,
+  TYPE_LABELS,
 } from "../../../lib/engineering/content"
 
 export const dynamicParams = false
 
+/** Essays, shipped changes, and notes each get a page of their own. */
 export function generateStaticParams() {
-  return getEssays().map((essay) => ({ slug: essay.slug }))
+  return getAllEntries().map((entry) => ({ slug: entry.slug }))
+}
+
+function crumbsFor(entry: { slug: string; title: string; type: string }) {
+  const path = `/engineering/${entry.slug}`
+  return entry.type === "essay"
+    ? [
+        { name: "Engineering", path: "/engineering" },
+        { name: entry.title, path },
+      ]
+    : [
+        { name: "Engineering", path: "/engineering" },
+        { name: "Log", path: "/engineering/log" },
+        { name: entry.title, path },
+      ]
 }
 
 export async function generateMetadata({
@@ -28,7 +45,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const essay = getEssayBySlug(slug)
+  const essay = getEntryBySlug(slug)
   if (!essay) return {}
   return pageMetadata({
     path: `/engineering/${essay.slug}`,
@@ -46,8 +63,9 @@ export default async function EssayPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const essay = getEssayBySlug(slug)
+  const essay = getEntryBySlug(slug)
   if (!essay) notFound()
+  const wordCount = proseOf(essay.body).split(/\s+/).filter(Boolean).length
 
   const path = `/engineering/${essay.slug}`
   const jsonLd = graph(
@@ -61,16 +79,15 @@ export default async function EssayPage({
       image: ogImage(path),
       datePublished: essay.date,
       dateModified: essay.date,
-      inLanguage: "en",
+      inLanguage: "en-GB",
+      wordCount,
+      genre: TYPE_LABELS[essay.type],
       ...(essay.pillar ? { articleSection: PILLAR_LABELS[essay.pillar] } : {}),
       author: { "@type": "Organization", name: BYLINE, url: absoluteUrl("/engineering") },
       publisher: { "@id": ORG_ID },
       isPartOf: { "@id": BLOG_ID },
     },
-    breadcrumbs([
-      { name: "Engineering", path: "/engineering" },
-      { name: essay.title, path },
-    ])
+    breadcrumbs(crumbsFor(essay))
   )
 
   return (
@@ -78,14 +95,17 @@ export default async function EssayPage({
       <JsonLd data={jsonLd} />
       <article className="container-site pb-20 md:pb-28">
         <div className="mx-auto max-w-(--narrow-width) pt-8 md:pt-10">
-          <Breadcrumbs
-            items={[
-              { name: "Engineering", path: "/engineering" },
-              { name: essay.title, path },
-            ]}
-          />
+          <Breadcrumbs items={crumbsFor(essay)} />
           <header className="anim-fade-up">
             <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 font-mono text-[12px] uppercase tracking-[0.12em]">
+              {essay.type !== "essay" ? (
+                <>
+                  <span className="font-medium text-(--tint-ink)">{TYPE_LABELS[essay.type]}</span>
+                  <span aria-hidden className="text-ink-tertiary">
+                    ·
+                  </span>
+                </>
+              ) : null}
               <time dateTime={essay.date} className="text-ink-tertiary">
                 {formatEntryDate(essay.date)}
               </time>

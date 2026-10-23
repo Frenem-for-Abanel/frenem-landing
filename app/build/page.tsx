@@ -22,7 +22,7 @@ import { BUILD_FAQS } from "../utils/faqs"
 import { absoluteUrl, breadcrumbs, faq, graph, ogImage, ORG_ID, webPage } from "../utils/structured-data"
 
 const DESCRIPTION =
-  "Organisation design for founder-led businesses: faster decisions, clear ownership, and leaders who run the business. The whole of Build, or only the parts you need."
+  "Organisation design for founder-led businesses: faster decisions, clear ownership, and leaders who run the business. All of Build, or only the parts you need."
 
 export const metadata: Metadata = pageMetadata({
   path: "/build",
@@ -75,6 +75,7 @@ const jsonLd = graph(
     serviceType: "Organisation design",
     category: "Organisation design and governance",
     provider: { "@id": ORG_ID },
+    areaServed: "Worldwide",
     audience: { "@type": "BusinessAudience", name: "Founders and founder-owners of growing businesses" },
     description:
       "Organisation design for founder-led businesses, as a complete sprint or only the parts you need: faster decisions, clear ownership, governance, and a leadership bench.",

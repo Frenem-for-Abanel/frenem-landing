@@ -12,6 +12,7 @@ import { absoluteUrl, LINKEDIN_URL, SITE_NAME, SITE_URL } from "./site"
 export const ORG_ID = `${SITE_URL}/#organization`
 export const WEBSITE_ID = `${SITE_URL}/#website`
 export const BLOG_ID = `${SITE_URL}/engineering#blog`
+export const GLOSSARY_ID = `${SITE_URL}/glossary#termset`
 
 export const SAME_AS = [LINKEDIN_URL]
 
@@ -68,6 +69,8 @@ export function siteGraph(): Json {
           "Founder-led companies",
         ],
         sameAs: SAME_AS,
+        // The firm works with companies anywhere; nothing on the site ties it to one market.
+        areaServed: "Worldwide",
         contactPoint: {
           "@type": "ContactPoint",
           contactType: "customer support",
@@ -82,7 +85,7 @@ export function siteGraph(): Json {
         name: SITE_NAME,
         alternateName: "frenem",
         description: HOME_DESCRIPTION,
-        inLanguage: "en",
+        inLanguage: "en-GB",
         publisher: { "@id": ORG_ID },
       },
     ],
@@ -110,7 +113,7 @@ export function webPage({
     url: abs(path),
     name,
     description,
-    inLanguage: "en",
+    inLanguage: "en-GB",
     isPartOf: { "@id": WEBSITE_ID },
     publisher: { "@id": ORG_ID },
     primaryImageOfPage: ogImage(path),
@@ -142,6 +145,67 @@ export function faq(path: string, items: Array<{ question: string; answer: strin
       name: item.question,
       acceptedAnswer: { "@type": "Answer", text: item.answer },
     })),
+  }
+}
+
+/** A guide: an Article published by Frenem, tied to its page. */
+export function article({
+  path,
+  headline,
+  description,
+  datePublished,
+  dateModified,
+  wordCount,
+  about,
+}: {
+  path: string
+  headline: string
+  description: string
+  datePublished: string
+  dateModified: string
+  wordCount: number
+  /** @ids or names of what the article explains. */
+  about?: Json[]
+}): Json {
+  return {
+    "@type": "Article",
+    "@id": `${abs(path)}#article`,
+    headline,
+    description,
+    url: abs(path),
+    mainEntityOfPage: { "@id": `${idBase(path)}#webpage` },
+    image: ogImage(path),
+    datePublished,
+    dateModified,
+    wordCount,
+    inLanguage: "en-GB",
+    author: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
+    isPartOf: { "@id": WEBSITE_ID },
+    ...(about?.length ? { about } : {}),
+  }
+}
+
+/** One glossary entry, part of the site's defined term set. */
+export function definedTerm({
+  path,
+  name,
+  description,
+  alternateNames,
+}: {
+  path: string
+  name: string
+  description: string
+  alternateNames?: string[]
+}): Json {
+  return {
+    "@type": "DefinedTerm",
+    "@id": `${abs(path)}#term`,
+    name,
+    description,
+    url: abs(path),
+    inDefinedTermSet: { "@id": GLOSSARY_ID },
+    ...(alternateNames?.length ? { alternateName: alternateNames } : {}),
   }
 }
 

@@ -29,6 +29,8 @@ npm run build    # production build
 | `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, and JSON-LD (defaults to `https://www.frenem.com`). An apex value such as `https://frenem.com` is rewritten to www, so sitemap and canonicals cannot advertise URLs that 404 behind GoDaddy forwarding. |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Optional. Google Search Console verification token (the `content` of its meta tag). |
 | `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Optional. Bing Webmaster Tools verification token (`msvalidate.01`). |
+| `LEAD_WEBHOOK_URL` | Optional. Every lead is also POSTed here as JSON (`{ text, lead, receivedAt }`; `text` makes it a ready-made Slack message). With both this and SMTP configured, a submission succeeds if either delivers, so one failing channel no longer loses the lead. |
+| `INDEXNOW_KEY` | Optional. 8 to 128 letters, digits, or dashes. Served at `/indexnow.txt` (set it at build time); `npm run indexnow` then submits every sitemap URL to IndexNow (Bing, and through it Copilot and ChatGPT search). |
 
 ## Canonical host
 
@@ -43,9 +45,12 @@ middleware.ts             Host-gated 308 from frenem.com to www.frenem.com
 app/
   page.tsx              Homepage (umbrella positioning + product router)
   pulse|build|prism/    Product pages, each with metadata + OG image
-  engineering/          Essays and log (MDX in content/), RSS feed, OG images
+  engineering/          Essays and log (MDX in content/), RSS feed, OG images; every entry has its own page
+  insights/             Hub for guides, the glossary, and the latest engineering entries
+  guides/[slug]/        Buyer-facing guides (MDX in content/guides/, loader in lib/guides/)
+  glossary/             Organisation glossary, from app/utils/glossary.ts
   not-found.tsx         Unknown URLs: noindex, with links back into the site
-  sitemap.ts robots.ts  Crawl files; manifest.ts, icon*, llms.txt/ alongside
+  sitemap.ts robots.ts  Crawl files; manifest.ts, icon*, llms.txt/, llms-full.txt/, indexnow.txt/ alongside
   api/contact/          Contact endpoint (validation, honeypot, rate limit, SMTP)
   components/           Shared sections and primitives
     build|pulse|prism/  Page-specific sections and product visuals
@@ -81,9 +86,16 @@ Sections separate by colour field, not rules, with a fine print grain (`.grain`)
 
 - Metadata: every page builds its tags with `pageMetadata()` in `app/utils/seo.ts` (absolute title, description, canonical, full Open Graph and Twitter card). Next replaces a nested `openGraph` object instead of merging it with the layout's, so pages should never set it by hand. Every page has its own share image (`opengraph-image.tsx`), essays included; the Twitter card points at that same image. The canonical origin is `https://www.frenem.com` (`app/utils/site.ts`). Unknown URLs render `app/not-found.tsx` (noindex, with links back to the real pages).
 - Structured data: `app/utils/structured-data.ts` builds one linked schema.org graph (Organization and WebSite by `@id`, then per page a WebPage, the Service or SoftwareApplication, breadcrumbs, FAQPage, Blog, and BlogPosting), rendered by `components/JsonLd.tsx`. FAQ markup mirrors the visible FAQ exactly; never add answers that aren't on the page.
-- Discovery: `sitemap.xml` (real dates only: essays carry theirs, marketing pages omit `lastmod`), `robots.txt` (open to all crawlers, including AI answer engines; only `/api/` is closed), an RSS feed at `/engineering/feed.xml`, and `/llms.txt`, a plain-text map of the site for AI assistants. Update `app/llms.txt/route.ts` when product positioning changes.
+- Discovery: `sitemap.xml` (real dates only: essays and guides carry theirs, marketing pages omit `lastmod`), `robots.txt` (open to all crawlers, with the AI answer engines named explicitly; only `/api/` is closed), an RSS feed at `/engineering/feed.xml`, `/llms.txt` (a map of the site for AI assistants), and `/llms-full.txt` (the full text). Both llms files are built in `app/utils/llms.ts` from the same FAQ, planner, glossary, and MDX data the pages render; update the product lines there when positioning changes. IndexNow is optional (see `INDEXNOW_KEY`).
+- Content for search and answer engines: guides (`content/guides/*.mdx`, validated by `lib/guides/content.ts`: no em dashes, snippet-length summaries, real dates) and the glossary (`app/utils/glossary.ts`, one quotable sentence per definition). Both teach; neither makes client claims or quotes statistics the site cannot source. Each ends with a route into the products (`components/ArticleCta.tsx`).
 - Core Web Vitals: headlines fall back to Arial or Roboto resized to Archivo's wide ExtraBold (`@font-face` blocks at the top of `globals.css`), so text wraps the same before and after the web font loads. The emphasis animation paints its heft with a text stroke instead of animating `font-weight`, which would re-wrap the line mid-animation. Fades start at 1% opacity so Chrome times the hero's Largest Contentful Paint when it appears. Keep all three when changing type or motion; target is CLS under 0.1 and LCP under 2.5s on mobile.
 
-### Contact flows
+### Analytics
 
-One modal, six flows: Build assessment questionnaire, Build quick contact, Build plan (sent from the planner), Pulse questionnaire, Pulse quick contact, and a general form. Deep links: `/pulse?intent=read`, `/build?intent=assessment`, `?intent=contact` on any page. Submissions post to `/api/contact` and are emailed to the team (recipients configured in `app/api/contact/route.ts`).
+`app/utils/analytics.ts` is vendor-neutral: `track(event, props)` pushes onto `window.dataLayer` when a tag manager has created it and dispatches a `frenem:track` DOM event. Plugging in a vendor is one listener. Events: `cta_click`, `modal_open`, `modal_close`, `questionnaire_step`, `lead_submitted`, `lead_failed`, `plan_pain_toggled`, `plan_shared`, `plan_sent`, `marquee_paused`, and `web_vital` (field Core Web Vitals via `useReportWebVitals`).
+
+First-touch attribution (`app/utils/attribution.ts`: UTMs, `gclid`, `li_fat_id`, external referrer, landing page) is kept in localStorage and sent with every contact submission; the notification email shows it under "Where this lead came from".
+
+## Contact flows
+
+One modal, six flows: Build assessment questionnaire, Build quick contact, Build plan (sent from the planner), Pulse questionnaire, Pulse quick contact, and a general form. Deep links: `/pulse?intent=read`, `/build?intent=assessment`, `?intent=contact` on any page, and `/build?plan=bottleneck,roles` to open the planner with problems ticked. The flows load on first use (`components/contact/lazy-flows.tsx`), not in every page's bundle. A Build plan the visitor has started turns any Build assessment CTA into "send my plan". Submissions post to `/api/contact` and are emailed to the team (recipients configured in `app/api/contact/route.ts`).

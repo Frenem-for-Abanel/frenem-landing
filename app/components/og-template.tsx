@@ -3,6 +3,21 @@ import { OG_IMAGE } from "../utils/seo"
 
 export const OG_SIZE = { width: OG_IMAGE.width, height: OG_IMAGE.height }
 
+/** Field and shape colours per page tint (globals.css: soft and mid tones). */
+export const OG_TINTS = {
+  brand: { tint: "#ece5d5", deep: "#c9b287" },
+  pulse: { tint: "#d2e4d7", deep: "#7aad93" },
+  build: { tint: "#f0d7c7", deep: "#d4876a" },
+  prism: { tint: "#dcd8ee", deep: "#948cc9" },
+} as const
+
+/** Long titles (guides, glossary terms) step down so they never overflow the card. */
+function titleSize(title: string): number {
+  if (title.length > 64) return 56
+  if (title.length > 40) return 66
+  return 80
+}
+
 /**
  * Shared OpenGraph card: the page's pastel field, the headline in ink, and
  * a deeper disc cropped off the corner, like the page heroes.
@@ -55,7 +70,7 @@ export function renderOgImage({
           <div
             style={{
               display: "flex",
-              fontSize: 80,
+              fontSize: titleSize(title),
               fontWeight: 800,
               color: "#151515",
               letterSpacing: -4,
@@ -66,7 +81,7 @@ export function renderOgImage({
             {title}
           </div>
           <div style={{ display: "flex", fontSize: 30, color: "#454545", lineHeight: 1.4, maxWidth: 900 }}>
-            {subtitle}
+            {subtitle.length > 150 ? `${subtitle.slice(0, 147).trimEnd()}…` : subtitle}
           </div>
         </div>
 

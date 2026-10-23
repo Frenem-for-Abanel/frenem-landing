@@ -71,7 +71,11 @@ describe("seo host", () => {
           ? "app/page.tsx"
           : pathname.startsWith("/engineering/") && pathname !== "/engineering/log"
             ? "app/engineering/[slug]/page.tsx"
-            : `app${pathname}/page.tsx`
+            : pathname.startsWith("/guides/")
+              ? "app/guides/[slug]/page.tsx"
+              : pathname.startsWith("/glossary/")
+                ? "app/glossary/[term]/page.tsx"
+                : `app${pathname}/page.tsx`
       expect(fs.existsSync(path.join(process.cwd(), page)), pathname).toBe(true)
     }
   })
@@ -80,7 +84,17 @@ describe("seo host", () => {
     const result = robots()
     expect(result.sitemap).toBe(`${SITE_URL}/sitemap.xml`)
     expect(result.sitemap).toBe(`${DEFAULT_SITE_URL}/sitemap.xml`)
-    expect(result.rules).toMatchObject({ userAgent: "*", allow: "/", disallow: "/api/" })
+    const rules = Array.isArray(result.rules) ? result.rules : [result.rules]
+    expect(rules).toContainEqual({ userAgent: "*", allow: "/", disallow: "/api/" })
+    // Every group keeps the site open and only the form API closed.
+    for (const rule of rules) {
+      expect(rule.allow).toBe("/")
+      expect(rule.disallow).toBe("/api/")
+    }
+    const named = rules.flatMap((rule) => (Array.isArray(rule.userAgent) ? rule.userAgent : [rule.userAgent]))
+    for (const bot of ["GPTBot", "OAI-SearchBot", "ClaudeBot", "PerplexityBot", "Google-Extended", "Bingbot"]) {
+      expect(named).toContain(bot)
+    }
   })
 
   it("keeps JSON-LD, the feed, and llms.txt on the www origin", async () => {

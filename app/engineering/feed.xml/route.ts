@@ -1,4 +1,4 @@
-import { getAllEntries, TYPE_LABELS } from "../../../lib/engineering/content"
+import { entryPath, getAllEntries, TYPE_LABELS } from "../../../lib/engineering/content"
 import { SITE_URL } from "../../utils/site"
 
 export const dynamic = "force-static"
@@ -11,16 +11,14 @@ const rfc822 = (date: string) => new Date(`${date}T12:00:00Z`).toUTCString()
 
 /**
  * RSS 2.0 for the whole engineering log, so essays and notes reach feed
- * readers and aggregators. Essays link to their page; notes to their anchor
- * on the log.
+ * readers and aggregators. Every entry links to its own page.
  */
 export function GET() {
   const entries = getAllEntries()
   const channelUrl = `${SITE_URL}/engineering`
   const items = entries
     .map((entry) => {
-      const link =
-        entry.type === "essay" ? `${SITE_URL}/engineering/${entry.slug}` : `${SITE_URL}/engineering/log#${entry.slug}`
+      const link = `${SITE_URL}${entryPath(entry)}`
       return [
         "    <item>",
         `      <title>${escape(entry.title)}</title>`,
@@ -41,7 +39,7 @@ export function GET() {
     <link>${channelUrl}</link>
     <atom:link href="${SITE_URL}/engineering/feed.xml" rel="self" type="application/rss+xml" />
     <description>Essays and field notes from Frenem Engineering: the method, design, and trust decisions behind the clarity suite.</description>
-    <language>en</language>
+    <language>en-GB</language>
 ${entries[0] ? `    <lastBuildDate>${rfc822(entries[0].date)}</lastBuildDate>\n` : ""}${items}
   </channel>
 </rss>

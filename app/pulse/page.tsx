@@ -24,7 +24,7 @@ const DESCRIPTION =
 
 export const metadata: Metadata = pageMetadata({
   path: "/pulse",
-  title: "Pulse by Frenem | Relational diagnostics & network analysis",
+  title: "Pulse by Frenem | Organisational network analysis (ONA)",
   description: DESCRIPTION,
   socialTitle: "Frenem Pulse: see how your people actually work together",
   socialDescription:
@@ -70,6 +70,7 @@ const jsonLd = graph(
     serviceType: "Relational diagnostics and organisational network analysis",
     category: "Organisational diagnostics",
     provider: { "@id": ORG_ID },
+    areaServed: "Worldwide",
     audience: { "@type": "BusinessAudience", name: "Leadership teams of scaling organisations" },
     description:
       "A relational diagnostic that maps how people actually work together: exit risk, hidden brokers, the manager effect, and cross-functional friction.",

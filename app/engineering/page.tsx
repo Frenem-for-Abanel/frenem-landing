@@ -3,7 +3,7 @@ import Link from "next/link"
 import FeaturedEssay from "../components/engineering/FeaturedEssay"
 import LogStream from "../components/engineering/LogStream"
 import JsonLd from "../components/JsonLd"
-import { getAllEntries, getEssays, getFeaturedEssay } from "../../lib/engineering/content"
+import { entryPath, getAllEntries, getFeaturedEssay } from "../../lib/engineering/content"
 import { pageMetadata } from "../utils/seo"
 import { absoluteUrl, BLOG_ID, breadcrumbs, graph, ORG_ID, webPage } from "../utils/structured-data"
 
@@ -30,14 +30,14 @@ export default function EngineeringPage() {
       name: "Frenem Engineering",
       description: DESCRIPTION,
       url: absoluteUrl("/engineering"),
-      inLanguage: "en",
+      inLanguage: "en-GB",
       publisher: { "@id": ORG_ID },
-      blogPost: getEssays().map((essay) => ({
+      blogPost: entries.map((entry) => ({
         "@type": "BlogPosting",
-        "@id": absoluteUrl(`/engineering/${essay.slug}#article`),
-        headline: essay.title,
-        url: absoluteUrl(`/engineering/${essay.slug}`),
-        datePublished: essay.date,
+        "@id": absoluteUrl(`${entryPath(entry)}#article`),
+        headline: entry.title,
+        url: absoluteUrl(entryPath(entry)),
+        datePublished: entry.date,
       })),
     },
     breadcrumbs([{ name: "Engineering", path: "/engineering" }])

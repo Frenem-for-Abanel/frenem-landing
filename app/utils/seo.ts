@@ -3,9 +3,9 @@ import type { EngineeringEntry } from "../../lib/engineering/content"
 import { SITE_NAME } from "./site"
 
 /** Homepage title and description. No city: the firm reads as global. The work is how the business runs, not an HR function. */
-export const HOME_TITLE = "Frenem | Diagnose, design, and run the organisation"
+export const HOME_TITLE = "Frenem | Organisation design and people diagnostics"
 export const HOME_DESCRIPTION =
-  "A clarity suite for how a business actually runs. Pulse maps how people work together, Build redesigns the structure, and Prism keeps it current."
+  "Organisation design and people diagnostics for founder-led companies. Pulse maps how people work, Build redesigns the structure, Prism keeps it current."
 
 /**
  * The essay summary is one sentence. When a TL;DR bullet states the topic in

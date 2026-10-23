@@ -6,6 +6,8 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Frenem",
     description:
       "Pulse maps how people actually work together, Build designs the structure your strategy needs, and Prism keeps it current.",
+    id: "/",
+    lang: "en-GB",
     start_url: "/",
     display: "browser",
     background_color: "#ffffff",

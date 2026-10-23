@@ -141,17 +141,23 @@ describe("middleware", () => {
 
 describe("next.config host redirects", () => {
   it("308s every apex path to a literal www URL", async () => {
-    const redirects = await nextConfig.redirects?.()
-    expect(redirects?.map((rule) => rule.source)).toEqual(["/", "/:path*"])
-    for (const rule of redirects ?? []) {
+    const all = (await nextConfig.redirects?.()) ?? []
+    const redirects = all.filter((rule) => rule.has)
+    expect(redirects.map((rule) => rule.source)).toEqual(["/", "/:path*"])
+    for (const rule of redirects) {
       expect(rule.permanent).toBe(true)
       expect(rule.has).toEqual([{ type: "host", value: APEX_HOST }])
       expect(rule.destination.startsWith(`https://${CANONICAL_HOST}`)).toBe(true)
       expect(rule.destination).not.toMatch(/https:\/\/frenem\.com\b/)
       expect(rule.destination).not.toMatch(/:\d/)
     }
-    expect(redirects?.[0]?.destination).toBe(`https://${CANONICAL_HOST}/`)
-    expect(redirects?.[1]?.destination).toBe(`https://${CANONICAL_HOST}/:path*`)
+    expect(redirects[0]?.destination).toBe(`https://${CANONICAL_HOST}/`)
+    expect(redirects[1]?.destination).toBe(`https://${CANONICAL_HOST}/:path*`)
+  })
+
+  it("sends the bare /guides path to the Insights hub", async () => {
+    const all = (await nextConfig.redirects?.()) ?? []
+    expect(all).toContainEqual({ source: "/guides", destination: "/insights", permanent: true })
   })
 
   it("sends nosniff, a referrer policy, and HSTS on every path", async () => {

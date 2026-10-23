@@ -69,7 +69,7 @@ const ALLOWED_KEYS = new Set([
   "draft",
 ])
 
-const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+export const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
 const TLDR_RE = /<Tldr\b[^>]*>([\s\S]*?)<\/Tldr>/
 const MIN_TLDR_BULLETS = 2
@@ -81,7 +81,7 @@ const MAX_TLDR_BULLETS = 4
  * package instead. It follows YAML 1.2, so a bare `2026-08-13` stays a string
  * rather than silently becoming a Date.
  */
-const YAML_ENGINE = {
+export const YAML_ENGINE = {
   parse: (input: string): object => (parseYaml(input) as object | null) ?? {},
   stringify: (): string => {
     throw new Error("engineering frontmatter is read-only")
@@ -94,7 +94,7 @@ export function tintClass(entry: Pick<EngineeringEntry, "product">): string {
 }
 
 /** Word count on prose alone: code blocks, JSX, and comments don't read. */
-function proseOf(body: string): string {
+export function proseOf(body: string): string {
   return body
     .replace(/```[\s\S]*?```/g, " ")
     .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
@@ -161,7 +161,7 @@ function readDir(root: string, kind: "essays" | "log", problems: string[]): RawF
 }
 
 /** A real calendar date, or null. Timestamps are rejected on purpose. */
-function asDateString(value: unknown): string | null {
+export function asDateString(value: unknown): string | null {
   if (typeof value !== "string" || !DATE_RE.test(value)) return null
   const parsed = new Date(`${value}T00:00:00.000Z`)
   if (Number.isNaN(parsed.getTime())) return null
@@ -362,6 +362,16 @@ export function getEssays(): EngineeringEntry[] {
 
 export function getEssayBySlug(slug: string): EngineeringEntry | undefined {
   return getEssays().find((entry) => entry.slug === slug)
+}
+
+/** Any published entry by slug: essays, shipped changes, and notes each have a page. */
+export function getEntryBySlug(slug: string): EngineeringEntry | undefined {
+  return loadEntries().find((entry) => entry.slug === slug)
+}
+
+/** An entry's own page. */
+export function entryPath(entry: Pick<EngineeringEntry, "slug">): string {
+  return `/engineering/${entry.slug}`
 }
 
 /** The manually pinned essay; validation guarantees exactly one. */
