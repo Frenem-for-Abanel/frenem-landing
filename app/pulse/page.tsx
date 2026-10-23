@@ -11,6 +11,8 @@ import TimelineSection from "../components/TimelineSection"
 import FaqSection from "../components/FaqSection"
 import SuiteLoopSection from "../components/SuiteLoopSection"
 import FinalCtaSection from "../components/FinalCtaSection"
+import InlineCta from "../components/InlineCta"
+import MobileCtaBar from "../components/MobileCtaBar"
 import { PHASE_VIEWBOX, PULSE_PHASES } from "../utils/compositions"
 import JsonLd from "../components/JsonLd"
 import { pageMetadata } from "../utils/seo"
@@ -100,23 +102,26 @@ export default function PulsePage() {
             See how your people <em>actually work together.</em>
           </>
         }
-        subtitle="Engagement surveys measure how people feel. Pulse measures how they work together: the friction, energy, and hidden connections between the people doing the work."
+        subtitle="Engagement surveys measure how people feel. Pulse measures how they work together: an organisational network analysis (ONA) of the friction, energy, and hidden connections between the people doing the work."
         actions={
           <>
             <ContactCta mode="pulseQuestionnaire" className="w-full sm:w-auto">
-              Map my organisation
+              Start with 4 questions
             </ContactCta>
             <ContactCta mode="pulseContact" variant="text" className="justify-center sm:justify-start">
               Just get in touch
             </ContactCta>
           </>
         }
-        note="Three report cuts. Privacy by design. No surveillance."
+        note="Four quick questions, then we reply within one business day with what a Pulse would show. No surveillance."
         scene="pulse"
       />
 
-      <LensesSection />
       <SignalsSection />
+      <InlineCta mode="pulseQuestionnaire" label="Start with 4 questions" secondaryLabel="Just get in touch" secondaryMode="pulseContact">
+        Which of these is already happening in your business?
+      </InlineCta>
+      <LensesSection />
       <ComparisonSection />
       <TimelineSection
         id="how-pulse"
@@ -131,6 +136,9 @@ export default function PulsePage() {
         viewBox={PHASE_VIEWBOX}
       />
       <ReportsSection />
+      <InlineCta mode="pulseQuestionnaire" label="Start with 4 questions" secondaryLabel="Just get in touch" secondaryMode="pulseContact">
+        See these reports for your own organisation.
+      </InlineCta>
       <PrivacySection />
       <FaqSection
         heading={
@@ -144,13 +152,14 @@ export default function PulsePage() {
         current="pulse"
         heading={
           <>
-            Three products. One <em>operating picture.</em>
+            Diagnose, then design, then <em>keep it true.</em>
           </>
         }
       />
+      <MobileCtaBar mode="pulseQuestionnaire" label="Start with 4 questions" summary="Pulse · relational diagnostics" />
       <FinalCtaSection
         modalMode="pulseQuestionnaire"
-        buttonText="Map my organisation"
+        buttonText="Start with 4 questions"
         secondaryButtonText="Just get in touch"
         secondaryModalMode="pulseContact"
         title={

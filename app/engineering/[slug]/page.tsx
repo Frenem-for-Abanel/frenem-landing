@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import Mdx from "../../components/engineering/Mdx"
 import Breadcrumbs from "../../components/Breadcrumbs"
 import JsonLd from "../../components/JsonLd"
+import ArticleCta from "../../components/ArticleCta"
 import { formatEntryDate } from "../../utils/dates"
 import { essayMetaDescription, pageMetadata } from "../../utils/seo"
 import { absoluteUrl, BLOG_ID, breadcrumbs, graph, ogImage, ORG_ID } from "../../utils/structured-data"
@@ -116,6 +117,8 @@ export default async function EssayPage({
           <div className="mt-8 border-t border-line pt-8 md:mt-10">
             <Mdx source={essay.body} />
           </div>
+
+          <ArticleCta product={essay.product} />
 
           <footer className="mt-14 border-t border-line pt-6">
             <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-ink-tertiary">

@@ -41,7 +41,7 @@ export default function CapitalReadySection() {
         aside={
           <p>
             IPOs and PE deals don&apos;t fail because of strategy. They fail because investors see
-            organisation risk. Promoter dependency, informal decision-making, a thin leadership
+            organisation risk. Dependence on the founder-owner, informal decision-making, a thin leadership
             bench. Build moves that work upstream, before it becomes expensive.
           </p>
         }
@@ -52,10 +52,10 @@ export default function CapitalReadySection() {
           <div aria-hidden className="h-28 w-28 bg-(--tint-soft) md:h-40 md:w-40" />
         </Parallax>
         <SplitText as="p" className="relative max-w-[18ch] text-[clamp(34px,5vw,76px)] font-light leading-[0.98] tracking-[-0.045em] [font-stretch:104%]">
-          Will this company still work if the promoter steps back?
+          Will this company still work if the founder steps back?
         </SplitText>
         <figcaption className="relative mt-8 text-[16px] font-medium text-white/65">
-          The question every merchant banker asks internally
+          The question every investment banker asks internally
         </figcaption>
       </figure>
 

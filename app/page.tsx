@@ -4,13 +4,15 @@ import ContactCta from "./components/ContactCta"
 import SmoothScrollLink from "./components/SmoothScrollLink"
 import IntentOpener from "./components/contact/IntentOpener"
 import ProductRouterSection from "./components/home/ProductRouterSection"
-import Marquee from "./components/motion/Marquee"
+import KineticBand from "./components/home/KineticBand"
+import FaqSection from "./components/FaqSection"
 import TeamSection from "./components/TeamSection"
 import SecuritySection from "./components/SecuritySection"
 import FinalCtaSection from "./components/FinalCtaSection"
 import JsonLd from "./components/JsonLd"
 import { HOME_DESCRIPTION, HOME_TITLE, pageMetadata } from "./utils/seo"
-import { absoluteUrl, graph, ORG_ID, webPage } from "./utils/structured-data"
+import { absoluteUrl, faq, graph, ORG_ID, webPage } from "./utils/structured-data"
+import { HOME_FAQS } from "./utils/faqs"
 
 export const metadata: Metadata = pageMetadata({
   path: "/",
@@ -37,14 +39,9 @@ const jsonLd = graph(
       description: product.description,
       url: absoluteUrl(product.path),
     })),
-  }
+  },
+  faq("/", HOME_FAQS)
 )
-
-const BAND = [
-  { word: "Diagnose", shape: "h-[0.6em] w-[0.6em] rounded-full bg-sage" },
-  { word: "Design", shape: "h-[0.56em] w-[0.56em] bg-clay" },
-  { word: "Operate", shape: "h-[0.4em] w-[1.1em] rounded-full bg-heather" },
-]
 
 export default function HomePage() {
   return (
@@ -58,7 +55,7 @@ export default function HomePage() {
             The whole organisation, <em>in focus.</em>
           </>
         }
-        subtitle="Diagnose how your people actually work together. Design the structure your strategy needs. Keep it current as you scale. Three products, one operating picture."
+        subtitle="Organisation design and people diagnostics for founder-led and scaling companies. Diagnose how your people actually work together, design the structure your strategy needs, and keep it current as you scale."
         actions={
           <>
             <ContactCta mode="default" className="w-full sm:w-auto">
@@ -67,35 +64,23 @@ export default function HomePage() {
             <SmoothScrollLink targetId="products">Explore the products</SmoothScrollLink>
           </>
         }
+        note="Tell us what's breaking. We reply within one business day."
         scene="suite"
       />
 
-      <div className="grain grain-light relative overflow-clip bg-ink py-6 text-sand md:py-9">
-        <Marquee kinetic speed={4} className="text-[clamp(56px,9vw,140px)] font-extrabold leading-[1] tracking-[-0.05em] [font-stretch:100%]">
-          {BAND.map(({ word, shape }) => (
-            <span key={word} className="flex items-center gap-[0.35em] pr-[0.35em]">
-              {word}
-              <span aria-hidden className={`inline-block shrink-0 ${shape}`} />
-            </span>
-          ))}
-        </Marquee>
-        <Marquee
-          kinetic
-          reverse
-          speed={3}
-          className="-mt-1 text-[clamp(56px,9vw,140px)] font-extrabold leading-[1] tracking-[-0.05em] text-transparent [-webkit-text-stroke:1.5px_var(--color-sand)]"
-        >
-          {["Pulse", "Build", "Prism"].map((word) => (
-            <span key={word} aria-hidden className="pr-[0.5em]">
-              {word}
-            </span>
-          ))}
-        </Marquee>
-      </div>
+      <KineticBand />
 
       <ProductRouterSection />
       <TeamSection compact tone="soft" />
       <SecuritySection variant="strip" />
+      <FaqSection
+        heading={
+          <>
+            New to Frenem? <em>Start here.</em>
+          </>
+        }
+        items={HOME_FAQS}
+      />
       <FinalCtaSection
         title={
           <>

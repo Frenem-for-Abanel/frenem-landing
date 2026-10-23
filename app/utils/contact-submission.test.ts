@@ -253,7 +253,7 @@ describe("contact email builders", () => {
     expect(html).toContain("New Pulse Questionnaire")
     expect(html).toContain("Pulse answers")
     expect(html).toContain("Losing key people")
-    expect(html).toContain("How many people are you looking to pulse-check?")
+    expect(html).toContain("How many people would take part?")
   })
 })
 

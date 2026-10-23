@@ -40,7 +40,7 @@ export default function TeamSection({
   tone = "white",
   title = (
     <>
-      A combined <em>100+ years</em> of consulting experience.
+      <em>A combined</em> 100+ years of consulting experience.
     </>
   ),
 }: {

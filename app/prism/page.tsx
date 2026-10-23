@@ -7,9 +7,12 @@ import FeatureWalkthrough from "../components/prism/FeatureWalkthrough"
 import SuiteLoopSection from "../components/SuiteLoopSection"
 import SecuritySection from "../components/SecuritySection"
 import FinalCtaSection from "../components/FinalCtaSection"
+import FaqSection from "../components/FaqSection"
+import MobileCtaBar from "../components/MobileCtaBar"
+import { PRISM_FAQS } from "../utils/faqs"
 import JsonLd from "../components/JsonLd"
 import { pageMetadata } from "../utils/seo"
-import { absoluteUrl, breadcrumbs, graph, ogImage, ORG_ID, webPage } from "../utils/structured-data"
+import { absoluteUrl, breadcrumbs, faq, graph, ogImage, ORG_ID, webPage } from "../utils/structured-data"
 
 const DESCRIPTION =
   "The organisation, kept current: live org charts, who owns what, how it's measured, governance, and a full audit trail."
@@ -50,7 +53,8 @@ const jsonLd = graph(
     publisher: { "@id": ORG_ID },
     provider: { "@id": ORG_ID },
   },
-  breadcrumbs([{ name: "Prism", path: "/prism" }])
+  breadcrumbs([{ name: "Prism", path: "/prism" }]),
+  faq("/prism", PRISM_FAQS)
 )
 
 export default function PrismPage() {
@@ -63,14 +67,14 @@ export default function PrismPage() {
         crumbs={[{ name: "Prism, the operating record", path: "/prism" }]}
         title={
           <>
-            Your single source of <em>truth.</em>
+            The organisation, <em>kept current.</em>
           </>
         }
-        subtitle="One place for who does what, how it's measured, and where the organisation stands."
+        subtitle="Live org charts, who owns what, how it's measured, and governance, with a full audit trail. One place for where the organisation stands."
         actions={
           <>
             <ContactCta mode="default" className="w-full sm:w-auto">
-              Get started
+              Talk to us about Prism
             </ContactCta>
             <SmoothScrollLink targetId="features">See what Prism does</SmoothScrollLink>
           </>
@@ -89,7 +93,17 @@ export default function PrismPage() {
         }
       />
       <SecuritySection variant="strip" />
+      <FaqSection
+        heading={
+          <>
+            Asked about <em>Prism.</em>
+          </>
+        }
+        items={PRISM_FAQS}
+      />
+      <MobileCtaBar mode="default" label="Talk to us" summary="Prism · operating record" />
       <FinalCtaSection
+        buttonText="Talk to us about Prism"
         title={
           <>
             One place for your organisation. <em>Always current.</em>

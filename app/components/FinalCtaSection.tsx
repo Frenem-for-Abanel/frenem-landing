@@ -24,13 +24,13 @@ interface FinalCtaSectionProps {
 export default function FinalCtaSection({
   title,
   subtitle,
-  buttonText = "Talk to us",
+  buttonText = "Get in touch",
   modalMode = "default",
   secondaryButtonText,
   secondaryModalMode = "default",
 }: FinalCtaSectionProps) {
   return (
-    <section className="relative overflow-clip py-24 md:py-40">
+    <section data-final-cta className="relative overflow-clip py-24 md:py-40">
       <FieldBackdrop className="bg-(--tint-soft)" origin="100% 100%" />
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <Parallax y={[80, -80]} rotate={[0, 90]} className="absolute right-[6%] top-16 hidden md:block">

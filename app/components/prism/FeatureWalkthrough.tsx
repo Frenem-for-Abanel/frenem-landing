@@ -32,7 +32,7 @@ const features: Feature[] = [
     short: "KRAs & KPIs",
     title: "Transparent KRAs, KPIs, and responsibilities",
     description:
-      "Everyone knows what they own, what they're measured on, and what success looks like in their role. Clarity as a default, not an annual exercise.",
+      "Everyone knows what they own (their key result areas, or KRAs), what they're measured on, and what success looks like in their role. Clarity as a default, not an annual exercise.",
     Vignette: KraVignette,
   },
   {

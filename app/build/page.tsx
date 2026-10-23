@@ -13,6 +13,8 @@ import SecuritySection from "../components/SecuritySection"
 import FaqSection from "../components/FaqSection"
 import SuiteLoopSection from "../components/SuiteLoopSection"
 import FinalCtaSection from "../components/FinalCtaSection"
+import InlineCta from "../components/InlineCta"
+import MobileCtaBar from "../components/MobileCtaBar"
 import { BUILD_PHASES, PHASE_VIEWBOX } from "../utils/compositions"
 import JsonLd from "../components/JsonLd"
 import { pageMetadata } from "../utils/seo"
@@ -73,7 +75,7 @@ const jsonLd = graph(
     serviceType: "Organisation design",
     category: "Organisation design and governance",
     provider: { "@id": ORG_ID },
-    audience: { "@type": "BusinessAudience", name: "Founders and promoters of growing businesses" },
+    audience: { "@type": "BusinessAudience", name: "Founders and founder-owners of growing businesses" },
     description:
       "Organisation design for founder-led businesses, as a complete sprint or only the parts you need: faster decisions, clear ownership, governance, and a leadership bench.",
     image: ogImage("/build"),
@@ -118,6 +120,9 @@ export default function BuildPage() {
 
       <PlanBuilder />
       <DeliverablesSection />
+      <InlineCta mode="assessment" label="Scope your Build" secondaryLabel="Just get in touch" secondaryMode="contact">
+        Want this for your business? Tell us where it hurts most.
+      </InlineCta>
       <TimelineSection
         id="how-build"
         heading={
@@ -135,7 +140,7 @@ export default function BuildPage() {
       <TeamSection
         title={
           <>
-            A combined <em>100+ years</em> of consulting.
+            <em>A combined</em> 100+ years of consulting.
           </>
         }
       />
@@ -152,13 +157,14 @@ export default function BuildPage() {
         current="build"
         heading={
           <>
-            Three products. One <em>operating picture.</em>
+            Build is one part of <em>a loop.</em>
           </>
         }
       />
+      <MobileCtaBar mode="assessment" label="Scope your Build" summary="Build · organisation design" clearOf={["plan"]} />
       <FinalCtaSection
         modalMode="assessment"
-        buttonText="Get started"
+        buttonText="Scope your Build"
         secondaryButtonText="Just get in touch"
         secondaryModalMode="contact"
         title={

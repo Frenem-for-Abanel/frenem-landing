@@ -42,7 +42,7 @@ export default function PositioningSection() {
           </p>
           <div className="md:justify-self-end">
             <ContactCta mode="assessment" className="w-full sm:w-auto">
-              Book a Sprint
+              Scope your Build
             </ContactCta>
           </div>
         </div>

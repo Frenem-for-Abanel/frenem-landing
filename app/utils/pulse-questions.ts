@@ -9,7 +9,7 @@ export type PulseQuestion = {
 export const PULSE_QUESTIONS: PulseQuestion[] = [
   {
     key: "q1",
-    title: "How many people are you looking to pulse-check?",
+    title: "How many people would take part?",
     options: ["Under 50", "50–150", "150–500", "500+"],
   },
   {
@@ -35,7 +35,7 @@ export const PULSE_QUESTIONS: PulseQuestion[] = [
 ]
 
 export const PULSE_QUESTION_LABELS: Record<PulseAnswerKey, string> = {
-  q1: "How many people are you looking to pulse-check?",
+  q1: "How many people would take part?",
   q2: "What's driving this?",
   q3: "Do you currently run engagement surveys?",
   q4: "Have you had unexpected resignations in the last 6 months that surprised leadership?",
