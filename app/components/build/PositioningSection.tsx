@@ -16,7 +16,6 @@ export default function PositioningSection() {
   return (
     <Section tone="soft">
       <SectionHead
-        kicker="Positioning"
         size={3}
         title={
           <>

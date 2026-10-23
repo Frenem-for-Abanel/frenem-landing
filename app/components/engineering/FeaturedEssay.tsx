@@ -4,6 +4,7 @@ import {
   tintClass,
   type EngineeringEntry,
 } from "../../../lib/engineering/content"
+import { formatEntryDate } from "../../utils/dates"
 import Mdx from "./Mdx"
 
 /**
@@ -18,6 +19,12 @@ export default function FeaturedEssay({ essay }: { essay: EngineeringEntry }) {
       className={`${tintClass(essay)} anim-fade-up border-b border-line py-10 md:py-14`}
     >
       <p className="font-mono text-[11px] uppercase tracking-[0.12em]">
+        <time dateTime={essay.date} className="text-ink-tertiary">
+          {formatEntryDate(essay.date)}
+        </time>
+        <span aria-hidden className="mx-2 text-ink-tertiary">
+          ·
+        </span>
         <span className="text-ink-tertiary">Featured</span>
         {essay.pillar ? (
           <>

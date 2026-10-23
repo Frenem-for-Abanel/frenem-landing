@@ -41,7 +41,6 @@ function Segment({ progress, index, total }: { progress: MotionValue<number>; in
  */
 export default function TimelineSection({
   id,
-  label = "How it works",
   heading,
   sub,
   phases,
@@ -49,7 +48,6 @@ export default function TimelineSection({
   viewBox,
 }: {
   id?: string
-  label?: string
   heading: ReactNode
   sub: string
   phases: TimelinePhase[]
@@ -71,7 +69,7 @@ export default function TimelineSection({
   return (
     <section id={id} className="relative scroll-mt-20 bg-paper">
       <div className="container-site pt-24 md:pt-36">
-        <SectionHead kicker={label} title={heading} aside={<p>{sub}</p>} className="mb-10 md:mb-12 lg:mb-0" />
+        <SectionHead title={heading} aside={<p>{sub}</p>} className="mb-10 md:mb-12 lg:mb-0" />
       </div>
 
       {/* Wide screens: pinned stage */}

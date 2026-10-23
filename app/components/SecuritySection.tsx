@@ -10,7 +10,7 @@ const ITEMS = [
   },
   {
     title: "Access Control",
-    body: "Secure OTP authentication with role-based permissions for promoter, HR, and employee levels.",
+    body: "Secure OTP authentication with role-based permissions for promoter, leadership, and employee levels.",
   },
   {
     title: "Monitoring",
@@ -65,7 +65,6 @@ export default function SecuritySection({ variant = "full" }: { variant?: "full"
     <Section tone="deep" revealFrom="100% 0%">
       <SectionHead
         dark
-        kicker="Security and trust"
         title={
           <>
             Your <em>data,</em> protected.

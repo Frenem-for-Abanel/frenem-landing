@@ -154,10 +154,14 @@
     color: var(--color-ink);
   }
 
+  /* Two-tone ring: an ink outline set in a paper halo (the outline paints
+     over the shadow), so focus shows on any surface: the ink line on pastel
+     fields, the paper bands on ink, even around a white button. */
   :focus-visible {
     outline: 2px solid var(--color-ink);
     outline-offset: 3px;
     border-radius: 2px;
+    box-shadow: 0 0 0 7px var(--color-paper);
   }
 
   /* Native disclosure widgets (FAQ) */

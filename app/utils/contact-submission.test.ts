@@ -110,7 +110,7 @@ describe("validateContactSubmission", () => {
         flow: "pulseQuestionnaire",
         answers: {
           q1: "Under 20",
-          q2: "Rising attrition",
+          q2: "Losing key people",
           q3: "No",
           q4: "None",
         },
@@ -122,7 +122,7 @@ describe("validateContactSubmission", () => {
       flow: "pulseQuestionnaire",
       answers: {
         q1: "Under 50",
-        q2: "Rising attrition",
+        q2: "Losing key people",
         q3: "No",
         q4: "None",
       },
@@ -130,7 +130,7 @@ describe("validateContactSubmission", () => {
     expect(result.ok).toBe(true)
     if (result.ok) {
       expect(result.data.flow).toBe("pulseQuestionnaire")
-      expect(result.data.answers?.q2).toBe("Rising attrition")
+      expect(result.data.answers?.q2).toBe("Losing key people")
     }
   })
 
@@ -154,7 +154,7 @@ describe("validateContactSubmission", () => {
         flow: "assessment",
         answers: {
           q1: "Under 50",
-          q2: "Rising attrition",
+          q2: "Losing key people",
           q3: "No",
           q4: "None",
         },
@@ -245,14 +245,14 @@ describe("contact email builders", () => {
       interest: "Pulse · Relational Diagnostics",
       answers: {
         q1: "Under 50",
-        q2: "Rising attrition",
+        q2: "Losing key people",
         q3: "No",
         q4: "None",
       },
     })
     expect(html).toContain("New Pulse Questionnaire")
     expect(html).toContain("Pulse answers")
-    expect(html).toContain("Rising attrition")
+    expect(html).toContain("Losing key people")
     expect(html).toContain("How many people are you looking to pulse-check?")
   })
 })

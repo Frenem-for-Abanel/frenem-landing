@@ -34,10 +34,10 @@ const products = [
   {
     tintClass: "tint-prism",
     product: "Prism",
-    tagline: "Employee management",
+    tagline: "Operating record",
     problem: "Nobody's quite sure who owns what anymore.",
     description:
-      "Lightweight employee management: live org charts, KRAs, review cycles, and governance in one place your team actually uses.",
+      "The organisation, kept current: live org charts, ownership, measurement, and governance in one place your team actually uses.",
     meta: ["Live org charts", "KRAs and reviews", "Audit trails"],
     href: "/prism",
     mark: "prism",
@@ -103,7 +103,6 @@ export default function ProductRouterSection() {
     <section id="products" className="relative scroll-mt-20 bg-paper pt-24 md:pt-36">
       <div className="container-site">
         <SectionHead
-          kicker="Start with the problem"
           title={
             <>
               Three products. One <em>operating picture.</em>

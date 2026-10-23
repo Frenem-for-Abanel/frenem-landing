@@ -6,7 +6,7 @@ import { GET as llms } from "./llms.txt/route"
 import { getAllEntries, getEssays } from "../lib/engineering/content"
 import robots from "./robots"
 import sitemap from "./sitemap"
-import { pageMetadata } from "./utils/seo"
+import * as seo from "./utils/seo"
 import { DEFAULT_SITE_URL, SITE_URL } from "./utils/site"
 import { ogImage, siteGraph, toJsonLd } from "./utils/structured-data"
 
@@ -22,6 +22,10 @@ const PAGE_FILES = [
 
 function metaString(file: string, key: "title" | "description"): string {
   const text = fs.readFileSync(path.join(process.cwd(), file), "utf8")
+  // Shared values (e.g. the homepage's HOME_TITLE) live in utils/seo.
+  const named = text.match(new RegExp(`\\b${key}:\\s*([A-Z][A-Z0-9_]+)\\b`))
+  const shared = named ? (seo as Record<string, unknown>)[named[1]!] : undefined
+  if (typeof shared === "string") return shared
   if (key === "description") {
     const constant = text.match(/const DESCRIPTION =\s*\n\s*"([^"]+)"/)
     if (constant) return constant[1]!
@@ -112,7 +116,7 @@ describe("seo host", () => {
   })
 
   it("leaves Twitter images unset so Next can reuse the Open Graph file", () => {
-    const metadata = pageMetadata({ path: "/pulse", title: "Pulse", description: "A diagnostic." })
+    const metadata = seo.pageMetadata({ path: "/pulse", title: "Pulse", description: "A diagnostic." })
     expect(metadata.twitter).toMatchObject({ card: "summary_large_image", title: "Pulse" })
     expect(metadata.twitter).not.toHaveProperty("images")
     expect(metadata.alternates?.canonical).toBe("/pulse")

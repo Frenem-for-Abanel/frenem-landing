@@ -49,18 +49,16 @@ export function Section({
 }
 
 /**
- * Section opener: a short kicker, a big heading that rises in word by word,
- * and an optional aside that sits against the heading's baseline.
+ * Section opener: a big heading that rises in word by word and speaks for
+ * itself (no eyebrow label), with an optional aside on its baseline.
  */
 export function SectionHead({
-  kicker,
   title,
   aside,
   dark = false,
   className,
   size = 2,
 }: {
-  kicker?: string
   title: ReactNode
   aside?: ReactNode
   dark?: boolean
@@ -70,14 +68,6 @@ export function SectionHead({
   return (
     <header className={cn("mb-14 grid grid-cols-1 gap-y-8 md:mb-20 lg:grid-cols-12 lg:items-end lg:gap-x-10", className)}>
       <div className={aside ? "lg:col-span-8" : "lg:col-span-11"}>
-        {kicker ? (
-          <Reveal>
-            <p className={cn("type-kicker mb-6 flex items-center gap-3 md:mb-8", dark ? "text-white/70" : "text-ink-secondary")}>
-              <span aria-hidden className="h-3 w-3 shrink-0 rounded-full bg-(--tint-bright)" />
-              {kicker}
-            </p>
-          </Reveal>
-        ) : null}
         <SplitText as="h2" className={size === 3 ? "type-display-3 max-w-[22ch]" : "type-display-2 max-w-[16ch]"}>
           {title}
         </SplitText>

@@ -43,7 +43,7 @@ const GLYPHS: Record<string, ReactNode> = {
 const lenses = [
   {
     title: "Self",
-    description: "How individuals see their own behaviour, habits, and self-regulation at work.",
+    description: "How individuals see their own way of working: behaviour, habits, and how they hold up under pressure.",
   },
   {
     title: "Subject",
@@ -67,7 +67,6 @@ export default function LensesSection() {
   return (
     <Section>
       <SectionHead
-        kicker="What Pulse measures"
         title={
           <>
             Four lenses. One <em>diagnostic.</em>

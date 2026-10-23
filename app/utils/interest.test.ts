@@ -9,6 +9,6 @@ describe("interest map", () => {
 
   it("maps build and prism products", () => {
     expect(getInterestForProduct("build")).toBe("Build · Org Design Sprint")
-    expect(getInterestForProduct("prism")).toBe("Prism · Employee Management")
+    expect(getInterestForProduct("prism")).toBe("Prism · Operating record")
   })
 })

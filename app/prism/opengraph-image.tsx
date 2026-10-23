@@ -2,7 +2,7 @@ import { renderOgImage, OG_SIZE } from "../components/og-template"
 
 export const size = OG_SIZE
 export const contentType = "image/png"
-export const alt = "Frenem Prism, employee management"
+export const alt = "Frenem Prism, the organisation kept current"
 
 export default function Image() {
   return renderOgImage({

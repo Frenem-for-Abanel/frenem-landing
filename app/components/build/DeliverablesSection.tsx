@@ -46,7 +46,6 @@ export default function DeliverablesSection() {
   return (
     <Section tone="tint">
       <SectionHead
-        kicker="What you walk away with"
         title={
           <>
             A working operating system. <em>Not a binder.</em>
