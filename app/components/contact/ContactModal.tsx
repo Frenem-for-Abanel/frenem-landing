@@ -172,7 +172,9 @@ export default function ContactModal() {
             ref={panelRef}
             role="dialog"
             aria-modal="true"
-            aria-labelledby="contact-modal-title"
+            // The flow stays mounted (hidden) under the discard prompt, so the
+            // label has to follow whichever title is showing.
+            aria-labelledby={discardConfirm ? "contact-modal-confirm-title" : "contact-modal-title"}
             tabIndex={-1}
             className={`${product ? `tint-${product}` : "tint-brand"} relative my-0 w-full max-h-[min(92dvh,calc(100dvh-1rem))] overflow-y-auto rounded-t-[24px] bg-paper shadow-[0_40px_100px_rgba(0,0,0,0.3)] outline-none sm:my-auto sm:max-h-[calc(100dvh-2rem)] sm:max-w-[500px] sm:rounded-none [scrollbar-color:var(--color-line-strong)_transparent] [scrollbar-width:thin]`}
             initial={{ opacity: 0, y: 60, scale: 0.96 }}
@@ -219,7 +221,7 @@ export default function ContactModal() {
               {discardConfirm && (
                 <div className="px-1 py-6 text-center">
                   <h3
-                    id="contact-modal-title"
+                    id="contact-modal-confirm-title"
                     className="mb-2.5 text-[30px] font-extrabold tracking-[-0.035em] [font-stretch:106%] text-ink"
                   >
                     {isQuestionnaireMode(mode) ? "Discard your answers?" : "Discard your message?"}
