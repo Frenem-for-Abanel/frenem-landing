@@ -104,9 +104,16 @@ export default function TimelineSection({
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   >
                     <p className="type-kicker text-ink-secondary">{phase.label}</p>
-                    <h3 className="mt-4 text-[clamp(48px,5.4vw,84px)] font-extrabold leading-[0.92] tracking-[-0.045em] [font-stretch:108%]">
+                    {/* The stacked list below carries the real h3s; this pinned
+                        view shows one phase at a time, so it stays out of the
+                        document outline while still reading as a heading. */}
+                    <p
+                      role="heading"
+                      aria-level={3}
+                      className="mt-4 text-[clamp(48px,5.4vw,84px)] font-extrabold leading-[0.92] tracking-[-0.045em] [font-stretch:108%]"
+                    >
                       {phase.title}
-                    </h3>
+                    </p>
                     <p className="type-lead mt-6 max-w-[440px] text-ink-secondary">{phase.description}</p>
                   </motion.div>
                 </AnimatePresence>

@@ -67,10 +67,10 @@ export default function SuiteLoopSection({
               <p className="type-kicker mt-10 text-ink-secondary">
                 {String(i + 1)}. {step.phase}
               </p>
-              <h3 className="mt-2 flex items-baseline gap-3 text-[56px] font-extrabold leading-none tracking-[-0.045em] [font-stretch:110%]">
-                {step.name}
-                {isCurrent ? <span className="text-[15px] font-semibold tracking-normal text-ink-secondary">This page</span> : null}
-              </h3>
+              <div className="mt-2 flex items-baseline gap-3">
+                <h3 className="text-[56px] font-extrabold leading-none tracking-[-0.045em] [font-stretch:110%]">{step.name}</h3>
+                {isCurrent ? <span className="text-[15px] font-semibold text-ink-secondary">This page</span> : null}
+              </div>
               <p className="mt-4 max-w-[320px] text-[17px] leading-relaxed text-ink-secondary">{step.blurb}</p>
               {!isCurrent ? (
                 <span className="mt-8 inline-flex items-center gap-2 text-[16px] font-semibold">

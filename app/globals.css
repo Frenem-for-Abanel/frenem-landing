@@ -14,7 +14,8 @@
 @theme {
   --color-ink: #151515;
   --color-ink-secondary: #454545;
-  --color-ink-tertiary: #6a6a6a;
+  /* Tertiary clears 4.5:1 on every pastel field, not only on paper. */
+  --color-ink-tertiary: #5c5c5c;
   --color-paper: #ffffff;
   --color-paper-raised: #ffffff;
   --color-paper-soft: #f0efea;
@@ -40,6 +41,9 @@
   --color-rose: #edd4d8;
   --color-rose-mid: #c68893;
   --color-rose-deep: #582331;
+
+  /* Form errors. Red reads as error at a glance; deep enough for 6:1 on paper. */
+  --color-danger: #a3241c;
 
   --color-line: rgb(21 21 21 / 0.1);
   --color-line-strong: rgb(21 21 21 / 0.22);

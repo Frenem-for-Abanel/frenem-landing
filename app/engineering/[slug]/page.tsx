@@ -84,7 +84,7 @@ export default async function EssayPage({
             ]}
           />
           <header className="anim-fade-up">
-            <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-[0.12em]">
+            <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 font-mono text-[12px] uppercase tracking-[0.12em]">
               <time dateTime={essay.date} className="text-ink-tertiary">
                 {formatEntryDate(essay.date)}
               </time>
@@ -118,7 +118,7 @@ export default async function EssayPage({
           </div>
 
           <footer className="mt-14 border-t border-line pt-6">
-            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-tertiary">
+            <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-ink-tertiary">
               <Link href="/engineering" className="transition-colors hover:text-ink">
                 {BYLINE}
               </Link>

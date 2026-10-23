@@ -26,25 +26,25 @@ export function OrgChartVignette() {
   return (
     <VignetteFrame caption="Org chart · live">
       <svg aria-hidden className="mx-auto block w-full max-w-[240px]" viewBox="0 0 220 130">
-        <line stroke="#151515" strokeOpacity="0.35" strokeWidth="2" x1="110" x2="50" y1="26" y2="64" />
-        <line stroke="#151515" strokeOpacity="0.35" strokeWidth="2" x1="110" x2="110" y1="26" y2="64" />
-        <line stroke="#151515" strokeOpacity="0.35" strokeWidth="2" x1="110" x2="170" y1="26" y2="64" />
-        <line stroke="#151515" strokeOpacity="0.2" strokeWidth="2" x1="50" x2="30" y1="80" y2="112" />
-        <line stroke="#151515" strokeOpacity="0.2" strokeWidth="2" x1="50" x2="70" y1="80" y2="112" />
-        <line stroke="#151515" strokeOpacity="0.2" strokeWidth="2" x1="110" x2="110" y1="80" y2="112" />
-        <line stroke="#151515" strokeOpacity="0.2" strokeWidth="2" x1="170" x2="150" y1="80" y2="112" />
-        <line stroke="#151515" strokeOpacity="0.2" strokeWidth="2" x1="170" x2="190" y1="80" y2="112" />
+        <line stroke="var(--color-ink)" strokeOpacity="0.35" strokeWidth="2" x1="110" x2="50" y1="26" y2="64" />
+        <line stroke="var(--color-ink)" strokeOpacity="0.35" strokeWidth="2" x1="110" x2="110" y1="26" y2="64" />
+        <line stroke="var(--color-ink)" strokeOpacity="0.35" strokeWidth="2" x1="110" x2="170" y1="26" y2="64" />
+        <line stroke="var(--color-ink)" strokeOpacity="0.2" strokeWidth="2" x1="50" x2="30" y1="80" y2="112" />
+        <line stroke="var(--color-ink)" strokeOpacity="0.2" strokeWidth="2" x1="50" x2="70" y1="80" y2="112" />
+        <line stroke="var(--color-ink)" strokeOpacity="0.2" strokeWidth="2" x1="110" x2="110" y1="80" y2="112" />
+        <line stroke="var(--color-ink)" strokeOpacity="0.2" strokeWidth="2" x1="170" x2="150" y1="80" y2="112" />
+        <line stroke="var(--color-ink)" strokeOpacity="0.2" strokeWidth="2" x1="170" x2="190" y1="80" y2="112" />
         <circle cx="110" cy="18" fill="var(--color-ink)" r="9" />
         <circle cx="50" cy="72" fill="var(--color-paper)" r="7.5" stroke="var(--color-ink)" strokeWidth="1.5" />
         <circle cx="110" cy="72" fill="var(--color-paper)" r="7.5" stroke="var(--color-ink)" strokeWidth="1.5" />
         <circle cx="170" cy="72" fill="var(--color-paper)" r="7.5" stroke="var(--color-ink)" strokeWidth="1.5" />
-        <circle cx="30" cy="118" fill="#151515" fillOpacity="0.35" r="4.5" />
-        <circle cx="70" cy="118" fill="#151515" fillOpacity="0.35" r="4.5" />
-        <circle cx="110" cy="118" fill="#151515" fillOpacity="0.35" r="4.5" />
-        <circle cx="150" cy="118" fill="#151515" fillOpacity="0.35" r="4.5" />
+        <circle cx="30" cy="118" fill="var(--color-ink)" fillOpacity="0.35" r="4.5" />
+        <circle cx="70" cy="118" fill="var(--color-ink)" fillOpacity="0.35" r="4.5" />
+        <circle cx="110" cy="118" fill="var(--color-ink)" fillOpacity="0.35" r="4.5" />
+        <circle cx="150" cy="118" fill="var(--color-ink)" fillOpacity="0.35" r="4.5" />
         <circle cx="190" cy="118" fill="var(--tint-bright)" r="4.5" />
       </svg>
-      <p className="mt-3 text-center font-sans text-[11px] text-ink-tertiary">
+      <p className="mt-3 text-center font-sans text-[12px] text-ink-tertiary">
         New joiner placed, chart updated instantly
       </p>
     </VignetteFrame>
@@ -71,7 +71,7 @@ export function KraVignette() {
             </div>
           </div>
         ))}
-        <p className="mt-1 font-sans text-[11px] text-ink-tertiary">
+        <p className="mt-1 font-sans text-[12px] text-ink-tertiary">
           Owner, measure, and target, visible to the whole chain
         </p>
       </div>
@@ -91,7 +91,7 @@ export function ReviewCycleVignette() {
           return (
             <li key={step} className="flex items-center gap-3 font-sans text-xs">
               <span
-                className={`flex h-5 w-5 shrink-0 items-center justify-center text-[11px] font-bold ${
+                className={`flex h-5 w-5 shrink-0 items-center justify-center text-[12px] font-bold ${
                   done
                     ? "bg-(--tint-bright) text-white"
                     : active
@@ -112,7 +112,7 @@ export function ReviewCycleVignette() {
                 {step}
               </span>
               {active && (
-                <span className="ml-auto bg-(--tint-soft) px-1.5 py-0.5 text-[11px] font-semibold text-(--tint-ink)">
+                <span className="ml-auto bg-(--tint-soft) px-1.5 py-0.5 text-[12px] font-semibold text-(--tint-ink)">
                   In progress
                 </span>
               )}
@@ -131,7 +131,7 @@ export function MoonshotVignette() {
         <div className="border border-line-strong bg-paper p-3">
           <div className="mb-1 flex items-center justify-between gap-2">
             <span className="font-sans text-xs font-semibold text-ink">Moonshot #14</span>
-            <span className="bg-(--tint-soft) px-1.5 py-0.5 text-[11px] font-semibold text-(--tint-ink)">
+            <span className="bg-(--tint-soft) px-1.5 py-0.5 text-[12px] font-semibold text-(--tint-ink)">
               Under review
             </span>
           </div>
@@ -141,13 +141,13 @@ export function MoonshotVignette() {
         <div className="border border-line bg-paper-raised p-3 opacity-70">
           <div className="mb-1 flex items-center justify-between gap-2">
             <span className="font-sans text-xs font-semibold text-ink">Moonshot #13</span>
-            <span className="bg-paper-soft px-1.5 py-0.5 text-[11px] font-semibold text-ink-tertiary">
+            <span className="bg-paper-soft px-1.5 py-0.5 text-[12px] font-semibold text-ink-tertiary">
               Shipped
             </span>
           </div>
           <div className="h-2 w-2/3 rounded-[1px] bg-line" />
         </div>
-        <p className="font-sans text-[11px] text-ink-tertiary">
+        <p className="font-sans text-[12px] text-ink-tertiary">
           Anyone in the company can propose the next big move
         </p>
       </div>
@@ -162,7 +162,7 @@ export function WhistleblowerVignette() {
         <span className="flex h-11 w-11 items-center justify-center bg-(--tint-soft)">
           <Lock aria-hidden className="h-5 w-5 text-(--tint-ink)" strokeWidth={1.8} />
         </span>
-        <div className="flex items-center gap-2 font-sans text-[11px] font-medium text-ink-secondary">
+        <div className="flex items-center gap-2 font-sans text-[12px] font-medium text-ink-secondary">
           <ShieldCheck aria-hidden className="h-3.5 w-3.5 text-(--tint-ink)" />
           Anonymous · Encrypted · Off the org chart
         </div>
@@ -195,11 +195,11 @@ export function AuditTrailVignette() {
               }`}
             />
             <span className="text-ink">{row.text}</span>
-            <span className="ml-auto shrink-0 text-[10px] text-ink-tertiary">{row.time}</span>
+            <span className="ml-auto shrink-0 text-[11px] text-ink-tertiary">{row.time}</span>
           </li>
         ))}
       </ul>
-      <p className="mt-2 font-sans text-[11px] text-ink-tertiary">
+      <p className="mt-2 font-sans text-[12px] text-ink-tertiary">
         Every change tracked, nothing off the record
       </p>
     </VignetteFrame>

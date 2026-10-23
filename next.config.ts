@@ -9,6 +9,14 @@ const securityHeaders = [
   { key: "Strict-Transport-Security", value: "max-age=63072000" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+  // Directives that hold without per-request nonces, so every page stays
+  // static: no framing by other sites, no plugins, no <base> hijack, and
+  // forms only post back here. A script-src policy needs a nonce and would
+  // make every page dynamic; add it when a third-party script arrives.
+  {
+    key: "Content-Security-Policy",
+    value: "frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests",
+  },
 ]
 
 const nextConfig: NextConfig = {

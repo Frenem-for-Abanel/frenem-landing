@@ -6,10 +6,9 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { X } from "lucide-react"
 import { useContactModal, type ContactModalMode } from "../../context/ContactModalContext"
 import { productFromPathname, PRODUCT_LABELS, type ProductKey } from "../../utils/product"
-import QuestionnaireFlow from "./QuestionnaireFlow"
-import QuickContactForm from "./QuickContactForm"
-import GeneralContactForm from "./GeneralContactForm"
-import BuildPlanForm from "./BuildPlanForm"
+import { track } from "../../utils/analytics"
+import { DirtyFormContext } from "./form-shared"
+import { BuildPlanForm, GeneralContactForm, QuestionnaireFlow, QuickContactForm, Toaster } from "./lazy-flows"
 
 function isQuestionnaireMode(mode: string): mode is "assessment" | "pulseQuestionnaire" {
   return mode === "assessment" || mode === "pulseQuestionnaire"
@@ -37,10 +36,16 @@ export default function ContactModal() {
   const panelRef = useRef<HTMLDivElement | null>(null)
   const previouslyFocused = useRef<HTMLElement | null>(null)
   const closeGuardRef = useRef<() => boolean>(() => false)
+  const formDirty = useRef(false)
+  const [everOpened, setEverOpened] = useState(false)
   const reduceMotion = useReducedMotion()
 
   const registerCloseGuard = useCallback((guard: () => boolean) => {
     closeGuardRef.current = guard
+  }, [])
+
+  const reportDirty = useCallback((dirty: boolean) => {
+    formDirty.current = dirty
   }, [])
 
   const requestClose = useCallback(() => {
@@ -49,7 +54,8 @@ export default function ContactModal() {
       setDiscardConfirm(false)
       return
     }
-    if (isQuestionnaireMode(mode) && closeGuardRef.current()) {
+    // Questionnaires guard their answers; every form guards typed text.
+    if ((isQuestionnaireMode(mode) && closeGuardRef.current()) || formDirty.current) {
       setDiscardConfirm(true)
       return
     }
@@ -63,8 +69,15 @@ export default function ContactModal() {
   }, [closeModal])
 
   useEffect(() => {
-    if (!isOpen) setDiscardConfirm(false)
-  }, [isOpen])
+    if (!isOpen) {
+      setDiscardConfirm(false)
+      formDirty.current = false
+      return
+    }
+    setEverOpened(true)
+    track("modal_open", { flow: mode })
+    return () => track("modal_close", { flow: mode })
+  }, [isOpen, mode])
 
   useEffect(() => {
     const handleEscape = (e: globalThis.KeyboardEvent) => {
@@ -75,8 +88,11 @@ export default function ContactModal() {
   }, [isOpen, requestClose])
 
   useEffect(() => {
+    // The page behind the dialog must not take focus or be read out.
+    const background = Array.from(document.querySelectorAll<HTMLElement>("body > header, body > main, body > footer"))
     if (isOpen) {
       document.body.style.overflow = "hidden"
+      background.forEach((el) => el?.setAttribute("inert", ""))
       previouslyFocused.current = document.activeElement as HTMLElement | null
       // Defer so the dialog is in the DOM.
       requestAnimationFrame(() => {
@@ -91,11 +107,17 @@ export default function ContactModal() {
       })
     } else {
       document.body.style.overflow = ""
-      previouslyFocused.current?.focus?.()
+      background.forEach((el) => el?.removeAttribute("inert"))
+      // Opened from the mobile menu, the opener has unmounted with the menu:
+      // fall back to the menu button rather than dropping focus on <body>.
+      const opener = previouslyFocused.current
+      const target = opener?.isConnected ? opener : document.querySelector<HTMLElement>("[data-menu-button]")
+      target?.focus?.()
       previouslyFocused.current = null
     }
     return () => {
       document.body.style.overflow = ""
+      background.forEach((el) => el?.removeAttribute("inert"))
     }
   }, [isOpen])
 
@@ -133,6 +155,9 @@ export default function ContactModal() {
   const product = productForMode(mode, pathname)
 
   return (
+    <>
+    {/* Toasts only ever come from the contact flows, so they load with them. */}
+    {everOpened && <Toaster position="top-center" />}
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -149,7 +174,7 @@ export default function ContactModal() {
             aria-modal="true"
             aria-labelledby="contact-modal-title"
             tabIndex={-1}
-            className={`${product ? `tint-${product}` : "tint-brand"} relative my-0 w-full max-h-[min(92dvh,calc(100dvh-1rem))] overflow-y-auto rounded-t-[24px] bg-paper shadow-[0_40px_100px_rgba(0,0,0,0.3)] outline-none sm:my-auto sm:max-h-[calc(100dvh-2rem)] sm:max-w-[500px] sm:rounded-none [&::-webkit-scrollbar]:hidden [scrollbar-width:none]`}
+            className={`${product ? `tint-${product}` : "tint-brand"} relative my-0 w-full max-h-[min(92dvh,calc(100dvh-1rem))] overflow-y-auto rounded-t-[24px] bg-paper shadow-[0_40px_100px_rgba(0,0,0,0.3)] outline-none sm:my-auto sm:max-h-[calc(100dvh-2rem)] sm:max-w-[500px] sm:rounded-none [scrollbar-color:var(--color-line-strong)_transparent] [scrollbar-width:thin]`}
             initial={{ opacity: 0, y: 60, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 40, scale: 0.97 }}
@@ -178,15 +203,17 @@ export default function ContactModal() {
             <div className="px-5 pb-8 pt-7 sm:px-8 sm:pb-9 sm:pt-8">
               {/* Keep the flow mounted (hidden) during discard-confirm so answers survive. */}
               <div className={discardConfirm ? "hidden" : undefined}>
-                {isQuestionnaireMode(mode) ? (
-                  <QuestionnaireFlow mode={mode} registerCloseGuard={registerCloseGuard} />
-                ) : isQuickContactMode(mode) ? (
-                  <QuickContactForm mode={mode} />
-                ) : mode === "buildPlan" ? (
-                  <BuildPlanForm />
-                ) : (
-                  <GeneralContactForm />
-                )}
+                <DirtyFormContext.Provider value={reportDirty}>
+                  {isQuestionnaireMode(mode) ? (
+                    <QuestionnaireFlow mode={mode} registerCloseGuard={registerCloseGuard} />
+                  ) : isQuickContactMode(mode) ? (
+                    <QuickContactForm mode={mode} />
+                  ) : mode === "buildPlan" ? (
+                    <BuildPlanForm />
+                  ) : (
+                    <GeneralContactForm />
+                  )}
+                </DirtyFormContext.Provider>
               </div>
 
               {discardConfirm && (
@@ -195,10 +222,12 @@ export default function ContactModal() {
                     id="contact-modal-title"
                     className="mb-2.5 text-[30px] font-extrabold tracking-[-0.035em] [font-stretch:106%] text-ink"
                   >
-                    Discard your answers?
+                    {isQuestionnaireMode(mode) ? "Discard your answers?" : "Discard your message?"}
                   </h3>
                   <p className="mb-7 text-[16px] text-ink-secondary">
-                    You&apos;ll lose progress on this {isPulseFlow ? "Pulse check" : "assessment"}.
+                    {isQuestionnaireMode(mode)
+                      ? `You'll lose your progress on this ${isPulseFlow ? "Pulse questionnaire" : "assessment"}.`
+                      : "You'll lose what you've typed so far."}
                   </p>
                   <div className="flex flex-wrap items-center justify-center gap-2.5">
                     <button
@@ -224,5 +253,6 @@ export default function ContactModal() {
         </motion.div>
       )}
     </AnimatePresence>
+    </>
   )
 }

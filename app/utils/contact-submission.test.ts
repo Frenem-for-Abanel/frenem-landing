@@ -256,3 +256,40 @@ describe("contact email builders", () => {
     expect(html).toContain("How many people are you looking to pulse-check?")
   })
 })
+
+describe("validateContactSubmission limits and attribution", () => {
+  const base = { name: "Ada Lovelace", email: "ada@example.com", company: "Analytical Engines" }
+
+  it("rejects over-long fields instead of truncating them", () => {
+    expect(validateContactSubmission({ ...base, name: "A".repeat(121) }).ok).toBe(false)
+    expect(validateContactSubmission({ ...base, company: "C".repeat(121) }).ok).toBe(false)
+    expect(validateContactSubmission({ ...base, notes: "n".repeat(4001) }).ok).toBe(false)
+    expect(validateContactSubmission({ ...base, notes: "n".repeat(4000) }).ok).toBe(true)
+  })
+
+  it("keeps sanitised attribution and the sending page", () => {
+    const result = validateContactSubmission({
+      ...base,
+      page: "/build",
+      attribution: { utm_source: "linkedin", landing_page: "/pulse", injected: "<script>" },
+    })
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.data.attribution).toEqual({ utm_source: "linkedin", landing_page: "/pulse" })
+      expect(result.data.page).toBe("/build")
+    }
+  })
+
+  it("renders the lead's source in the notification, escaped", () => {
+    const result = validateContactSubmission({
+      ...base,
+      attribution: { utm_campaign: "<b>q4</b>", referrer: "https://www.google.com/" },
+    })
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    const html = buildContactEmailHtml(result.data)
+    expect(html).toContain("Where this lead came from")
+    expect(html).toContain("&lt;b&gt;q4&lt;/b&gt;")
+    expect(html).toContain("https://www.google.com/")
+  })
+})

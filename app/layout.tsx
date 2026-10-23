@@ -1,13 +1,13 @@
 import "./globals.css"
 import type { Metadata, Viewport } from "next"
 import { Archivo, League_Spartan } from "next/font/google"
-import { Toaster } from "sonner"
 import type React from "react"
 import type { CSSProperties } from "react"
 import { Providers } from "./context/Providers"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import ContactModal from "./components/contact/ContactModal"
+import Analytics from "./components/Analytics"
 import JsonLd from "./components/JsonLd"
 import { HOME_DESCRIPTION, HOME_TITLE } from "./utils/seo"
 import { SITE_NAME, SITE_URL } from "./utils/site"
@@ -90,19 +90,27 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth">
+    <html lang="en-GB" data-scroll-behavior="smooth">
       <body
         style={displayFont}
         className={`${archivo.variable} ${leagueSpartan.variable} min-h-screen bg-paper font-sans text-ink antialiased`}
       >
+        <a
+          href="#main"
+          className="fixed left-4 top-4 z-[2000] -translate-y-[200%] rounded-full bg-ink px-5 py-3 text-[15px] font-semibold text-paper transition-transform focus-visible:translate-y-0"
+        >
+          Skip to content
+        </a>
         <JsonLd data={siteGraph()} />
+        <Analytics />
         <Providers>
           <Header />
-          <main>{children}</main>
+          <main id="main" tabIndex={-1} className="outline-none">
+            {children}
+          </main>
           <Footer />
           <ContactModal />
         </Providers>
-        <Toaster position="top-center" />
       </body>
     </html>
   )

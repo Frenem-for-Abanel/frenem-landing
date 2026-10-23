@@ -1,6 +1,7 @@
 import { ASSESSMENT_QUESTIONS, type AssessmentAnswerKey } from "./assessment-questions"
 import { PULSE_QUESTIONS, type PulseAnswerKey } from "./pulse-questions"
 import { parsePainIds, type PainId } from "./build-plan"
+import { sanitizeAttribution, type Attribution } from "./attribution"
 
 export type ContactFlow =
   | "assessment"
@@ -23,6 +24,8 @@ export type ContactSubmissionInput = {
   flow?: unknown
   answers?: unknown
   plan?: unknown
+  attribution?: unknown
+  page?: unknown
 }
 
 export type ValidatedContactSubmission = {
@@ -36,7 +39,14 @@ export type ValidatedContactSubmission = {
   answers?: Record<QuestionnaireAnswerKey, string>
   /** Problems chosen in the Build planner (buildPlan flow only). */
   plan?: PainId[]
+  /** Where the lead first came from (campaign, referrer, landing page). */
+  attribution?: Attribution
+  /** The page the form was sent from. */
+  page?: string
 }
+
+/** Field limits, shared with the forms. Anything longer is rejected, not truncated. */
+export const FIELD_LIMITS = { name: 120, company: 120, email: 254, notes: 4000, short: 120, page: 300 } as const
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -110,19 +120,30 @@ export function validateContactSubmission(
   const company = asTrimmedString(input.company)
 
   if (name.length < 2) {
-    return { ok: false, error: "Name must be at least 2 characters." }
+    return { ok: false, error: "Please enter your full name." }
   }
-  if (!EMAIL_RE.test(email)) {
+  if (name.length > FIELD_LIMITS.name) {
+    return { ok: false, error: "Please keep your name under 120 characters." }
+  }
+  if (email.length > FIELD_LIMITS.email || !EMAIL_RE.test(email)) {
     return { ok: false, error: "Please enter a valid email address." }
   }
   if (company.length < 2) {
-    return { ok: false, error: "Company name must be at least 2 characters." }
+    return { ok: false, error: "Please enter your full company name." }
+  }
+  if (company.length > FIELD_LIMITS.company) {
+    return { ok: false, error: "Please keep the company name under 120 characters." }
   }
 
-  const team_size = asTrimmedString(input.team_size) || undefined
-  const interest = asTrimmedString(input.interest) || undefined
+  const team_size = asTrimmedString(input.team_size).slice(0, FIELD_LIMITS.short) || undefined
+  const interest = asTrimmedString(input.interest).slice(0, FIELD_LIMITS.short) || undefined
   const notes =
     asTrimmedString(input.notes) || asTrimmedString(input.message) || undefined
+  if (notes && notes.length > FIELD_LIMITS.notes) {
+    return { ok: false, error: "Please keep your message under 4,000 characters." }
+  }
+  const attribution = sanitizeAttribution(input.attribution)
+  const page = asTrimmedString(input.page).slice(0, FIELD_LIMITS.page) || undefined
 
   let answers: Record<QuestionnaireAnswerKey, string> | undefined
 
@@ -158,6 +179,8 @@ export function validateContactSubmission(
       notes,
       answers,
       plan,
+      attribution,
+      page,
     },
   }
 }

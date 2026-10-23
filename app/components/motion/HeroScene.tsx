@@ -116,6 +116,10 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
   const reduce = useReducedMotion()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const goTo = useRef<(index: number) => void>(() => {})
+  // The dots only breathe while the story plays. Paused, picked, or finished,
+  // the canvas comes to rest and its loop stops until something moves it.
+  const breathing = useRef(true)
+  const wake = useRef<() => void>(() => {})
   const [stage, setStage] = useState<HTMLDivElement | null>(null)
   const [index, setIndex] = useState(0)
   const [mode, setMode] = useState<Mode>("playing")
@@ -174,6 +178,11 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
   // has already moved (reduced motion opens on the outcome), so it starts
   // from this ref rather than from scene 0. Labels are revealed by the canvas
   // itself, once its shapes have landed (see `retarget`).
+  useEffect(() => {
+    breathing.current = mode === "playing"
+    wake.current()
+  }, [mode])
+
   const indexRef = useRef(index)
   useEffect(() => {
     indexRef.current = index
@@ -225,6 +234,11 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
     let frame = 0
     let running = false
     let visible = false
+    // Canvas top in page coordinates, so frames read scroll position instead
+    // of forcing layout with getBoundingClientRect.
+    let pageTop = 0
+    let left = 0
+    let lastScroll = -1
     const pointer = { x: -9999, y: -9999, strength: 0, target: 0 }
     const now = () => performance.now() / 1000
 
@@ -301,6 +315,8 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
     const layout = () => {
       const crect = canvas.getBoundingClientRect()
       const srect = stage.getBoundingClientRect()
+      pageTop = crect.top + window.scrollY
+      left = crect.left
       W = crect.width
       H = crect.height
       sx = srect.left - crect.left
@@ -341,7 +357,7 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
       let scroll = 0
       if (!stillMotion) {
         const vh = window.innerHeight
-        const centre = canvas.getBoundingClientRect().top + sy + S / 2
+        const centre = pageTop - window.scrollY + sy + S / 2
         scroll = Math.min(1, Math.max(0, (vh * 0.35 - centre) / (vh * 0.35 + S / 2)))
       }
       pointer.strength += (pointer.target - pointer.strength) * 0.1
@@ -391,7 +407,7 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
         p.c = e < 0.5 ? p.fc : p.tc
         if (p.s <= 0.01) continue
 
-        let s = p.s * (1 - 0.5 * Math.sin(Math.PI * e)) * (stillMotion ? 1 : 0.94 + 0.06 * Math.sin(t * 1.7 + p.phase * 6.28))
+        let s = p.s * (1 - 0.5 * Math.sin(Math.PI * e)) * (stillMotion || !breathing.current ? 1 : 0.94 + 0.06 * Math.sin(t * 1.7 + p.phase * 6.28))
         let px = sx + p.x * S
         let py = sy + p.y * S
 
@@ -424,11 +440,25 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
         ctx.fill(path)
       })
       ctx.globalAlpha = 1
+      lastScroll = scroll
+    }
+
+    /** True once nothing on the canvas can change until an input arrives. */
+    const atRest = () => {
+      if (breathing.current || pointer.strength > 0.01 || pointer.target > 0) return false
+      const t = now()
+      return particles.every((p) => t >= p.start + p.delay + TRAVEL_S)
     }
 
     const loop = () => {
+      const scrollBefore = lastScroll
       draw()
-      if (running) frame = requestAnimationFrame(loop)
+      if (!running) return
+      if (atRest() && lastScroll === scrollBefore) {
+        running = false
+        return
+      }
+      frame = requestAnimationFrame(loop)
     }
     const start = () => {
       if (running || !visible || document.hidden || stillMotion) return
@@ -444,7 +474,11 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
       if (i === current || !slots.length) return
       retarget(i, false)
       if (stillMotion) draw()
+      else start()
     }
+    wake.current = start
+    const onScroll = () => start()
+    if (!stillMotion) window.addEventListener("scroll", onScroll, { passive: true })
 
     layout()
     draw()
@@ -452,6 +486,7 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
     const ro = new ResizeObserver(() => {
       layout()
       draw()
+      start()
     })
     ro.observe(canvas)
     ro.observe(stage)
@@ -476,10 +511,11 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
     })
 
     const onMove = (e: PointerEvent) => {
-      const rect = canvas.getBoundingClientRect()
-      pointer.x = e.clientX - rect.left
-      pointer.y = e.clientY - rect.top
-      pointer.target = pointer.x >= 0 && pointer.y >= 0 && pointer.x <= rect.width && pointer.y <= rect.height ? 1 : 0
+      if (!visible) return
+      pointer.x = e.clientX - left
+      pointer.y = e.clientY - (pageTop - window.scrollY)
+      pointer.target = pointer.x >= 0 && pointer.y >= 0 && pointer.x <= W && pointer.y <= H ? 1 : 0
+      if (pointer.target || pointer.strength > 0.01) start()
     }
     if (finePointer && !stillMotion) window.addEventListener("pointermove", onMove, { passive: true })
 
@@ -491,7 +527,9 @@ export function HeroScene({ set, children }: { set: SceneSet; children: ReactNod
       io.disconnect()
       document.removeEventListener("visibilitychange", onVisibility)
       window.removeEventListener("pointermove", onMove)
+      window.removeEventListener("scroll", onScroll)
       goTo.current = () => {}
+      wake.current = () => {}
     }
   }, [set, stage])
 
@@ -530,7 +568,8 @@ export function SceneStage({ className }: { className?: string }) {
 
   return (
     <div className={className}>
-      <div ref={setStage} role="img" aria-label={scene.caption} className="relative aspect-square w-full">
+      {/* Decorative: the caption under the steps says the same thing in words. */}
+      <div ref={setStage} aria-hidden className="relative aspect-square w-full">
         {scenes.map((s, i) =>
           (s.notes ?? []).map((n) => (
             <span

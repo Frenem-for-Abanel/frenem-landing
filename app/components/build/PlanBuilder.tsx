@@ -2,9 +2,19 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
-import { Check } from "lucide-react"
+import { Check, Link2 } from "lucide-react"
 import { useContactModal } from "../../context/ContactModalContext"
-import { BUILD_PAINS, resolveBuildPlan, SCOPE_LABELS, type PainId } from "../../utils/build-plan"
+import {
+  BUILD_PAINS,
+  PLAN_PARAM,
+  planFromQuery,
+  planShareUrl,
+  resolveBuildPlan,
+  SCOPE_LABELS,
+  type PainId,
+} from "../../utils/build-plan"
+import { track } from "../../utils/analytics"
+import { preloadContactFlows } from "../contact/lazy-flows"
 import { DEEP, INK, MID, WHITE } from "../../utils/palette"
 import { smoothScrollTo } from "../../utils/smooth-scroll"
 import { CtaInner, magnetic, primaryCtaClass } from "../ContactCta"
@@ -77,10 +87,42 @@ function Marker({ id, on }: { id: PainId; on: boolean }) {
  * scope, never steps or timelines: those are shaped with the team.
  */
 export default function PlanBuilder() {
-  const { openModal } = useContactModal()
+  const { openModal, planDraft: selected, setPlanDraft: setSelected } = useContactModal()
   const reduce = useReducedMotion()
-  const [selected, setSelected] = useState<PainId[]>([])
   const plan = useMemo(() => resolveBuildPlan(selected), [selected])
+  const [copied, setCopied] = useState(false)
+
+  // A shared link (`/build?plan=…`) opens with its problems ticked.
+  useEffect(() => {
+    const shared = planFromQuery(new URLSearchParams(window.location.search).get(PLAN_PARAM))
+    if (shared.length) setSelected(shared)
+  }, [setSelected])
+
+  // Keep the address bar in step, so a refresh or a copied URL keeps the plan.
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    if (selected.length) url.searchParams.set(PLAN_PARAM, selected.join(","))
+    else url.searchParams.delete(PLAN_PARAM)
+    if (url.href !== window.location.href) history.replaceState(history.state, "", url)
+    setCopied(false)
+  }, [selected])
+
+  const copyLink = async () => {
+    const link = planShareUrl(window.location.origin, selected)
+    try {
+      await navigator.clipboard.writeText(link)
+      setCopied(true)
+      track("plan_shared", { problems: selected.length })
+    } catch {
+      // Clipboard blocked: the address bar already holds the same link.
+      window.prompt("Copy this link to your plan", link)
+    }
+  }
+
+  const analyse = () => {
+    track("cta_click", { label: "Analyse my plan", flow: "buildPlan" })
+    openModal("buildPlan", { plan: selected })
+  }
 
   const sectionRef = useRef<HTMLDivElement>(null)
   const sheetRef = useRef<HTMLDivElement>(null)
@@ -102,12 +144,25 @@ export default function PlanBuilder() {
     return () => io.disconnect()
   }, [])
 
-  const toggle = (id: PainId) =>
-    setSelected((prev) => (prev.includes(id) ? prev.filter((p) => p !== id) : inOrder([...prev, id])))
+  const toggle = (id: PainId) => {
+    const on = !selected.includes(id)
+    setSelected(on ? inOrder([...selected, id]) : selected.filter((p) => p !== id))
+    track("plan_pain_toggled", { problem: id, on })
+  }
 
   const count = selected.length
   const allSelected = count === ALL.length
   const showBar = count > 0 && sectionInView && !sheetInView
+
+  // The floating bar covers the bottom of the screen: keep keyboard focus
+  // from scrolling a ticked row underneath it.
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.scrollPaddingBottom = showBar ? "96px" : ""
+    return () => {
+      root.style.scrollPaddingBottom = ""
+    }
+  }, [showBar])
 
   return (
     <Section id="plan">
@@ -221,7 +276,7 @@ export default function PlanBuilder() {
                 <Structure selected={selected} complete={allSelected} reduce={Boolean(reduce)} />
 
                 <p className="text-[15px] font-semibold" aria-live="polite">
-                  {count === 0 ? "Nothing in place yet" : `${count} of ${ALL.length} in place`}
+                  {count === 0 ? "No problems picked yet" : `${count} of ${ALL.length} problems in your plan`}
                 </p>
 
                 <ul className="mt-3 space-y-2">
@@ -245,34 +300,49 @@ export default function PlanBuilder() {
 
                 <div className="mt-7">
                   {count === 0 ? (
-                    <button type="button" onClick={() => setSelected(ALL)} className={`${primaryCtaClass} w-full`} {...magnetic}>
+                    <button type="button" onClick={() => setSelected(ALL)} onPointerEnter={preloadContactFlows} className={`${primaryCtaClass} w-full`} {...magnetic}>
                       <CtaInner>Start with everything</CtaInner>
                     </button>
                   ) : (
                     <>
                       <button
                         type="button"
-                        onClick={() => openModal("buildPlan", { plan: selected })}
+                        onClick={analyse}
+                        onPointerEnter={preloadContactFlows}
+                        onFocus={preloadContactFlows}
                         className={`${primaryCtaClass} w-full`}
                         {...magnetic}
                       >
                         <CtaInner>Analyse my plan</CtaInner>
                       </button>
-                      {!allSelected ? (
+                      <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+                        {!allSelected ? (
+                          <button
+                            type="button"
+                            onClick={() => setSelected(ALL)}
+                            className="link-line text-[15px] font-semibold"
+                          >
+                            Make it the complete Build
+                          </button>
+                        ) : null}
                         <button
                           type="button"
-                          onClick={() => setSelected(ALL)}
-                          className="link-line mt-5 text-[15px] font-semibold"
+                          onClick={copyLink}
+                          className="inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ink-secondary transition-colors hover:text-ink"
                         >
-                          Make it the complete Build
+                          <Link2 aria-hidden className="h-4 w-4" strokeWidth={2.2} />
+                          {copied ? "Link copied" : "Copy a link to this plan"}
                         </button>
-                      ) : null}
+                        <span className="sr-only" aria-live="polite">
+                          {copied ? "Link to your plan copied" : ""}
+                        </span>
+                      </div>
                     </>
                   )}
                   <p className="mt-5 text-[14px] leading-relaxed text-ink-secondary">
                     {count === 0
                       ? "Pick what applies and we'll analyse it against how your business runs."
-                      : "We'll analyse it against how your business runs and come back to you soon."}
+                      : "We'll analyse it against how your business runs and reply within one business day. Share the link with your co-founder or leadership team first if you like."}
                   </p>
                 </div>
               </div>
@@ -294,14 +364,25 @@ export default function PlanBuilder() {
             {count} of {ALL.length}
             <span className="font-normal text-white/60"> · {plan.scope ? SCOPE_LABELS[plan.scope] : ""}</span>
           </p>
-          <button
-            type="button"
-            tabIndex={showBar ? 0 : -1}
-            onClick={() => smoothScrollTo("your-plan", { align: "end" })}
-            className="h-11 shrink-0 rounded-full bg-(--tint-soft) px-5 text-[15px] font-semibold text-ink"
-          >
-            View plan
-          </button>
+          <div className="flex shrink-0 items-center gap-1">
+            <button
+              type="button"
+              tabIndex={showBar ? 0 : -1}
+              onClick={() => smoothScrollTo("your-plan", { align: "end" })}
+              className="h-11 rounded-full px-3 text-[15px] font-semibold text-white/80 transition-colors hover:text-paper"
+            >
+              View
+            </button>
+            <button
+              type="button"
+              tabIndex={showBar ? 0 : -1}
+              onClick={analyse}
+              onPointerEnter={preloadContactFlows}
+              className="h-11 rounded-full bg-(--tint-soft) px-5 text-[15px] font-semibold text-ink"
+            >
+              Analyse my plan
+            </button>
+          </div>
         </div>
       </div>
     </Section>

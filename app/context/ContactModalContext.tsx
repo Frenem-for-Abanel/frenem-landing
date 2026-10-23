@@ -20,6 +20,9 @@ type ContactModalContextType = {
   isOpen: boolean
   mode: ContactModalMode
   plan: PainId[]
+  /** What the visitor has ticked in the Build planner so far. */
+  planDraft: PainId[]
+  setPlanDraft: (plan: PainId[]) => void
   openModal: (mode?: ContactModalMode, options?: OpenOptions) => void
   closeModal: () => void
 }
@@ -30,12 +33,23 @@ export function ContactModalProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
   const [mode, setMode] = useState<ContactModalMode>("default")
   const [plan, setPlan] = useState<PainId[]>([])
+  const [planDraft, setPlanDraft] = useState<PainId[]>([])
 
-  const openModal = useCallback((nextMode: ContactModalMode = "default", options?: OpenOptions) => {
-    setMode(nextMode)
-    setPlan(options?.plan ?? [])
-    setIsOpen(true)
-  }, [])
+  const openModal = useCallback(
+    (nextMode: ContactModalMode = "default", options?: OpenOptions) => {
+      // A visitor who has already built a plan should not be asked the same
+      // questions again: the Build assessment becomes "send my plan".
+      if (nextMode === "assessment" && !options?.plan && planDraft.length > 0) {
+        setMode("buildPlan")
+        setPlan(planDraft)
+      } else {
+        setMode(nextMode)
+        setPlan(options?.plan ?? [])
+      }
+      setIsOpen(true)
+    },
+    [planDraft]
+  )
 
   // Keep mode until the next open so exit animations don't flash the wrong flow.
   const closeModal = useCallback(() => {
@@ -43,7 +57,7 @@ export function ContactModalProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <ContactModalContext.Provider value={{ isOpen, mode, plan, openModal, closeModal }}>
+    <ContactModalContext.Provider value={{ isOpen, mode, plan, planDraft, setPlanDraft, openModal, closeModal }}>
       {children}
     </ContactModalContext.Provider>
   )

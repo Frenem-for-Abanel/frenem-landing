@@ -8,6 +8,13 @@ export const PRODUCT_LABELS: Record<ProductKey, string> = {
   prism: "Prism",
 }
 
+/** What each product is, in a few words: shown under the coined names in navigation. */
+export const PRODUCT_ROLES: Record<ProductKey, string> = {
+  pulse: "Relational diagnostics",
+  build: "Organisation design",
+  prism: "Operating record",
+}
+
 /** Derive the active product from a pathname, e.g. "/pulse" or "/build#how". */
 export function productFromPathname(pathname: string): ProductKey | null {
   const segment = pathname.split("/").filter(Boolean)[0]?.toLowerCase()

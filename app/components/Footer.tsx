@@ -27,7 +27,7 @@ export default function Footer() {
           </div>
 
           <nav className="lg:col-span-3 lg:col-start-8" aria-label="Products">
-            <p className="type-kicker mb-4 text-white/45">Products</p>
+            <p className="type-kicker mb-4 text-white/60">Products</p>
             <ul>
               {products.map((p) => (
                 <li key={p.href}>
@@ -37,7 +37,7 @@ export default function Footer() {
                       className={`h-3 w-3 shrink-0 rounded-full transition-transform duration-500 group-hover:scale-150 ${p.dot}`}
                     />
                     <span className="font-semibold text-white">{p.name}</span>
-                    <span className="text-white/45">{p.role}</span>
+                    <span className="text-white/60">{p.role}</span>
                   </Link>
                 </li>
               ))}
@@ -45,7 +45,7 @@ export default function Footer() {
           </nav>
 
           <nav className="lg:col-span-2" aria-label="Company">
-            <p className="type-kicker mb-4 text-white/45">Company</p>
+            <p className="type-kicker mb-4 text-white/60">Company</p>
             <ul>
               <li>
                 <Link href="/engineering" className={linkClass}>
@@ -66,7 +66,7 @@ export default function Footer() {
           </nav>
         </div>
 
-        <div className="mt-20 flex flex-col justify-between gap-2 text-[14px] text-white/45 md:mt-28 md:flex-row">
+        <div className="mt-20 flex flex-col justify-between gap-2 text-[14px] text-white/60 md:mt-28 md:flex-row">
           <span>© Frenem {new Date().getFullYear()}</span>
         </div>
       </div>

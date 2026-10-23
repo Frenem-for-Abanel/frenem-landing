@@ -12,6 +12,7 @@ import { questionnaireAnswersComplete } from "../../utils/contact-modal-helpers"
 import ContactFieldsForm, { type ContactFields } from "./ContactFieldsForm"
 import SuccessState from "./SuccessState"
 import { submitContact } from "./submit-contact"
+import { track } from "../../utils/analytics"
 
 type QuestionnaireMode = "assessment" | "pulseQuestionnaire"
 type AnswerKey = "q1" | "q2" | "q3" | "q4"
@@ -43,6 +44,15 @@ export default function QuestionnaireFlow({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // The answer button that had focus unmounts on each step, so focus moves to
+  // the new step's heading as it mounts (after the exit animation).
+  const focusNextHeading = useRef(false)
+  const headingRef = useCallback((el: HTMLHeadingElement | null) => {
+    if (el && focusNextHeading.current) {
+      focusNextHeading.current = false
+      el.focus()
+    }
+  }, [])
 
   const stateRef = useRef({ step, success })
   stateRef.current = { step, success }
@@ -60,6 +70,10 @@ export default function QuestionnaireFlow({
     }
   }, [])
 
+  useEffect(() => {
+    track("questionnaire_step", { flow: mode, step })
+  }, [mode, step])
+
   const clearAdvanceTimer = useCallback(() => {
     if (advanceTimer.current) {
       clearTimeout(advanceTimer.current)
@@ -69,6 +83,7 @@ export default function QuestionnaireFlow({
 
   const goBack = () => {
     clearAdvanceTimer()
+    focusNextHeading.current = true
     setStep((s) => Math.max(1, s - 1))
   }
 
@@ -78,6 +93,7 @@ export default function QuestionnaireFlow({
     clearAdvanceTimer()
     advanceTimer.current = setTimeout(() => {
       advanceTimer.current = null
+      focusNextHeading.current = true
       setStep((s) => (s === fromStep ? Math.min(s + 1, TOTAL_STEPS) : s))
     }, AUTO_ADVANCE_MS)
   }
@@ -113,8 +129,8 @@ export default function QuestionnaireFlow({
   if (success) {
     return (
       <SuccessState srTitle={isPulse ? "Pulse answers submitted" : "Assessment submitted"}>
-        Thanks. We&apos;ll review your answers and reach out within a day with what stands out,
-        plus a time to talk if useful.
+        Thanks. We&apos;ll review your answers and reply within one business day with what stands
+        out, plus a time to talk if useful.
       </SuccessState>
     )
   }
@@ -161,8 +177,12 @@ export default function QuestionnaireFlow({
           ) : (
             <span />
           )}
-          <span className="ml-auto text-[14px] font-semibold text-ink-tertiary">
-            {Math.min(step, TOTAL_STEPS)} / {TOTAL_STEPS}
+          <span className="ml-auto text-[14px] font-semibold text-ink-tertiary" aria-live="polite">
+            <span className="sr-only">Step </span>
+            {Math.min(step, TOTAL_STEPS)}
+            <span aria-hidden> / </span>
+            <span className="sr-only"> of </span>
+            {TOTAL_STEPS}
           </span>
         </div>
       </div>
@@ -172,11 +192,13 @@ export default function QuestionnaireFlow({
           <motion.div key={currentQuestion.key} {...slide}>
             <h3
               id="contact-modal-title"
-              className="mb-6 text-[30px] font-extrabold leading-[1.02] tracking-[-0.035em] [font-stretch:106%] text-ink"
+              ref={headingRef}
+              tabIndex={-1}
+              className="mb-6 text-[30px] font-extrabold leading-[1.02] tracking-[-0.035em] [font-stretch:106%] text-ink outline-none"
             >
               {currentQuestion.title}
             </h3>
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2.5" role="group" aria-labelledby="contact-modal-title">
               {currentQuestion.options.map((option) => {
                 const selected = answers[currentQuestion.key] === option
                 return (
@@ -189,7 +211,7 @@ export default function QuestionnaireFlow({
                       "group flex w-full cursor-pointer items-center gap-3.5 rounded-full border-2 px-5 py-3.5 text-left text-[16px] font-semibold text-ink transition-[border-color,background] duration-300",
                       selected
                         ? "border-ink bg-(--tint-soft)"
-                        : "border-ink/12 bg-paper hover:border-ink"
+                        : "border-ink/30 bg-paper hover:border-ink"
                     )}
                   >
                     <span
@@ -211,10 +233,15 @@ export default function QuestionnaireFlow({
           <motion.div key="questionnaire-contact" {...slide}>
             <h3
               id="contact-modal-title"
-              className="mb-6 text-[30px] font-extrabold leading-[1.02] tracking-[-0.035em] [font-stretch:106%] text-ink"
+              ref={headingRef}
+              tabIndex={-1}
+              className="text-[30px] font-extrabold leading-[1.02] tracking-[-0.035em] [font-stretch:106%] text-ink outline-none"
             >
-              Where should we send this?
+              Last step: where can we reach you?
             </h3>
+            <p className="mb-6 mt-3 text-[16px] leading-relaxed text-ink-secondary">
+              We&apos;ll read your answers and reply within one business day with what stands out.
+            </p>
             <ContactFieldsForm
               idPrefix={mode}
               onSubmit={handleSubmit}

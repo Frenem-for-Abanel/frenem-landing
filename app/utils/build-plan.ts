@@ -273,3 +273,24 @@ export function parsePainIds(input: unknown): PainId[] | null {
   const set = new Set(input as PainId[])
   return BUILD_PAINS.map((p) => p.id).filter((id) => set.has(id))
 }
+
+/** Query parameter that carries a plan in a shareable link, e.g. `/build?plan=bottleneck,roles`. */
+export const PLAN_PARAM = "plan"
+
+/** Problems from a `?plan=` value; unknown or malformed values give an empty plan. */
+export function planFromQuery(value: string | null | undefined): PainId[] {
+  if (!value) return []
+  const ids = value
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean)
+  return parsePainIds(ids) ?? []
+}
+
+/** The link that reopens the planner with these problems ticked. */
+export function planShareUrl(origin: string, ids: readonly PainId[]): string {
+  const url = new URL("/build", origin)
+  if (ids.length) url.searchParams.set(PLAN_PARAM, ids.join(","))
+  url.hash = "plan"
+  return url.toString()
+}

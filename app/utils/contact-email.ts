@@ -8,9 +8,11 @@ import {
   type ValidatedContactSubmission,
 } from "./contact-submission"
 
-const ACCENT = "#ff5b1f"
-const INK = "#0a0a0a"
-const MUTED = "#6e6e6a"
+// Brand tokens from globals.css: clay-mid for the accent, ink, tertiary ink.
+const ACCENT = "#d4876a"
+const LINK = "#5c2419"
+const INK = "#151515"
+const MUTED = "#5c5c5c"
 
 function row(label: string, value: string): string {
   return `
@@ -29,7 +31,7 @@ export function buildContactEmailHtml(data: ValidatedContactSubmission): string 
   const rows = [
     data.flow !== "default" ? row("Flow", escapeHtml(contactFlowLabel(data.flow))) : "",
     row("Name", safeName),
-    row("Email", `<a href="mailto:${safeEmail}" style="color:${ACCENT};">${safeEmail}</a>`),
+    row("Email", `<a href="mailto:${safeEmail}" style="color:${LINK};">${safeEmail}</a>`),
     row("Company", safeCompany),
     data.team_size ? row("Team size", escapeHtml(data.team_size)) : "",
     data.interest ? row("Interested in", escapeHtml(data.interest)) : "",
@@ -93,6 +95,31 @@ export function buildContactEmailHtml(data: ValidatedContactSubmission): string 
       <ul style="margin:0;padding-left:18px;">${modules}</ul>`
   }
 
+  let sourceBlock = ""
+  const source = data.attribution
+  if (source || data.page) {
+    const labels: Array<[string, string | undefined]> = [
+      ["Sent from", data.page],
+      ["Landing page", source?.landing_page],
+      ["Referrer", source?.referrer],
+      ["Source", source?.utm_source],
+      ["Medium", source?.utm_medium],
+      ["Campaign", source?.utm_campaign],
+      ["Term", source?.utm_term],
+      ["Content", source?.utm_content],
+      ["Google click", source?.gclid ? "yes" : undefined],
+      ["LinkedIn click", source?.li_fat_id ? "yes" : undefined],
+      ["First visit", source?.first_seen],
+    ]
+    const sourceRows = labels
+      .filter(([, value]) => Boolean(value))
+      .map(([label, value]) => row(label, escapeHtml(value!)))
+      .join("")
+    sourceBlock = `
+      <p style="margin:24px 0 10px;padding-top:16px;border-top:1px solid #ececea;color:${MUTED};font-size:13px;text-transform:uppercase;letter-spacing:0.06em;">Where this lead came from</p>
+      <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${sourceRows || row("Source", "Direct (no campaign or referrer)")}</table>`
+  }
+
   return `
     <div style="font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;">
       <div style="border-left:3px solid ${ACCENT};padding-left:14px;margin-bottom:20px;">
@@ -103,5 +130,6 @@ export function buildContactEmailHtml(data: ValidatedContactSubmission): string 
       ${notesBlock}
       ${answersBlock}
       ${planBlock}
+      ${sourceBlock}
     </div>`
 }

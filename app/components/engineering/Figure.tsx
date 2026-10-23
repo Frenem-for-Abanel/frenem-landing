@@ -20,7 +20,7 @@ export default function Figure({
       <div className="bg-(--tint-soft) p-4 sm:p-6 [&_svg]:block [&_svg]:h-auto [&_svg]:w-full">
         {showPlaceholder ? (
           <div className="flex aspect-[16/7] items-center justify-center rounded border border-dashed border-line-strong bg-paper-soft px-4">
-            <span className="text-center font-mono text-[11px] uppercase tracking-[0.08em] text-ink-tertiary">
+            <span className="text-center font-mono text-[12px] uppercase tracking-[0.08em] text-ink-tertiary">
               {placeholder}
             </span>
           </div>

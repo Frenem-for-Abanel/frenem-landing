@@ -8,6 +8,7 @@ import { resolveBuildPlan, SCOPE_LABELS } from "../../utils/build-plan"
 import ContactFieldsForm, { type ContactFields } from "./ContactFieldsForm"
 import SuccessState from "./SuccessState"
 import { submitContact } from "./submit-contact"
+import { track } from "../../utils/analytics"
 
 /** Sends the plan assembled in the Build planner, with the contact trio. */
 export default function BuildPlanForm() {
@@ -28,6 +29,7 @@ export default function BuildPlanForm() {
         interest: INTEREST_BY_PRODUCT.build,
         plan: painIds,
       })
+      track("plan_sent", { problems: painIds.length, scope: plan.scope ?? undefined })
       setSuccess(true)
     } catch (error) {
       toast.error("Failed to send your plan", {
@@ -41,8 +43,8 @@ export default function BuildPlanForm() {
   if (success) {
     return (
       <SuccessState srTitle="Plan sent">
-        Thanks. We&apos;re analysing your plan and will come back to you soon with what we&apos;d
-        tackle first.
+        Thanks. We&apos;re analysing your plan and will come back within one business day with
+        what we&apos;d tackle first.
       </SuccessState>
     )
   }
@@ -57,7 +59,7 @@ export default function BuildPlanForm() {
       </h3>
       <p className="mt-3 text-[16px] leading-relaxed text-ink-secondary">
         Tell us where to reach you. We&apos;ll look at what you picked against how your business
-        runs, and come back soon with what we&apos;d tackle first.
+        runs, and come back within one business day with what we&apos;d tackle first.
       </p>
 
       <div className="mb-7 mt-6 bg-(--tint-soft) p-5">
@@ -67,7 +69,7 @@ export default function BuildPlanForm() {
         <ul className="mt-3 space-y-2">
           {plan.pains.map((p) => (
             <li key={p.id} className="flex items-center gap-3 text-[15px] font-medium text-ink">
-              <span aria-hidden className="h-2.5 w-2.5 shrink-0 rounded-full bg-ink" />
+              <span aria-hidden className="h-2.5 w-2.5 shrink-0 bg-ink" />
               {p.outcome}
             </li>
           ))}

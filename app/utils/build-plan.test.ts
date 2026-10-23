@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { BUILD_PAINS, parsePainIds, resolveBuildPlan, scopeFor, SCOPE_LABELS } from "./build-plan"
+import { BUILD_PAINS, parsePainIds, planFromQuery, planShareUrl, resolveBuildPlan, scopeFor, SCOPE_LABELS } from "./build-plan"
 
 const ids = (plan: ReturnType<typeof resolveBuildPlan>) => plan.modules.map((m) => m.id)
 
@@ -81,5 +81,23 @@ describe("parsePainIds", () => {
     expect(parsePainIds("bottleneck")).toBeNull()
     expect(parsePainIds([1, 2])).toBeNull()
     expect(parsePainIds(undefined)).toBeNull()
+  })
+})
+
+describe("shareable plan links", () => {
+  it("reads a plan from the query, in canonical order", () => {
+    expect(planFromQuery("succession, bottleneck")).toEqual(["bottleneck", "succession"])
+  })
+
+  it("ignores unknown or empty values", () => {
+    expect(planFromQuery("bottleneck,nonsense")).toEqual([])
+    expect(planFromQuery("")).toEqual([])
+    expect(planFromQuery(null)).toEqual([])
+  })
+
+  it("builds a link that round-trips", () => {
+    const url = planShareUrl("https://www.frenem.com", ["roles", "control"])
+    expect(url).toBe("https://www.frenem.com/build?plan=roles%2Ccontrol#plan")
+    expect(planFromQuery(new URL(url).searchParams.get("plan"))).toEqual(["roles", "control"])
   })
 })

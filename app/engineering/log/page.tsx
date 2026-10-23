@@ -36,7 +36,7 @@ export default function EngineeringLogPage() {
             { name: "Log", path: "/engineering/log" },
           ]}
         />
-        <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-ink-secondary">
+        <p className="font-mono text-[12px] font-medium uppercase tracking-[0.14em] text-ink-secondary">
           The Log
         </p>
         <h1 className="type-display-3 mt-4">Everything, in order.</h1>

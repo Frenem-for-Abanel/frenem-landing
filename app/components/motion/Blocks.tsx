@@ -4,6 +4,9 @@ import { useEffect, useRef, type ReactNode } from "react"
 import { animate, interpolate, useReducedMotion } from "framer-motion"
 import type { Block } from "../../utils/blocks"
 
+/** How long the idle wander runs each time a figure comes into view. */
+const IDLE_DRIFT_MS = 5000
+
 /**
  * Renderers for the block system (see utils/blocks.ts): every figure is a
  * fixed cast of rectangles that springs between layouts.
@@ -128,6 +131,7 @@ export function MorphField({
   // DOM is driven directly and React never touches these attributes again.
   const initial = useRef(layouts[index])
   const current = useRef<Block[]>(layouts[index].slice())
+  const drifting = useRef(false)
   const mounted = useRef(false)
   const idle = drift > 0 && !reduce
 
@@ -156,37 +160,48 @@ export function MorphField({
         onUpdate: (t) => {
           const m = mixBlock(from[i], b, t)
           current.current[i] = m
-          if (!idle) paint(rects.current[i], m)
+          // While the wander runs it paints every frame; once it has
+          // stopped, the spring paints its own moves.
+          if (!drifting.current) paint(rects.current[i], m)
         },
       })
     })
     return () => controls.forEach((c) => c?.stop())
   }, [index, layouts, reduce, viewBox, idle])
 
-  // One painter for the idle wander, running only while on screen.
+  // One painter for the idle wander, running only while on screen, and only
+  // for a few seconds each time the figure arrives: ambient motion that
+  // never stops is a distraction (WCAG 2.2.2), and the figure reads at rest.
   useEffect(() => {
     if (!idle) return
     const svg = svgRef.current
     if (!svg) return
     let frame = 0
     let running = false
+    let until = 0
     const loop = (now: number) => {
       const t = now / 1000
       current.current.forEach((b, i) => paint(rects.current[i], drifted(b, t, drift)))
+      if (now > until) running = false
+      drifting.current = running
       if (running) frame = requestAnimationFrame(loop)
     }
     const io = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !running) {
         running = true
+        drifting.current = true
+        until = performance.now() + IDLE_DRIFT_MS
         frame = requestAnimationFrame(loop)
       } else if (!entry.isIntersecting) {
         running = false
+        drifting.current = false
         cancelAnimationFrame(frame)
       }
     })
     io.observe(svg)
     return () => {
       running = false
+      drifting.current = false
       cancelAnimationFrame(frame)
       io.disconnect()
     }

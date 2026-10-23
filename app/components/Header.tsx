@@ -6,7 +6,9 @@ import { usePathname } from "next/navigation"
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion"
 import { useContactModal } from "../context/ContactModalContext"
 import { headerContactMode } from "../utils/contact-modal-helpers"
-import { productFromPathname, PRODUCTS, PRODUCT_LABELS, type ProductKey } from "../utils/product"
+import { productFromPathname, PRODUCTS, PRODUCT_LABELS, PRODUCT_ROLES as PRODUCT_ROLE, type ProductKey } from "../utils/product"
+import { track } from "../utils/analytics"
+import { preloadContactFlows } from "./contact/lazy-flows"
 
 const PRODUCT_FIELD: Record<ProductKey, string> = {
   pulse: "bg-sage",
@@ -20,12 +22,6 @@ const PRODUCT_DOT: Record<ProductKey, string> = {
   prism: "bg-heather-mid",
 }
 
-const PRODUCT_ROLE: Record<ProductKey, string> = {
-  pulse: "Relational diagnostics",
-  build: "Organisation design",
-  prism: "Operating record",
-}
-
 /**
  * Site header. Transparent over the hero, a frosted bar once you scroll,
  * and out of the way while you read down (it returns as soon as you scroll
@@ -36,7 +32,9 @@ export default function Header() {
   const { openModal } = useContactModal()
   const reduce = useReducedMotion()
   const product = productFromPathname(pathname)
-  const onEngineering = pathname === "/engineering" || pathname.startsWith("/engineering/")
+  const onInsights = ["/insights", "/guides", "/glossary", "/engineering"].some(
+    (root) => pathname === root || pathname.startsWith(`${root}/`)
+  )
 
   const [atTop, setAtTop] = useState(true)
   const [tucked, setTucked] = useState(false)
@@ -76,8 +74,10 @@ export default function Header() {
   }, [menuOpen])
 
   const contact = () => {
+    const mode = headerContactMode(product)
+    track("cta_click", { label: "Get in touch", flow: mode, placement: "header" })
     setMenuOpen(false)
-    openModal(headerContactMode(product))
+    openModal(mode)
   }
 
   return (
@@ -111,7 +111,7 @@ export default function Header() {
                     key={key}
                     href={`/${key}`}
                     aria-current={active ? "page" : undefined}
-                    className={`group inline-flex h-11 items-center gap-2.5 rounded-full px-4 text-[15px] font-semibold tracking-[-0.01em] [font-stretch:108%] transition-colors duration-300 ${
+                    className={`group inline-flex h-11 items-center gap-2.5 rounded-full px-4 text-[15px] font-semibold tracking-[-0.01em] [font-stretch:108%] transition-colors duration-300 lg:h-12 ${
                       active ? "bg-paper text-ink" : `text-ink ${hoverField(key)}`
                     }`}
                   >
@@ -121,18 +121,24 @@ export default function Header() {
                         active ? "scale-100" : "scale-0 group-hover:scale-100"
                       }`}
                     />
-                    {PRODUCT_LABELS[key]}
+                    {/* The coined name alone means nothing on a first visit, so say what each one is. */}
+                    <span className="flex flex-col leading-[1.1]">
+                      {PRODUCT_LABELS[key]}
+                      <span className="hidden text-[12px] font-medium tracking-normal text-ink-secondary [font-stretch:100%] lg:block">
+                        {PRODUCT_ROLE[key]}
+                      </span>
+                    </span>
                   </Link>
                 )
               })}
               <Link
-                href="/engineering"
-                aria-current={onEngineering ? "page" : undefined}
-                className={`inline-flex h-11 items-center rounded-full px-4 text-[15px] font-semibold tracking-[-0.01em] [font-stretch:108%] transition-colors duration-300 ${
-                  onEngineering ? "bg-paper" : "hover:bg-paper-soft"
+                href="/insights"
+                aria-current={pathname === "/insights" ? "page" : onInsights ? "true" : undefined}
+                className={`inline-flex h-11 items-center rounded-full px-4 text-[15px] font-semibold tracking-[-0.01em] [font-stretch:108%] transition-colors duration-300 lg:h-12 ${
+                  onInsights ? "bg-paper" : "hover:bg-paper-soft"
                 }`}
               >
-                Engineering
+                Insights
               </Link>
             </nav>
 
@@ -140,17 +146,23 @@ export default function Header() {
               <button
                 type="button"
                 onClick={contact}
-                className="hidden h-11 items-center rounded-full bg-ink px-5 text-[15px] font-semibold tracking-[-0.01em] text-paper [font-stretch:108%] transition-transform duration-300 hover:scale-[1.04] md:inline-flex"
+                onPointerEnter={preloadContactFlows}
+                onFocus={preloadContactFlows}
+                onTouchStart={preloadContactFlows}
+                className={`h-11 items-center rounded-full bg-ink px-4 text-[15px] font-semibold tracking-[-0.01em] text-paper [font-stretch:108%] transition-transform duration-300 hover:scale-[1.04] sm:px-5 ${
+                  menuOpen ? "hidden" : "inline-flex"
+                }`}
               >
                 Get in touch
               </button>
               <button
                 ref={menuButton}
+                data-menu-button
                 type="button"
                 aria-expanded={menuOpen}
                 aria-controls="mobile-menu"
                 onClick={() => setMenuOpen((v) => !v)}
-                className="inline-flex h-11 items-center gap-3 rounded-full bg-ink pl-4 pr-3 text-[15px] font-semibold text-paper md:hidden"
+                className="inline-flex h-11 items-center gap-3 rounded-full border-2 border-ink bg-paper pl-4 pr-3 text-[15px] font-semibold text-ink md:hidden"
               >
                 {menuOpen ? "Close" : "Menu"}
                 <span aria-hidden className="relative block h-3 w-5">
@@ -193,8 +205,9 @@ export default function Header() {
                 </MenuRow>
               ))}
               <MenuRow index={3} reduce={Boolean(reduce)} className="bg-paper-soft">
-                <Link href="/engineering" className="flex h-full items-center px-5 text-[32px] font-extrabold tracking-[-0.035em] [font-stretch:110%]">
-                  Engineering
+                <Link href="/insights" className="flex h-full flex-col justify-center px-5">
+                  <span className="text-[32px] font-extrabold leading-none tracking-[-0.035em] [font-stretch:110%]">Insights</span>
+                  <span className="mt-2 text-[15px] font-medium text-ink-secondary">Guides, glossary, and engineering</span>
                 </Link>
               </MenuRow>
               <MenuRow index={4} reduce={Boolean(reduce)} className="bg-sand">

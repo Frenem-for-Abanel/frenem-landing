@@ -41,10 +41,10 @@ export default function LogEntry({
         : null}
       <div className="grid gap-x-6 gap-y-2 md:grid-cols-[88px_minmax(0,1fr)]">
         <span className="flex flex-col gap-1 md:pt-[3px]">
-          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-(--tint-ink)">
+          <span className="font-mono text-[12px] font-medium uppercase tracking-[0.12em] text-(--tint-ink)">
             {TYPE_LABELS[entry.type]}
           </span>
-          <time dateTime={entry.date} className="font-mono text-[11px] text-ink-tertiary">
+          <time dateTime={entry.date} className="font-mono text-[12px] text-ink-tertiary">
             {formatEntryDate(entry.date)}
           </time>
         </span>

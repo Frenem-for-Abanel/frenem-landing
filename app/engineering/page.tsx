@@ -51,7 +51,7 @@ export default function EngineeringPage() {
       <section aria-labelledby="the-log" className="pt-10 md:pt-12">
         <h2
           id="the-log"
-          className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-ink-secondary"
+          className="font-mono text-[12px] font-medium uppercase tracking-[0.14em] text-ink-secondary"
         >
           The Log
         </h2>

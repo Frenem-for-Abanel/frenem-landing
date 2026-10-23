@@ -23,6 +23,13 @@ export default function SmoothScrollLink({
       onClick={(e) => {
         e.preventDefault()
         smoothScrollTo(targetId)
+        // Keyboard and screen-reader users land where the page scrolled to.
+        const target = document.getElementById(targetId)
+        if (target) {
+          if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1")
+          target.focus({ preventScroll: true })
+          history.replaceState(null, "", `#${targetId}`)
+        }
       }}
       className={cn(variant === "primary" ? primaryCtaClass : textCtaClass, className)}
       {...(variant === "primary" ? magnetic : {})}

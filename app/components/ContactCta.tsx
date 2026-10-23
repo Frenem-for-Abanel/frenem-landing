@@ -3,6 +3,8 @@
 import type { PointerEvent, ReactNode } from "react"
 import { ArrowDown, ArrowRight } from "lucide-react"
 import { useContactModal, type ContactModalMode } from "../context/ContactModalContext"
+import { track } from "../utils/analytics"
+import { preloadContactFlows } from "./contact/lazy-flows"
 import { cn } from "@/lib/utils"
 
 /**
@@ -78,7 +80,13 @@ export default function ContactCta({
   return (
     <button
       type="button"
-      onClick={() => openModal(mode)}
+      onClick={(e) => {
+        track("cta_click", { label: e.currentTarget.textContent?.trim() ?? "", flow: mode })
+        openModal(mode)
+      }}
+      onPointerEnter={preloadContactFlows}
+      onFocus={preloadContactFlows}
+      onTouchStart={preloadContactFlows}
       className={cn(variant === "primary" ? primaryCtaClass : textCtaClass, className)}
       {...(variant === "primary" ? magnetic : {})}
     >

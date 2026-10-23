@@ -39,7 +39,7 @@ export default function QuickContactForm({ mode }: { mode: QuickContactMode }) {
   if (success) {
     return (
       <SuccessState srTitle="Message sent">
-        Thanks. Someone from the team will reach out within a day.
+        Thanks. Someone from the team will reply within one business day.
       </SuccessState>
     )
   }
@@ -51,9 +51,13 @@ export default function QuickContactForm({ mode }: { mode: QuickContactMode }) {
         className="mb-7 text-[26px] font-bold leading-[1.1] tracking-[-0.03em] [font-stretch:104%] text-ink"
       >
         {isPulse
-          ? "Curious what a relational diagnostic would surface in your org? Tell us where to send it."
-          : "Curious what an org design review would find? Tell us where to send it."}
+          ? "Curious what a relational diagnostic would surface in your organisation?"
+          : "Curious what an organisation design review would find?"}
       </h3>
+      <p className="-mt-4 mb-7 text-[16px] leading-relaxed text-ink-secondary">
+        Leave your details and we&apos;ll reply within one business day to find a time to talk it
+        through. No commitment.
+      </p>
       <ContactFieldsForm
         idPrefix={mode}
         onSubmit={handleSubmit}

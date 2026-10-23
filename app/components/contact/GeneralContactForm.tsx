@@ -11,12 +11,18 @@ import { CtaInner, primaryCtaClass } from "../ContactCta"
 import { productFromPathname } from "../../utils/product"
 import { getInterestForProduct, INTEREST_BY_PRODUCT } from "../../utils/interest"
 import {
+  emailField,
   FieldError,
+  fieldA11y,
   HoneypotField,
   inputClass,
+  inputErrorClass,
   labelClass,
+  OptionalTag,
+  requiredText,
   SELECT_CHEVRON,
   selectClass,
+  useReportDirty,
 } from "./form-shared"
 import SuccessState from "./SuccessState"
 import { submitContact } from "./submit-contact"
@@ -37,14 +43,18 @@ const INTEREST_OPTIONS = [
 ]
 
 const NOTES_MAX_HEIGHT = 200
+const NOTES_MAX_LENGTH = 4000
 
 const schema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  company: z.string().min(2, { message: "Company name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
+  name: requiredText("Please enter your name.", "Please enter your full name."),
+  company: requiredText("Please enter your company name.", "Please enter your full company name."),
+  email: emailField,
   team_size: z.string().optional(),
   interest: z.string().optional(),
-  notes: z.string().optional(),
+  notes: z
+    .string()
+    .max(NOTES_MAX_LENGTH, { message: `Please keep this under ${NOTES_MAX_LENGTH} characters.` })
+    .optional(),
   website: z.string().optional(), // honeypot
 })
 
@@ -67,7 +77,9 @@ export default function GeneralContactForm() {
       website: "",
     },
   })
-  const { errors, isSubmitting } = form.formState
+  const { errors, isSubmitting, dirtyFields } = form.formState
+  // `interest` is prefilled from the page, so only typed fields count as unsent work.
+  useReportDirty(Boolean(dirtyFields.name || dirtyFields.company || dirtyFields.email || dirtyFields.notes))
 
   const adjustNotesHeight = (el: HTMLTextAreaElement | null) => {
     if (!el) return
@@ -87,9 +99,6 @@ export default function GeneralContactForm() {
         notes: values.notes || undefined,
       })
       setSuccess(true)
-      toast.success("Thank you for your message", {
-        description: "We'll get back to you within 24 hours.",
-      })
     } catch (error) {
       toast.error("Failed to send message", {
         description: error instanceof Error ? error.message : "Please try again later.",
@@ -100,14 +109,14 @@ export default function GeneralContactForm() {
   if (success) {
     return (
       <SuccessState srTitle="Message sent">
-        Thanks for reaching out. We&apos;ll get back to you within 24 hours to set up a
+        Thanks for reaching out. We&apos;ll reply within one business day to set up a
         conversation.
       </SuccessState>
     )
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="relative space-y-[18px]">
+    <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="relative space-y-[18px]">
       <HoneypotField registration={form.register("website")} />
       <h3
         id="contact-modal-title"
@@ -116,7 +125,8 @@ export default function GeneralContactForm() {
         Get in <span className="font-light">touch.</span>
       </h3>
       <p className="mb-2 text-[16px] leading-relaxed text-ink-secondary">
-        Tell us a little about your business. We&apos;ll get back to you within 24 hours.
+        Tell us a little about your business. We&apos;ll reply within one business day with a
+        suggested starting point and a time to talk.
       </p>
 
       <div className="grid grid-cols-1 gap-[14px] md:grid-cols-2">
@@ -125,47 +135,52 @@ export default function GeneralContactForm() {
             Your name
           </label>
           <input
-            id="contact-name"
+            {...fieldA11y("contact-name", errors.name?.message)}
+            autoComplete="name"
             type="text"
             placeholder="First and last name"
-            className={cn(inputClass, errors.name && "border-red-500")}
+            className={cn(inputClass, errors.name && inputErrorClass)}
             {...form.register("name")}
           />
-          <FieldError message={errors.name?.message} />
+          <FieldError fieldId="contact-name" message={errors.name?.message} />
         </div>
         <div>
           <label htmlFor="contact-company" className={labelClass}>
             Company
           </label>
           <input
-            id="contact-company"
+            {...fieldA11y("contact-company", errors.company?.message)}
+            autoComplete="organization"
             type="text"
             placeholder="Company name"
-            className={cn(inputClass, errors.company && "border-red-500")}
+            className={cn(inputClass, errors.company && inputErrorClass)}
             {...form.register("company")}
           />
-          <FieldError message={errors.company?.message} />
+          <FieldError fieldId="contact-company" message={errors.company?.message} />
         </div>
       </div>
 
       <div>
         <label htmlFor="contact-email" className={labelClass}>
-          Email
+          Work email
         </label>
         <input
-          id="contact-email"
+          {...fieldA11y("contact-email", errors.email?.message)}
+          autoComplete="email"
+          inputMode="email"
           type="email"
           placeholder="you@company.com"
-          className={cn(inputClass, errors.email && "border-red-500")}
+          className={cn(inputClass, errors.email && inputErrorClass)}
           {...form.register("email")}
         />
-        <FieldError message={errors.email?.message} />
+        <FieldError fieldId="contact-email" message={errors.email?.message} />
       </div>
 
       <div className="grid grid-cols-1 gap-[14px] md:grid-cols-2">
         <div>
           <label htmlFor="contact-team-size" className={labelClass}>
             Team size
+            <OptionalTag />
           </label>
           <select
             id="contact-team-size"
@@ -184,6 +199,7 @@ export default function GeneralContactForm() {
         <div>
           <label htmlFor="contact-interest" className={labelClass}>
             Interested in
+            <OptionalTag />
           </label>
           <select
             id="contact-interest"
@@ -203,16 +219,19 @@ export default function GeneralContactForm() {
 
       <div>
         <label htmlFor="contact-notes" className={labelClass}>
-          Anything else? <span className="font-normal text-ink-tertiary">(optional)</span>
+          Anything else?
+          <OptionalTag />
         </label>
         <textarea
-          id="contact-notes"
+          {...fieldA11y("contact-notes", errors.notes?.message, false)}
+          maxLength={NOTES_MAX_LENGTH}
           placeholder="Brief context about your business or what you're looking to solve"
           rows={3}
-          className={cn(inputClass, "min-h-[72px] resize-y")}
+          className={cn(inputClass, "min-h-[72px] resize-y", errors.notes && inputErrorClass)}
           {...form.register("notes")}
           onInput={(e) => adjustNotesHeight(e.currentTarget)}
         />
+        <FieldError fieldId="contact-notes" message={errors.notes?.message} />
       </div>
 
       <button type="submit" disabled={isSubmitting} className={cn(primaryCtaClass, "mt-2 w-full")}>

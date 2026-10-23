@@ -18,7 +18,7 @@ export default function FeaturedEssay({ essay }: { essay: EngineeringEntry }) {
       aria-labelledby="featured-essay"
       className={`${tintClass(essay)} anim-fade-up border-b border-line py-10 md:py-14`}
     >
-      <p className="font-mono text-[11px] uppercase tracking-[0.12em]">
+      <p className="font-mono text-[12px] uppercase tracking-[0.12em]">
         <time dateTime={essay.date} className="text-ink-tertiary">
           {formatEntryDate(essay.date)}
         </time>
@@ -38,11 +38,11 @@ export default function FeaturedEssay({ essay }: { essay: EngineeringEntry }) {
         ) : null}
       </p>
 
-      <h1 id="featured-essay" className="type-display-2 mt-6 max-w-[18ch]">
+      <h2 id="featured-essay" className="type-display-2 mt-6 max-w-[18ch]">
         <Link href={href} className="transition-colors hover:text-(--tint-ink)">
           {essay.title}
         </Link>
-      </h1>
+      </h2>
 
       <p className="mt-5 max-w-[62ch] font-sans text-[17px] leading-relaxed text-ink-secondary md:text-lg">
         {essay.summary}
