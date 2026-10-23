@@ -15,17 +15,16 @@ describe("mdxToMarkdown", () => {
 })
 
 describe("llms files", () => {
-  it("index covers every FAQ set, the glossary, and the full-text link", () => {
+  it("index covers every FAQ set and the full-text link", () => {
     const text = llmsIndex()
     for (const item of [...HOME_FAQS, ...PRISM_FAQS]) expect(text).toContain(item.question)
     expect(text).toContain(`${SITE_URL}/llms-full.txt`)
-    expect(text).toContain(`${SITE_URL}/glossary#`)
     expect(text).not.toContain("planner above")
   })
 
-  it("full text carries essays and the glossary without MDX", () => {
+  it("full text carries the FAQs and essays without MDX", () => {
     const text = llmsFull()
-    expect(text).toContain("## Glossary")
+    expect(text).toContain("## Engineering essays")
     expect(text).not.toMatch(/<Figure|<Tldr/)
     expect(text).not.toContain("—")
   })

@@ -34,8 +34,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly" as const,
       priority: entry.type === "essay" ? 0.6 : 0.4,
     })),
-    // The glossary lives in code, so it carries no edit date of its own.
-    { url: absoluteUrl("/glossary"), changeFrequency: "yearly", priority: 0.4 },
   ]
   return entries.map(withImage)
 }

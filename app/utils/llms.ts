@@ -1,14 +1,13 @@
 import { entryPath, getAllEntries, getEssays, type EngineeringEntry } from "../../lib/engineering/content"
 import { BUILD_PAINS } from "./build-plan"
 import { BUILD_FAQS, HOME_FAQS, PRISM_FAQS, PULSE_FAQS, type FaqEntry } from "./faqs"
-import { GLOSSARY, termPath } from "./glossary"
 import { SITE_URL } from "./site"
 
 /**
  * The plain-text maps of the site for AI assistants and answer engines
  * (llmstxt.org): `/llms.txt` is the index, `/llms-full.txt` the full text.
  * Everything here is built from the same data the pages render (FAQs, the
- * Build planner, the glossary, essay bodies), so neither file can
+ * Build planner, essay bodies), so neither file can
  * say something the site does not.
  */
 
@@ -82,10 +81,6 @@ ${faqLines(BUILD_FAQS, "/build")}
 
 ${faqLines(PRISM_FAQS, "/prism")}
 
-## Glossary
-
-${GLOSSARY.map((t) => `- [${t.term}](${url(termPath(t))}): ${t.definition}`).join("\n")}
-
 ## Engineering
 
 - [Frenem Engineering](${url("/engineering")}): Essays and field notes on the method, design, and trust decisions behind the products.
@@ -117,7 +112,6 @@ export function llmsFull(): string {
           .map((item) => `### ${item.question}\n\n${item.answer}`)
           .join("\n\n")}`
     ),
-    `## Glossary\n\n${GLOSSARY.map((t) => `- **${t.term}:** ${t.definition}`).join("\n")}\n\nSource: ${url("/glossary")}`,
     `## Engineering essays\n\n${getEssays()
       .map((e) => `### ${e.title}\n\nSource: ${url(entryPath(e))}\n\n${mdxToMarkdown(e.body).replace(/^## /gm, "#### ")}`)
       .join("\n\n")}`,

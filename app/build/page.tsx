@@ -19,7 +19,7 @@ import { BUILD_PHASES, PHASE_VIEWBOX } from "../utils/compositions"
 import JsonLd from "../components/JsonLd"
 import { pageMetadata } from "../utils/seo"
 import { BUILD_FAQS } from "../utils/faqs"
-import { absoluteUrl, breadcrumbs, faq, graph, mentionsFor, ogImage, ORG_ID, webPage } from "../utils/structured-data"
+import { absoluteUrl, breadcrumbs, faq, graph, ogImage, ORG_ID, webPage } from "../utils/structured-data"
 
 const DESCRIPTION =
   "Organisation design for founder-led businesses: faster decisions, clear ownership, and leaders who run the business. All of Build, or only the parts you need."
@@ -76,7 +76,6 @@ const jsonLd = graph(
     category: "Organisation design and governance",
     provider: { "@id": ORG_ID },
     areaServed: "Worldwide",
-    mentions: mentionsFor("build"),
     audience: { "@type": "BusinessAudience", name: "Founders and founder-owners of growing businesses" },
     description:
       "Organisation design for founder-led businesses, as a complete sprint or only the parts you need: faster decisions, clear ownership, governance, and a leadership bench.",

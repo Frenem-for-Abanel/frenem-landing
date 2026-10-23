@@ -1,7 +1,5 @@
 import { HOME_DESCRIPTION, OG_IMAGE, openGraphImagePath } from "./seo"
 import { absoluteUrl, LINKEDIN_URL, SITE_NAME, SITE_URL } from "./site"
-import { GLOSSARY } from "./glossary"
-import type { ProductKey } from "./product"
 
 /**
  * schema.org JSON-LD for search engines and AI answer engines. One linked
@@ -14,7 +12,6 @@ import type { ProductKey } from "./product"
 export const ORG_ID = `${SITE_URL}/#organization`
 export const WEBSITE_ID = `${SITE_URL}/#website`
 export const BLOG_ID = `${SITE_URL}/engineering#blog`
-export const GLOSSARY_ID = `${SITE_URL}/glossary#termset`
 
 export const SAME_AS = [LINKEDIN_URL]
 
@@ -152,17 +149,6 @@ export function faq(path: string, items: Array<{ question: string; answer: strin
       acceptedAnswer: { "@type": "Answer", text: item.answer },
     })),
   }
-}
-
-/**
- * Glossary terms a product page relies on, as links into the site's defined
- * term set. Ties each product to the concepts it is about, for answer
- * engines, without adding anything that isn't already on the site.
- */
-export function mentionsFor(product: ProductKey): Json[] {
-  return GLOSSARY.filter((entry) => entry.product === product).map((entry) => ({
-    "@id": `${abs("/glossary")}#${entry.slug}`,
-  }))
 }
 
 export function graph(...nodes: Json[]): Json {

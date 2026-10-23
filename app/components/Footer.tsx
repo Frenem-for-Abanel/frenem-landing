@@ -53,11 +53,6 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/glossary" className={linkClass}>
-                  Glossary
-                </Link>
-              </li>
-              <li>
                 <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
                   LinkedIn
                 </a>
