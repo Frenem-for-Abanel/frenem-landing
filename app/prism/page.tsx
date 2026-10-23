@@ -23,7 +23,7 @@ export const metadata: Metadata = pageMetadata({
   description: DESCRIPTION,
   socialTitle: "Frenem Prism: the organisation, kept current",
   socialDescription:
-    "Org charts, performance cycles, KPIs, and governance in a tool your team will actually use.",
+    "Org charts, ownership, KPIs, and governance in a tool your team will actually use.",
 })
 
 const APP_ID = absoluteUrl("/prism#software")
@@ -79,7 +79,7 @@ export default function PrismPage() {
             <SmoothScrollLink targetId="features">See what Prism does</SmoothScrollLink>
           </>
         }
-        note="Org charts, KRAs, reviews, and audit trails, in one place."
+        note="Org charts, ownership, KPIs, and audit trails, in one place."
         scene="prism"
       />
 
@@ -109,7 +109,7 @@ export default function PrismPage() {
             One place for your organisation. <em>Always current.</em>
           </>
         }
-        subtitle="Org charts, performance cycles, KPIs, and governance. In a tool your team will actually use."
+        subtitle="Org charts, ownership, KPIs, and governance. In a tool your team will actually use."
       />
     </div>
   )

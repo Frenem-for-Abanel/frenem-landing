@@ -17,7 +17,7 @@ export const HOME_FAQS: FaqEntry[] = [
   {
     question: "What is Frenem?",
     answer:
-      "Frenem is an organisation clarity firm for scaling companies. Pulse maps how your people actually work together, Build designs the structure your strategy needs, and Prism keeps that design current as you scale.",
+      "Frenem is an organisation clarity firm for scaling companies. Pulse maps how work actually moves through your business, Build designs the structure your strategy needs, and Prism keeps that design current as you scale.",
     links: [
       { phrase: "Pulse", href: "/pulse" },
       { phrase: "Build", href: "/build" },
@@ -27,17 +27,17 @@ export const HOME_FAQS: FaqEntry[] = [
   {
     question: "Who is Frenem for?",
     answer:
-      "Founders and leadership teams of growing, founder-led businesses. Typically the company has outgrown the way it was first run: decisions still route through a few people, people you counted on leave without warning, or nobody is quite sure who owns what anymore.",
+      "Founders and leadership teams of growing, founder-led businesses. Typically the company has outgrown the way it was first run: decisions still route through a few people, key people leave without warning, or nobody is quite sure who owns what anymore.",
   },
   {
     question: "How is Frenem different from an engagement survey or a traditional consultancy?",
     answer:
-      "Engagement surveys measure how people feel; Pulse measures how they work together. And where traditional consulting hands over a slide deck after months of work, Build leaves a live operating system your team uses every day.",
+      "Engagement surveys measure sentiment; Pulse measures how the business actually runs. And where traditional consulting hands over a slide deck after months of work, Build leaves a live operating system your team uses every day.",
   },
   {
     question: "Where should we start?",
     answer:
-      "Start with what's breaking. If people you counted on keep leaving, start with Pulse. If the company still can't run without you, start with Build. If nobody's sure who owns what, start with Prism. Not sure? Tell us what's breaking and we'll point you at the right starting place.",
+      "Start with what's breaking. If key people keep leaving, or work stalls when one person is out, start with Pulse. If the company still can't run without you, start with Build. If nobody's sure who owns what, start with Prism. Not sure? Tell us what's breaking and we'll point you at the right starting place.",
   },
   {
     question: "Do the three products work together?",

@@ -20,15 +20,15 @@ import { PULSE_FAQS } from "../utils/faqs"
 import { absoluteUrl, breadcrumbs, faq, graph, ogImage, ORG_ID, webPage } from "../utils/structured-data"
 
 const DESCRIPTION =
-  "Engagement surveys measure how people feel. Pulse measures how they work together: exit risk, hidden brokers, and friction, visible while you can still act."
+  "Engagement surveys measure sentiment. Pulse shows how your business actually runs: key-person risk, hidden brokers, and friction, visible while you can still act."
 
 export const metadata: Metadata = pageMetadata({
   path: "/pulse",
   title: "Pulse by Frenem | Organisational network analysis (ONA)",
   description: DESCRIPTION,
-  socialTitle: "Frenem Pulse: see how your people actually work together",
+  socialTitle: "Frenem Pulse: see how your business actually runs",
   socialDescription:
-    "See how your people actually work together: exit risk, hidden brokers, and friction, visible while you can still act on them.",
+    "See how work actually moves through your business: key-person risk, hidden brokers, and friction, visible while you can still act on them.",
 })
 
 const phases = [
@@ -73,14 +73,14 @@ const jsonLd = graph(
     areaServed: "Worldwide",
     audience: { "@type": "BusinessAudience", name: "Leadership teams of scaling organisations" },
     description:
-      "A relational diagnostic that maps how people actually work together: exit risk, hidden brokers, the manager effect, and cross-functional friction.",
+      "A relational diagnostic that maps how work actually moves through a business: key-person risk, hidden brokers, the manager effect, and cross-functional friction.",
     image: ogImage("/pulse"),
     url: absoluteUrl("/pulse"),
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Pulse report cuts",
       itemListElement: [
-        { name: "The Individual Report", description: "A confidential personal read for every employee." },
+        { name: "The Individual Report", description: "A confidential personal read for everyone who takes part." },
         { name: "The Org Pulse Report", description: "A systemic, top-down read for leadership." },
         { name: "The Relational Network Map", description: "Structural silos, hidden brokers, and an isolation watchlist." },
       ].map((report) => ({ "@type": "Offer", itemOffered: { "@type": "Service", ...report } })),
@@ -100,10 +100,10 @@ export default function PulsePage() {
         crumbs={[{ name: "Pulse, relational diagnostics", path: "/pulse" }]}
         title={
           <>
-            See how your people <em>actually work together.</em>
+            See how your business <em>actually runs.</em>
           </>
         }
-        subtitle="Engagement surveys measure how people feel. Pulse measures how they work together: an organisational network analysis (ONA) of the friction, energy, and hidden connections between the people doing the work."
+        subtitle="Engagement surveys measure sentiment. Pulse measures how the work actually flows: an organisational network analysis (ONA) of the friction, dependencies, and hidden connections that decide how fast the business moves."
         actions={
           <>
             <ContactCta mode="pulseQuestionnaire" className="w-full sm:w-auto">
@@ -131,7 +131,7 @@ export default function PulsePage() {
             Ingest. Route. Protect. <em>Deliver.</em>
           </>
         }
-        sub="From boundary to reports in four clear steps. Your part: one file of how the organisation is structured, and honest answers from your people."
+        sub="From boundary to reports in four clear steps. Your part: one file of how the organisation is structured, and honest answers from your team."
         phases={phases}
         layouts={PULSE_PHASES}
         viewBox={PHASE_VIEWBOX}

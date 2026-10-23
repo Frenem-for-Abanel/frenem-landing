@@ -155,10 +155,6 @@ describe("next.config host redirects", () => {
     expect(redirects[1]?.destination).toBe(`https://${CANONICAL_HOST}/:path*`)
   })
 
-  it("sends the bare /guides path to the Insights hub", async () => {
-    const all = (await nextConfig.redirects?.()) ?? []
-    expect(all).toContainEqual({ source: "/guides", destination: "/insights", permanent: true })
-  })
 
   it("sends nosniff, a referrer policy, and HSTS on every path", async () => {
     const headers = await nextConfig.headers?.()

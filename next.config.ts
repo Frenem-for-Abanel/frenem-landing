@@ -36,8 +36,6 @@ const nextConfig: NextConfig = {
         destination: `https://${CANONICAL_HOST}/`,
         permanent: true,
       },
-      // Guides have no index of their own: the Insights hub lists them.
-      { source: "/guides", destination: "/insights", permanent: true },
       {
         source: "/:path*",
         has: [{ type: "host", value: APEX_HOST }],

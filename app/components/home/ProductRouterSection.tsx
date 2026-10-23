@@ -13,9 +13,9 @@ const products = [
     tintClass: "tint-pulse",
     product: "Pulse",
     tagline: "Relational diagnostics",
-    problem: "People you counted on keep leaving, and it keeps surprising you.",
+    problem: "Key people leave, and you find out too late what they were holding together.",
     description:
-      "Pulse maps how your people actually work together: exit risk, hidden brokers, and cross-team friction, visible early.",
+      "Pulse maps how work actually moves through your business: key-person risk, hidden brokers, and cross-team friction, visible early.",
     meta: ["Network map", "3 report cuts", "Privacy by design"],
     href: "/pulse",
     mark: "pulse",
@@ -38,7 +38,7 @@ const products = [
     problem: "Nobody's quite sure who owns what anymore.",
     description:
       "The organisation, kept current: live org charts, ownership, measurement, and governance in one place your team actually uses.",
-    meta: ["Live org charts", "KRAs and reviews", "Audit trails"],
+    meta: ["Live org charts", "Ownership and KPIs", "Audit trails"],
     href: "/prism",
     mark: "prism",
   },

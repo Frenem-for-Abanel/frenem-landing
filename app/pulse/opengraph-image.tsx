@@ -6,8 +6,8 @@ export const alt = "Frenem Pulse, relational diagnostics"
 
 export default function Image() {
   return renderOgImage({
-    title: "See how your people actually work together.",
-    subtitle: "Exit risk, hidden brokers, and friction, visible while you can still act.",
+    title: "See how your business actually runs.",
+    subtitle: "Key-person risk, hidden brokers, and friction, visible while you can still act.",
     tint: "#d2e4d7",
     deep: "#7aad93",
   })

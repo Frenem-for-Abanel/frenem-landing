@@ -148,67 +148,6 @@ export function faq(path: string, items: Array<{ question: string; answer: strin
   }
 }
 
-/** A guide: an Article published by Frenem, tied to its page. */
-export function article({
-  path,
-  headline,
-  description,
-  datePublished,
-  dateModified,
-  wordCount,
-  about,
-}: {
-  path: string
-  headline: string
-  description: string
-  datePublished: string
-  dateModified: string
-  wordCount: number
-  /** @ids or names of what the article explains. */
-  about?: Json[]
-}): Json {
-  return {
-    "@type": "Article",
-    "@id": `${abs(path)}#article`,
-    headline,
-    description,
-    url: abs(path),
-    mainEntityOfPage: { "@id": `${idBase(path)}#webpage` },
-    image: ogImage(path),
-    datePublished,
-    dateModified,
-    wordCount,
-    inLanguage: "en-GB",
-    author: { "@id": ORG_ID },
-    publisher: { "@id": ORG_ID },
-    isPartOf: { "@id": WEBSITE_ID },
-    ...(about?.length ? { about } : {}),
-  }
-}
-
-/** One glossary entry, part of the site's defined term set. */
-export function definedTerm({
-  path,
-  name,
-  description,
-  alternateNames,
-}: {
-  path: string
-  name: string
-  description: string
-  alternateNames?: string[]
-}): Json {
-  return {
-    "@type": "DefinedTerm",
-    "@id": `${abs(path)}#term`,
-    name,
-    description,
-    url: abs(path),
-    inDefinedTermSet: { "@id": GLOSSARY_ID },
-    ...(alternateNames?.length ? { alternateName: alternateNames } : {}),
-  }
-}
-
 export function graph(...nodes: Json[]): Json {
   return { "@context": "https://schema.org", "@graph": nodes }
 }

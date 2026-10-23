@@ -181,7 +181,7 @@ export function buildScenes(set: SceneSet, g: number): Scene[] {
           id: "pulse",
           label: "Diagnose",
           hold: 4600,
-          caption: "Pulse maps how your people actually work together.",
+          caption: "Pulse maps how work actually moves through the business.",
           dots: network(g, { person: 1, broker: 4, tie: 1, bridge: 4, friction: 5, isolated: 3 }).dots(),
           notes: [
             { x: 0.5, y: 0.3, text: "Broker", align: "center" },
@@ -265,7 +265,7 @@ export function buildScenes(set: SceneSet, g: number): Scene[] {
           id: "pulse",
           label: "What Pulse sees",
           hold: 6000,
-          caption: "How people actually work together: brokers, friction, isolation.",
+          caption: "How work actually moves: brokers, friction, isolation.",
           dots: network(g, { person: 1, broker: 3, tie: 1, bridge: 3, friction: 4, isolated: 2 }).dots(),
           notes: [
             { x: 0.5, y: 0.3, text: "Hidden broker", align: "center" },
@@ -297,7 +297,7 @@ export function buildScenes(set: SceneSet, g: number): Scene[] {
           id: "scattered",
           label: "Today",
           hold: 3400,
-          caption: "People data scattered across files.",
+          caption: "The organisation, scattered across files.",
           dots: scattered.dots(),
         },
         {

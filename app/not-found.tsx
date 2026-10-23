@@ -7,12 +7,12 @@ import { PRODUCT_LABELS, PRODUCT_ROLES, PRODUCTS } from "./utils/product"
 // here would only duplicate it.
 export const metadata: Metadata = {
   title: { absolute: "Page not found | Frenem" },
-  description: "That page doesn't exist. Explore Frenem Pulse, Build, Prism, or our guides from here.",
+  description: "That page doesn't exist. Explore Frenem Pulse, Build, or Prism from here.",
 }
 
 const LINKS = [
   ...PRODUCTS.map((key) => ({ href: `/${key}`, label: PRODUCT_LABELS[key], detail: PRODUCT_ROLES[key] })),
-  { href: "/insights", label: "Insights", detail: "Guides, glossary, and engineering" },
+  { href: "/engineering", label: "Engineering", detail: "Essays and field notes" },
   { href: "/", label: "Home", detail: "Everything Frenem does, on one page" },
 ]
 

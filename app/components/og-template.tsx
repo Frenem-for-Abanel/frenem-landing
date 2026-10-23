@@ -11,7 +11,7 @@ export const OG_TINTS = {
   prism: { tint: "#dcd8ee", deep: "#948cc9" },
 } as const
 
-/** Long titles (guides, glossary terms) step down so they never overflow the card. */
+/** Long titles step down so they never overflow the card. */
 function titleSize(title: string): number {
   if (title.length > 64) return 56
   if (title.length > 40) return 66

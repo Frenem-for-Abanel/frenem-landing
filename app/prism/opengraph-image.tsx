@@ -6,8 +6,8 @@ export const alt = "Frenem Prism, the organisation kept current"
 
 export default function Image() {
   return renderOgImage({
-    title: "Your single source of truth.",
-    subtitle: "Live org charts, KRAs, review cycles, and governance in one place.",
+    title: "The organisation, kept current.",
+    subtitle: "Live org charts, ownership, KPIs, and governance in one place.",
     tint: "#dcd8ee",
     deep: "#948cc9",
   })

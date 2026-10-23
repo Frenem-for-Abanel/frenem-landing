@@ -71,11 +71,7 @@ describe("seo host", () => {
           ? "app/page.tsx"
           : pathname.startsWith("/engineering/") && pathname !== "/engineering/log"
             ? "app/engineering/[slug]/page.tsx"
-            : pathname.startsWith("/guides/")
-              ? "app/guides/[slug]/page.tsx"
-              : pathname.startsWith("/glossary/")
-                ? "app/glossary/[term]/page.tsx"
-                : `app${pathname}/page.tsx`
+            : `app${pathname}/page.tsx`
       expect(fs.existsSync(path.join(process.cwd(), page)), pathname).toBe(true)
     }
   })

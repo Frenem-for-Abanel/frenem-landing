@@ -32,9 +32,7 @@ export default function Header() {
   const { openModal } = useContactModal()
   const reduce = useReducedMotion()
   const product = productFromPathname(pathname)
-  const onInsights = ["/insights", "/guides", "/glossary", "/engineering"].some(
-    (root) => pathname === root || pathname.startsWith(`${root}/`)
-  )
+  const onEngineering = pathname === "/engineering" || pathname.startsWith("/engineering/")
 
   const [atTop, setAtTop] = useState(true)
   const [tucked, setTucked] = useState(false)
@@ -132,13 +130,13 @@ export default function Header() {
                 )
               })}
               <Link
-                href="/insights"
-                aria-current={pathname === "/insights" ? "page" : onInsights ? "true" : undefined}
+                href="/engineering"
+                aria-current={onEngineering ? "page" : undefined}
                 className={`inline-flex h-11 items-center rounded-full px-4 text-[15px] font-semibold tracking-[-0.01em] [font-stretch:108%] transition-colors duration-300 lg:h-12 ${
-                  onInsights ? "bg-paper" : "hover:bg-paper-soft"
+                  onEngineering ? "bg-paper" : "hover:bg-paper-soft"
                 }`}
               >
-                Insights
+                Engineering
               </Link>
             </nav>
 
@@ -205,9 +203,8 @@ export default function Header() {
                 </MenuRow>
               ))}
               <MenuRow index={3} reduce={Boolean(reduce)} className="bg-paper-soft">
-                <Link href="/insights" className="flex h-full flex-col justify-center px-5">
-                  <span className="text-[32px] font-extrabold leading-none tracking-[-0.035em] [font-stretch:110%]">Insights</span>
-                  <span className="mt-2 text-[15px] font-medium text-ink-secondary">Guides, glossary, and engineering</span>
+                <Link href="/engineering" className="flex h-full items-center px-5 text-[32px] font-extrabold tracking-[-0.035em] [font-stretch:110%]">
+                  Engineering
                 </Link>
               </MenuRow>
               <MenuRow index={4} reduce={Boolean(reduce)} className="bg-sand">

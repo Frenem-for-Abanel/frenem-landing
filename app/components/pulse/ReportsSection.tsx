@@ -7,7 +7,7 @@ import { IndividualReportMock, OrgPulseMock, NetworkMapMock } from "./ReportMock
 
 const reports = [
   {
-    audience: "For every employee",
+    audience: "For everyone who takes part",
     title: "The Individual Report",
     description:
       "A confidential personal read: where self-perception and colleagues' experience align, the one blind spot that matters most, and a single habit to practise next. Developmental, never evaluation.",
@@ -17,7 +17,7 @@ const reports = [
     audience: "For leadership",
     title: "The Org Pulse Report",
     description:
-      "A systemic, top-down read: heatmaps of strain, trust, and culture by department and layer. The top risks, their trajectory if unaddressed, and one intervention you actually control.",
+      "A systemic, top-down read: heatmaps of strain, trust, and friction by department and layer. The top risks, their trajectory if unaddressed, and one intervention you actually control.",
     Mock: OrgPulseMock,
   },
   {

@@ -44,22 +44,17 @@ export default function Footer() {
             </ul>
           </nav>
 
-          <nav className="lg:col-span-2" aria-label="Insights and company">
-            <p className="type-kicker mb-4 text-white/60">Insights</p>
+          <nav className="lg:col-span-2" aria-label="Company">
+            <p className="type-kicker mb-4 text-white/60">Company</p>
             <ul>
               <li>
-                <Link href="/insights" className={linkClass}>
-                  Guides
+                <Link href="/engineering" className={linkClass}>
+                  Engineering
                 </Link>
               </li>
               <li>
                 <Link href="/glossary" className={linkClass}>
                   Glossary
-                </Link>
-              </li>
-              <li>
-                <Link href="/engineering" className={linkClass}>
-                  Engineering
                 </Link>
               </li>
               <li>

@@ -22,7 +22,7 @@ export const metadata: Metadata = pageMetadata({
 })
 
 const PRODUCTS = [
-  { name: "Frenem Pulse", path: "/pulse", description: "Relational diagnostics: how your people actually work together." },
+  { name: "Frenem Pulse", path: "/pulse", description: "Relational diagnostics: how work actually moves through your business." },
   { name: "Frenem Build", path: "/build", description: "Organisation design: the structure your strategy needs." },
   { name: "Frenem Prism", path: "/prism", description: "The operating record: org charts, ownership, and governance, kept current." },
 ]
@@ -55,7 +55,7 @@ export default function HomePage() {
             The whole organisation, <em>in focus.</em>
           </>
         }
-        subtitle="Organisation design and people diagnostics for founder-led and scaling companies. Diagnose how your people actually work together, design the structure your strategy needs, and keep it current as you scale."
+        subtitle="Organisation design and diagnostics for founder-led and scaling companies. See how work and decisions actually move through the business, design the structure your strategy needs, and keep it current as you scale."
         actions={
           <>
             <ContactCta mode="default" className="w-full sm:w-auto">
@@ -87,7 +87,7 @@ export default function HomePage() {
             Start with a <em>conversation.</em>
           </>
         }
-        subtitle="Tell us what's breaking, whether that's execution, structure, or losing key people, and we'll point you at the right starting place. No commitment, no decks."
+        subtitle="Tell us what's breaking, whether that's execution, structure, or key-person risk, and we'll point you at the right starting place. No commitment, no decks."
       />
     </div>
   )

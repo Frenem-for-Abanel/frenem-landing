@@ -8,7 +8,7 @@ const rows = [
   {
     label: "Measures",
     them: "How individuals feel",
-    us: "How people work together",
+    us: "How the work actually flows",
   },
   {
     label: "Unit of analysis",
