@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { buildPayload, track, TRACK_EVENT } from "./analytics"
+import { buildPayload, registerAnalyticsSink, track, TRACK_EVENT } from "./analytics"
 
 describe("buildPayload", () => {
   it("names the event and drops undefined props", () => {
@@ -13,6 +13,7 @@ describe("buildPayload", () => {
 
 describe("track", () => {
   afterEach(() => {
+    registerAnalyticsSink(null)
     vi.unstubAllGlobals()
   })
 
@@ -51,5 +52,26 @@ describe("track", () => {
       dispatchEvent: () => true,
     })
     expect(() => track("modal_open")).not.toThrow()
+  })
+
+  it("forwards payloads to a registered PostHog/analytics sink and survives sink errors", () => {
+    const received: unknown[] = []
+    registerAnalyticsSink((payload) => {
+      received.push(payload)
+    })
+    vi.stubGlobal("CustomEvent", class {
+      constructor(public type: string, public init: { detail: unknown }) {}
+    })
+    vi.stubGlobal("window", {
+      location: { pathname: "/pulse" },
+      dispatchEvent: () => true,
+    })
+    track("cta_click", { label: "Book demo" })
+    expect(received).toEqual([{ event: "cta_click", page: "/pulse", label: "Book demo" }])
+
+    registerAnalyticsSink(() => {
+      throw new Error("sink failure")
+    })
+    expect(() => track("cta_click", { label: "Book demo" })).not.toThrow()
   })
 })

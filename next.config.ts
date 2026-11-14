@@ -1,4 +1,5 @@
 import type { NextConfig } from "next"
+import { withSentryConfig } from "@sentry/nextjs/config"
 import { APEX_HOST, CANONICAL_HOST } from "./app/utils/site"
 
 const securityHeaders = [
@@ -50,6 +51,29 @@ const nextConfig: NextConfig = {
       { source: "/:path*", headers: securityHeaders },
     ]
   },
+  async rewrites() {
+    return [
+      {
+        source: "/ingest/static/:path*",
+        destination: "https://us-assets.i.posthog.com/static/:path*",
+      },
+      {
+        source: "/ingest/:path*",
+        destination: "https://us.i.posthog.com/:path*",
+      },
+      {
+        source: "/ingest/decide",
+        destination: "https://us.i.posthog.com/decide",
+      },
+    ]
+  },
+  skipTrailingSlashRedirect: true,
 }
 
-export default nextConfig
+export default withSentryConfig(nextConfig, {
+  silent: true,
+  tunnelRoute: "/monitoring",
+  sourcemaps: {
+    disable: !process.env.SENTRY_AUTH_TOKEN,
+  },
+})
