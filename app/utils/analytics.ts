@@ -24,6 +24,14 @@ export type AnalyticsProps = Record<string, string | number | boolean | null | u
 
 export type AnalyticsPayload = { event: AnalyticsEventName } & Record<string, string | number | boolean | null>
 
+export type AnalyticsSink = (payload: AnalyticsPayload) => void
+
+let externalSink: AnalyticsSink | null = null
+
+export function registerAnalyticsSink(sink: AnalyticsSink | null): void {
+  externalSink = sink
+}
+
 declare global {
   interface Window {
     dataLayer?: unknown[]
@@ -51,6 +59,13 @@ export function track(event: AnalyticsEventName, props: AnalyticsProps = {}): vo
     window.dispatchEvent(new CustomEvent(TRACK_EVENT, { detail: payload }))
   } catch {
     // CustomEvent is universal in supported browsers; ignore exotic failures.
+  }
+  if (externalSink) {
+    try {
+      externalSink(payload)
+    } catch {
+      // External analytics sinks must never break UI interactions.
+    }
   }
   if (process.env.NODE_ENV === "development") console.debug("[track]", payload)
 }

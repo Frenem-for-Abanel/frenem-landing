@@ -2,16 +2,24 @@
 
 import { useEffect } from "react"
 import { useReportWebVitals } from "next/web-vitals"
-import { track } from "../utils/analytics"
+import { registerAnalyticsSink, track } from "../utils/analytics"
 import { captureAttribution } from "../utils/attribution"
+import { initLandingPostHog, posthog } from "../utils/observability"
 
 /**
- * Records where a visitor came from and reports Core Web Vitals from real
- * sessions through the analytics layer. Renders nothing.
+ * Records where a visitor came from, connects PostHog when configured, and
+ * reports Core Web Vitals from real sessions through the analytics layer.
+ * Renders nothing and keeps all pages statically generated.
  */
 export default function Analytics() {
   useEffect(() => {
     captureAttribution()
+    if (initLandingPostHog()) {
+      registerAnalyticsSink(({ event, ...properties }) => {
+        posthog.capture(event, properties)
+      })
+      return () => registerAnalyticsSink(null)
+    }
   }, [])
 
   useReportWebVitals((metric) => {

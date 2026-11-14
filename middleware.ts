@@ -16,7 +16,6 @@ export function middleware(request: NextRequest) {
 export const config = {
   // Spell `/` out as well as the catch-all. Next's matcher treats `*` as
   // zero-or-more today; the explicit root keeps the homepage covered if that
-  // ever changes. Hashed build assets skip the middleware: on the canonical
-  // host it only ever passes them through, so running it is wasted work.
-  matcher: ["/", "/((?!_next/static|_next/image).*)"],
+  // ever changes. Hashed build assets and telemetry proxy paths skip middleware.
+  matcher: ["/", "/((?!_next/static|_next/image|ingest|monitoring).*)"],
 }
