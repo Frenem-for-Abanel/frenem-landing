@@ -66,8 +66,20 @@ export default function Footer() {
           </nav>
         </div>
 
-        <div className="mt-20 flex flex-col justify-between gap-2 text-[14px] text-white/45 md:mt-28 md:flex-row">
-          <span>© Frenem {new Date().getFullYear()}</span>
+        <div className="mt-20 flex flex-col justify-between gap-4 text-[14px] text-white/45 md:mt-28 md:flex-row md:gap-8">
+          <p>
+            © {new Date().getFullYear()} Protark Pvt. Ltd.
+            <br />
+            Frenem is a brand of Protark Pvt. Ltd.
+          </p>
+          <nav aria-label="Legal" className="flex gap-6">
+            <Link href="/terms" className="transition-colors hover:text-white">
+              Terms of Use
+            </Link>
+            <Link href="/privacy" className="transition-colors hover:text-white">
+              Privacy Policy
+            </Link>
+          </nav>
         </div>
       </div>
 

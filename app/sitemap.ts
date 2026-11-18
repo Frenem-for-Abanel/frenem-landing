@@ -19,6 +19,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl("/pulse"), changeFrequency: "monthly", priority: 0.9 },
     { url: absoluteUrl("/build"), changeFrequency: "monthly", priority: 0.9 },
     { url: absoluteUrl("/prism"), changeFrequency: "monthly", priority: 0.9 },
+    { url: absoluteUrl("/terms"), changeFrequency: "yearly", priority: 0.2 },
+    { url: absoluteUrl("/privacy"), changeFrequency: "yearly", priority: 0.2 },
     { url: absoluteUrl("/engineering"), lastModified: newest, changeFrequency: "weekly", priority: 0.7 },
     { url: absoluteUrl("/engineering/log"), lastModified: newest, changeFrequency: "weekly", priority: 0.5 },
     ...getEssays().map((essay) => ({
